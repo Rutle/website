@@ -18,6 +18,7 @@
     "express": "^4.16.2",
     "express-handlebars": "^3.0.0",
     "express-session": "^1.15.6",
-    "hepburn": "^1.0.0"
+    "hepburn": "^1.0.0",
+    "redis": "^2.8.0"
   }
 }
