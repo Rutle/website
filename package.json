@@ -1,0 +1,23 @@
+{
+  "name": "japan",
+  "version": "1.0.0",
+  "description": "Japanese hiragana and katakana practice app.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "keywords": [
+    "japan",
+    "hiragana",
+    "katakana"
+  ],
+  "author": "Jussi Ristimäki",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.2",
+    "express-handlebars": "^3.0.0",
+    "express-session": "^1.15.6",
+    "hepburn": "^1.0.0"
+  }
+}
