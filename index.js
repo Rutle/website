@@ -8,6 +8,7 @@ const publicPath = path.join(__dirname, '/views');
 const express = require('express');
 const exphbs = require('express-handlebars');
 var session = require('express-session');
+const PORT = process.env.PORT || 5000
 var gameSessions = new Map();
 
 const app = express();
@@ -50,4 +51,4 @@ app.get('/hiragana', (request, response) => { // '/' url it is listening
 		romanji: "rj"
 	} )
 });
-app.listen(3000);
+app.listen(PORT, () => console.log('Listening on ${PORT}'));
