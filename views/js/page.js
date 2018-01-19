@@ -1,12 +1,51 @@
-
+/*
 $(document).ready(function() {
-$('#navbar nav a').click(function (e) {
-    $('#navbar nav a').removeClass('active');
+  $('#home').click(function (e) {
+    e.stopPropagation();
+    $('#projects').removeClass('active');
+    $('#contact').removeClass('active');
     $(this).addClass('active');
-	console.log(this)
   });
 });
 
+$(document).ready(function() {
+  $('#projects').click(function (e) {
+    e.stopPropagation();
+    $('#home').removeClass('active');
+    $('#contact').removeClass('active');
+    $(this).addClass('active');
+  });
+});
+$(document).ready(function() {
+  $('#contact').click(function (e) {
+    e.stopPropagation();
+    $('#projects').removeClass('active');
+    $('#home').removeClass('active');
+    $(this).addClass('active');
+  });
+});
+*/
+
+/*
+$(function() {
+  $('#navbar nav a').click(function (event) {
+    event.preventDefault();
+    $('#navbar nav a').removeClass('active');
+    $(this).addClass('active');
+    console.log($(this));
+    $.get("/"+$(this).attr('href'));
+    });
+});*/
+/*
+$(document).ready(function() {
+  $('#navbar nav a').click(function (event) {
+    $('#navbar nav a').removeClass('active');
+    $(this).addClass('active');
+    console.log($(this));
+
+  });
+});
+*/
 /*
 $(document).ready(function() {
 $("#navbar ul li a").click(function () {
@@ -24,25 +63,30 @@ $("#navbar a").click(function () {
   });
 });
 */
-/*
+
 $(function() {
-  $('nav a[href^="/' + location.pathname.split("/")[1] + '"]').addClass('active');
+  if (location.pathname.split("/")[1] === "") {
+    $('#home').addClass('active');
+  } else {
+    $('#navbar nav a[href^="/' + location.pathname.split("/")[1] + '"]').addClass('active');
+  }
+
 });
-*/
+
 /*
 $(document).ready(function () {
         $('nav.nav > a').click(function (e) {
             //e.preventDefault();
             $('nav.nav > a').removeClass('active');
-            $(this).addClass('active');                
-        });            
+            $(this).addClass('active');
+        });
     });
-/*
 */
+
 /*
 $(function() {
     if ((location.pathname.split("/")[1]) !== ""){
-		
+
         $('nav a[href^="/' + location.pathname.split("/")[1] + '"]').addClass('active');
     } else {
 		$('nav a[href^="/' + location.pathname.split("/")[1] + '"]').addClass('active');

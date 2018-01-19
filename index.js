@@ -9,7 +9,7 @@ const express = require('express');
 const exphbs = require('express-handlebars');
 var session = require('express-session');
 const PORT = process.env.PORT || 5000;
-const redis = require('./redisconnection')
+//const redis = require('./redisconnection')
 
 var gameSessions = new Map();
 
@@ -33,7 +33,7 @@ app.use(session({
 );
 
 app.get('/', (request, response) => { // '/' url it is listening
-  var { sessionID } = request;
+  /*var { sessionID } = request;*/
 	//if () {	}
 	/*
 	if(request.session.page_views){
@@ -46,11 +46,17 @@ app.get('/', (request, response) => { // '/' url it is listening
 	console.log(request); */
 	response.render('home');
 });
-app.get('/hiragana', (request, response) => { // '/' url it is listening
+app.get('/game', (request, response) => { // '/' url it is listening
 
-	response.render('hiragana', {
+	response.render('game', {
 		hiragana: "hg",
 		romanji: "rj"
-	} )
+	})
+});
+app.get('/contact', (request, response) => {
+	response.render('contact');
+});
+app.get('/projects', (request, response) => {
+	response.render('projects');
 });
 app.listen(PORT, () => console.log('Listening on %d', PORT));

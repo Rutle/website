@@ -7,7 +7,7 @@
     <meta name="author" content="">
     <link rel="icon" href="../../../../favicon.ico">
 
-    <title>Cover Template for Bootstrap</title>
+    <title>Rulle's small website</title>
 
     <!-- Bootstrap core CSS -->
     <link href="/css/bootstrap.min.css" rel="stylesheet">
@@ -28,28 +28,22 @@
             <div class="inner" id="navbar">
               <h3 class="masthead-brand">Cover</h3>
               <nav class="nav nav-masthead">
-                <a class="nav-link active" href="#">Home</a>
-                <!--<a class="nav-link" href="#">Projects</a>-->
-                <a class="nav-link" href="#">Contact</a>
-				        <a class="nav-link dropdown-toggle dropdown" href="http://example.com" id="dropdown01" 	data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Projects</a>
+                <a class="nav-link" id="home" href="/">Home</a>
+                <a class="nav-link" id="projects" href="/projects">Projects</a>
+                <a class="nav-link" id="contact" href="/contact">Contact</a>
+                <!--
+                <a class="nav-link dropdown-toggle dropdown" href="http://example.com" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Projects</a>
 				        <div class="dropdown-menu" aria-labelledby="dropdown01">
-					        <a class="dropdown-item" href="/hiragana">Hiragana</a>
-					        <a class="dropdown-item" href="/katakana">Katakana</a>
-                  <a class="dropdown-item" href="/romaji">Romaji</a>
-					        <!--<a class="dropdown-item" href="#">Kanji</a>-->
-				        </div>
+					        <a class="dropdown-item" href="#">Hiragana</a>
+					        <a class="dropdown-item" href="#">Katakana</a>
+					        <a class="dropdown-item" href="#">Kanji</a>
+				        </div>-->
               </nav>
             </div>
           </header>
 
           <main role="main" class="inner cover">
-            <h1 class="cover-heading">Rulle's projects.</h1>
-            <p class="lead">On this website there are some projects that I worked on.</p>
-            <p class="lead">
-            <a href="/hiragana" class="btn btn-lg btn-secondary">Hiragana</a>
-			      <a href="/katakana" class="btn btn-lg btn-secondary">Katakana</a>
-			      <!--<a href="/kanji" class="btn btn-lg btn-secondary">Kanji</a>-->
-            </p>
+            {{{body}}}
           </main>
 
           <footer class="mastfoot">
@@ -67,10 +61,12 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
+    <!--
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script>window.jQuery || document.write('<script src="../../../../assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
+    <script>window.jQuery || document.write('<script src="../../../../assets/js/vendor/jquery-slim.min.js"><\/script>')</script>-->
+    <script src="/js/jquery-3.2.1.min.js"></script>
     <script src="/js/popper.min.js"></script>
     <script src="/js/bootstrap.min.js"></script>
-	<script src="/js/page.js"></script>
+	  <script src="/js/page.js"></script>
   </body>
 </html>
