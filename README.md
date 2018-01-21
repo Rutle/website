@@ -1,6 +1,6 @@
 # Website project
 
-Personal website project for learning Node.js, Geroku and so on.
+Personal website project for learning Node.js, Heroku, Redis and so on.
 
 ## Modules
 
