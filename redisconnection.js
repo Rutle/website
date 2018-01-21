@@ -1,3 +1,5 @@
+'use strict';
+
 const aDetails = require('./auth')
 var redis = require('redis');
 
