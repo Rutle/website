@@ -7,35 +7,7 @@ $(document).ready(function() {
     $(this).addClass('active');
   });
 });
-
-$(document).ready(function() {
-  $('#projects').click(function (e) {
-    e.stopPropagation();
-    $('#home').removeClass('active');
-    $('#contact').removeClass('active');
-    $(this).addClass('active');
-  });
-});
-$(document).ready(function() {
-  $('#contact').click(function (e) {
-    e.stopPropagation();
-    $('#projects').removeClass('active');
-    $('#home').removeClass('active');
-    $(this).addClass('active');
-  });
-});
 */
-
-/*
-$(function() {
-  $('#navbar nav a').click(function (event) {
-    event.preventDefault();
-    $('#navbar nav a').removeClass('active');
-    $(this).addClass('active');
-    console.log($(this));
-    $.get("/"+$(this).attr('href'));
-    });
-});*/
 /*
 $(document).ready(function() {
   $('#navbar nav a').click(function (event) {
@@ -72,6 +44,14 @@ $(function() {
   }
 
 });
+
+$(document).ready(function() {
+  $('#hiraganaBtn').click(function () {
+    console.log("duu");
+
+  });
+});
+
 
 /*
 $(document).ready(function () {

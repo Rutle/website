@@ -16,13 +16,14 @@ var gameSessions = new Map();
 const app = express();
 
 app.engine('.hbs', exphbs({
-	defaultLayout: 'main2',
+	defaultLayout: 'main',
 	extname: '.hbs',
 	layoutsDir: path.join(__dirname, 'views/layouts')
 }));
 app.set('view engine', '.hbs');
 //app.set('views', path.join(__dirname, 'views'))
 
+app.use('/wanakana', express.static(__dirname + '/node_modules/wanakana/lib/'));
 app.use('/', express.static(publicPath));
 app.use(session({
 	secret: "It's a secret!",
@@ -32,7 +33,7 @@ app.use(session({
 	})
 );
 
-app.get('/', (request, response) => { // '/' url it is listening
+app.get('/', (req, res) => { // '/' url it is listening
   /*var { sessionID } = request;*/
 	//if () {	}
 	/*
@@ -44,19 +45,18 @@ app.get('/', (request, response) => { // '/' url it is listening
 		//response.send("Welcome to this page for the first time!")
 	}
 	console.log(request); */
-	response.render('home');
+	res.render('home');
 });
-app.get('/game', (request, response) => { // '/' url it is listening
+app.get('/game/:gameId', (req, res) => {
 
-	response.render('game', {
-		hiragana: "hg",
-		romanji: "rj"
+	res.render('game', {
+		gameId: req.param,
 	})
 });
-app.get('/contact', (request, response) => {
-	response.render('contact');
+app.get('/contact', (req, res) => {
+	res.render('contact');
 });
-app.get('/projects', (request, response) => {
-	response.render('projects');
+app.get('/projects', (req, res) => {
+	res.render('projects');
 });
 app.listen(PORT, () => console.log('Listening on %d', PORT));

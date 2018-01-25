@@ -2,8 +2,8 @@
 
 'use strict';
 
-var hepburn = require("hepburn");
-
+// var hepburn = require("hepburn");
+/*
 exports.choices = ["Hiragana", "Katakana", "Romaji"];
 
 exports.syllabary  = [
@@ -78,3 +78,4 @@ class Game {
 }
 
 module.exports.Game = Game;
+*/
