@@ -1,13 +1,12 @@
 # Website project
 
-Personal website project for learning Node.js, Heroku, Redis and so on.
+Personal website project for learning Node.js, Heroku and so on
 
 ## Modules
 
  - express
  - express-handlebars
  - express-session
- - hepburn
 
 ## Start it up
 
