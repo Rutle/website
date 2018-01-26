@@ -47,11 +47,21 @@ app.get('/', (req, res) => { // '/' url it is listening
 	console.log(request); */
 	res.render('home');
 });
-app.get('/game/:gameId', (req, res) => {
+app.get('/game/:gameId/:translateTo?', (req, res) => {
+	console.log(req.params)
+	if(req.params.translateTo === undefined) {
+		res.render('game', {
+			gameId: req.params.gameId,
+			gameStart: false,
+		})
+	} else {
+		res.render('game', {
+			gameId: req.params.gameId,
+			translateTo: req.params.translateTo,
+			gameStart: true,
+		})
+	}
 
-	res.render('game', {
-		gameId: req.param,
-	})
 });
 app.get('/contact', (req, res) => {
 	res.render('contact');

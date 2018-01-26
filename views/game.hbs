@@ -1,4 +1,73 @@
-<h1 class="cover-heading">Hiragana guessing game</h1>
-<h1 class="display-1">
-	{{gameId}}
-</h1>
+<div class="row justify-content-start"> <!-- Heading -->
+  <div class="col"><h1 class="text-left">
+		{{#if gameStart}}
+		<strong>></strong>Rulle's projects<strong>></strong>{{gameId}}<strong>></strong>to {{translateTo}}</h1></div>
+		{{else}}
+		<strong>></strong>Rulle's projects<strong>></strong>{{gameId}}</h1></div>
+		{{/if}}
+</div>
+<hr>
+{{#if gameStart}}
+	<!-- Game -->
+	<div class="row">
+		<div class="col-sm-3">
+			<div class="card text-white bg-dark mb-3 card-box">
+				<div class="card-header">
+					<ul class="nav nav-tabs card-header-tabs">
+						<li class="nav-item">
+							<a class="nav-link active" href="#"><h5>{{gameId}}</h5></a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="#">Hint</a>
+						</li>
+					</ul>
+				</div>
+				<div class="card-body">
+					<h1 class="display-1 card-title">ひ</h1>
+					<input class="form-control" placeholder="Answer" type="text">
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- Game End -->
+{{else}}
+	<div class="row">
+		<div class="col-sm-6">
+			<div class="card text-white bg-dark mb-3 card-box">
+				<div class="card-body">
+					<h5 class="card-title">Special title treatment</h5>
+					<p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+					<a class="btn-block btn btn-light" href="/game/hiragana/romaji" role="button" id="toRomaji"><strong>To romaji</strong></a>
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-6">
+			<div class="card text-white bg-dark mb-3 card-box">
+				<div class="card-body">
+					<h5 class="card-title">Special title treatment</h5>
+					<p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+					<a class="btn-block btn btn-light" href="/game/hiragana/hiragana" role="button" id="toHiragana"><strong>To hiragana</strong></a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col">
+			<div class="card text-white bg-dark mb-3 card-box">
+				<div class="card-body">
+					<h5 class="card-title">Special title treatment</h5>
+					<p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+				</div>
+				<div class="card-footer">
+					<div class="row">
+						<div class="col-6">
+					    <a class="btn-block btn btn-light float-left" href="/game/hiragana/romaji" role="button" id="toRomaji"><strong>To romaji</strong></a>
+						</div>
+						<div class="col-6">
+					    <a class="btn-block btn btn-light float-right" href="/game/hiragana/hiragana" role="button" id="toHiragana"><strong>To hiragana</strong></a>
+						</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{{/if}}

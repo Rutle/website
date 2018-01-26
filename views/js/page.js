@@ -44,14 +44,14 @@ $(function() {
   }
 
 });
-
+/*
 $(document).ready(function() {
   $('#hiraganaBtn').click(function () {
-    console.log("duu");
+
 
   });
 });
-
+*/
 
 /*
 $(document).ready(function () {
