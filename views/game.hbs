@@ -17,10 +17,10 @@
 				</div>
 				<div class="card-body">
           <div class="row align-items-center" style="height: 100%;">
-            <div class="col-sm-6 test-border game-card-char">
+            <div class="col-sm-6 game-card-char">
               <h1 class="display-1 card-title">ひ</h1>
             </div>
-            <div class="col-sm-6 test-border game-card-buttons-col">
+            <div class="col-sm-6 game-card-buttons-col">
               <div class="btn-group-vertical game-card-buttons-group" role="group">
                 <div class="btn-group game-card-buttons">
                   <button type="button" class="btn btn-dark border-bottom-0">1</button>
@@ -38,6 +38,14 @@
 		</div>
 	</div>
 	<!-- Game End -->
+  <script>
+    var chosenSet = "{{gameId}}";
+    var chosenToTranslate = "{{toTranslate}}"
+    
+  </script>
+  <script src="/wanakana/wanakana.js"></script>
+  <script src="/js/game.js"></script>
+
 {{else}}
 <!--
 	<div class="row">
@@ -127,10 +135,10 @@
         <div class="card-footer"> <!-- Card Footer -->
           <div class="row">
             <div class="col-6">
-              <a class="btn-block btn btn-dark float-left" href="/game/hiragana/romaji" role="button" id="toRomaji"><strong>To romaji</strong></a>
+              <a class="btn-block btn btn-dark float-left" href="/game/{{gameId}}/romaji" role="button" id="toRomaji"><strong>To romaji</strong></a>
             </div>
             <div class="col-6">
-              <a class="btn-block btn btn-dark float-right" href="/game/hiragana/hiragana" role="button" id="toHiragana"><strong>To hiragana</strong></a>
+              <a class="btn-block btn btn-dark float-right" href="/game/{{gameId}}/hiragana" role="button" id="toHiragana"><strong>To hiragana</strong></a>
             </div>
           </div>
         </div>

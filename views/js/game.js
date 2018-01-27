@@ -571,14 +571,61 @@ var TO_ROMAJI = new Map([
   */
 ]);
 
+class GameStatus {
+	constructor(amount, language, toTranslate) {
+    this.amount = amount;
+    this.lang = language;
+    this.toTranslate = toTranslate;
+		this.correctAnswers = 0;
+	}
+  /*
+	// Getters
+	get choiceSet() {
+		return this.choiceSet;
+	} */
+  get getCorrectAnswers() {
+    return this.correctAnswers;
+  }
+  get getAmount() {
+    return this.amount;
+  }
+  get getLang() {
+    return this.lang;
+  }
+  get getToTranslate() {
+    return this.toTranslate;
+  }
+	resetGame() {
+		this.correctAnswers = 0;
+	}
+	// Setters
+  /*
+	set setSyllabary(syllabary) {
+		this.syllabary = syllabary;
+	}
+  */
+}
+
+var game = {};
+var numberChars = 5;
+var gId = chosenSet;
+var toTrans = chosenToTranslate
+
+gameStart();
+
+function gameStart(numberChars, gId, toTrans) {
+  game = GameStatus(numberChars, gId, toTrans);
+
+}
 /* Function to return random Hiragana/Katakana/Romaji
    Param1, What type of character will be returned.
 */
- function getRandom(type) {
+function getUniqueRandom(type, amount) {
    var objLength = 0;
+   var randomChar = "";
    if (type === 'romaji') {
      objLength = FROM_ROMAJI.size;
-     return
+// https://stackoverflow.com/questions/42739256/how-get-random-item-from-es6-map-or-set?rq=1
    } else if (type === 'hiragana') {
      objLength = TO_ROMAJI.size;
    } else if (type === 'katakana') {
