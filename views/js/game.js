@@ -578,11 +578,6 @@ class GameStatus {
     this.toTranslate = toTranslate;
 		this.correctAnswers = 0;
 	}
-  /*
-	// Getters
-	get choiceSet() {
-		return this.choiceSet;
-	} */
   get getCorrectAnswers() {
     return this.correctAnswers;
   }
@@ -598,13 +593,58 @@ class GameStatus {
 	resetGame() {
 		this.correctAnswers = 0;
 	}
-	// Setters
-  /*
-	set setSyllabary(syllabary) {
-		this.syllabary = syllabary;
-	}
-  */
 }
+
+/* Function to return random Hiragana/Katakana/Romaji
+   Param1, What type of character will be returned.
+*/
+
+function getUniqueRandom(type, amount) {
+   var objLength = 0;
+   var charMap = new Map();
+   if (type === 'romaji') {
+     objLength = FROM_ROMAJI.size;
+     var count = 0;
+     while (true) {
+       let index = Math.floor(Math.random() * FROM_ROMAJI.size);
+       let cntr = 0;
+       for(let [key, value] of FROM_ROMAJI) {
+         if(cntr === index) {
+           if(!charMap.has(key)) {
+             cntr = 0;
+             charMap.set(key, value);
+             console.log(key, value);
+             count++;
+             break;
+           } else {
+             cntr = 0;
+             break;
+           }
+         } else {
+           cntr++;
+         }
+       }
+       if(count === amount) {
+         console.log("Found %d unique key, value pairs", amount);
+         break;
+       }
+     }
+     console.log(count);
+   } else if (type === 'hiragana') {
+
+     objLength = TO_ROMAJI.size;
+   } else if (type === 'katakana') {
+     objLength = TO_ROMAJI.size;
+   } else {
+     return undefined;
+   }
+
+   return charMap;
+}
+/*
+https://stackoverflow.com/questions/42739256/how-get-random-item-from-es6-map-or-set?rq=1
+*/
+
 
 var game = {};
 var numberChars = 5;
@@ -614,25 +654,7 @@ var toTrans = chosenToTranslate
 gameStart();
 
 function gameStart(numberChars, gId, toTrans) {
-  game = GameStatus(numberChars, gId, toTrans);
+  var charMap = getUniqueRandom(chosenToTranslate, 5);
+  game = GameStatus(numberChars, gId, toTrans, charMap);
 
 }
-/* Function to return random Hiragana/Katakana/Romaji
-   Param1, What type of character will be returned.
-*/
-function getUniqueRandom(type, amount) {
-   var objLength = 0;
-   var randomChar = "";
-   if (type === 'romaji') {
-     objLength = FROM_ROMAJI.size;
-// https://stackoverflow.com/questions/42739256/how-get-random-item-from-es6-map-or-set?rq=1
-   } else if (type === 'hiragana') {
-     objLength = TO_ROMAJI.size;
-   } else if (type === 'katakana') {
-     objLength = TO_ROMAJI.size;
-   } else {
-     return undefined;
-   }
-
-   return
- }
