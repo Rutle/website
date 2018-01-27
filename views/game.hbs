@@ -1,5 +1,5 @@
 <div class="row justify-content-start"> <!-- Heading -->
-  <div class="col"><h1 class="text-left">
+  <div class="col box"><h1 class="text-left">
 		{{#if gameStart}}
 		<strong>></strong>Rulle's projects<strong>></strong>{{gameId}}<strong>></strong>to {{translateTo}}</h1></div>
 		{{else}}
@@ -9,28 +9,37 @@
 <hr>
 {{#if gameStart}}
 	<!-- Game -->
-	<div class="row">
-		<div class="col-sm-3">
-			<div class="card text-white bg-dark mb-3 card-box">
-				<div class="card-header">
-					<ul class="nav nav-tabs card-header-tabs">
-						<li class="nav-item">
-							<a class="nav-link active" href="#"><h5>{{gameId}}</h5></a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link" href="#">Hint</a>
-						</li>
-					</ul>
+	<div class="row justify-content-center">
+		<div class="col-sm-8 align-text-center">
+			<div class="card text-dark bg-light mb-3 card-box">
+				<div class="card-header game-card-header">
+          <h5>{{gameId}} to {{translateTo}}</h5>
 				</div>
 				<div class="card-body">
-					<h1 class="display-1 card-title">ひ</h1>
-					<input class="form-control" placeholder="Answer" type="text">
+          <div class="row align-items-center">
+            <div class="col-sm-6 test-border">
+              <h1 class="display-1 card-title">ひ</h1>
+            </div>
+            <div class="col-sm-6 test-border">
+              <div class="btn-group-vertical" role="group">
+                <div class="btn-group">
+                  <button type="button" class="btn btn-secondary border-bottom-0">1</button>
+                  <button type="button" class="btn btn-secondary border-bottom-0">3</button>
+                </div>
+                <div class="btn-group">
+                  <button type="button" class="btn btn-secondary">4</button>
+                  <button type="button" class="btn btn-secondary">6</button>
+                </div>
+              </div>
+            </div>
+          </div>
 				</div>
 			</div>
 		</div>
 	</div>
 	<!-- Game End -->
 {{else}}
+<!--
 	<div class="row">
 		<div class="col-sm-6">
 			<div class="card text-white bg-dark mb-3 card-box">
@@ -66,8 +75,66 @@
 						<div class="col-6">
 					    <a class="btn-block btn btn-light float-right" href="/game/hiragana/hiragana" role="button" id="toHiragana"><strong>To hiragana</strong></a>
 						</div>
-				</div>
-			</div>
-		</div>
-	</div>
+				  </div>
+			  </div>
+		  </div>
+	  </div>
+  </div>-->
+  <div class="row justify-content-center">
+    <div class="col-6 align-text-center">
+      <div class="card text-dark bg-light mb-3">
+        <div class="card-body"> <!-- Card Body -->
+          <h5 class="card-title">Hiragana game</h5>
+          <p class="card-text">Choose before starting the game.</p>
+          <!--
+          <div class="row">
+            <div class="col-3">
+              <strong class="option-text">Options: </strong>
+            </div>
+            <div class="col-6">
+              <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                <label class="btn btn-dark active">
+                  <input type="radio" name="options" id="option1" autocomplete="off" checked> Active
+                </label>
+                <label class="btn btn-dark">
+                  <input type="radio" name="options" id="option2" autocomplete="off"> Radio
+                </label>
+                <label class="btn btn-dark">
+                  <input type="radio" name="options" id="option3" autocomplete="off"> Radio
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-3">
+              <strong class="option-text">Count: </strong>
+            </div>
+            <div class="col-6">
+              <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                <label class="btn btn-dark active">
+                  <input type="radio" name="options" id="option1" autocomplete="off" checked> Random
+                </label>
+                <label class="btn btn-dark">
+                  <input type="radio" name="options" id="option2" autocomplete="off"> All
+                </label>
+                <label class="btn btn-dark">
+                  <input type="radio" name="options" id="option3" autocomplete="off"> Custom
+                </label>
+              </div>
+            </div>
+          </div> -->
+        </div>
+        <div class="card-footer"> <!-- Card Footer -->
+          <div class="row">
+            <div class="col-6">
+              <a class="btn-block btn btn-dark float-left" href="/game/hiragana/romaji" role="button" id="toRomaji"><strong>To romaji</strong></a>
+            </div>
+            <div class="col-6">
+              <a class="btn-block btn btn-dark float-right" href="/game/hiragana/hiragana" role="button" id="toHiragana"><strong>To hiragana</strong></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 {{/if}}
