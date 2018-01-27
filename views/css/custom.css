@@ -42,6 +42,21 @@ body {
 .game-card-header {
   text-transform: capitalize;
 }
+.game-card-buttons {
+  height: 50%;
+  width: 100%;
+}
+.game-card-buttons-col {
+  height: 100%;
+  width: 100%;
+}
+.game-card-buttons-group {
+  height: 100%;
+  width: 80%;
+}
+.game-card-char {
+   height: 100%;
+}
 #navbarheader a {
   /*padding: .25rem 0;*/
   font-weight: 700;
@@ -69,4 +84,16 @@ body {
   height:1px;
   background-color: black;
   box-shadow: 0 2px 4px 0px rgba(0,0,0,0.25);
+}
+@media (max-width: 576px) {
+    /* only size 'xs' and below */
+    .game-card-buttons { /* Laita tänne se height / width game cardin contentille.*/
+        height: 50%;
+    }
+    .game-card-buttons-col {
+      height: 50%;
+    }
+    .game-card-char {
+       height: 50%;
+    }
 }
