@@ -7,13 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js"
   },
-  "keywords": [
-    "japan",
-    "hiragana",
-    "katakana"
-  ],
+  "keywords": [],
   "author": "Jussi Ristimäki",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "axios": "^0.18.0",
     "bootstrap": "^4.1.1",
@@ -25,6 +21,7 @@
     "jquery": "^3.3.1",
     "morgan": "^1.9.0",
     "popper.js": "^1.14.3",
-    "semantic-ui": "^2.3.1"
+    "semantic-ui": "^2.3.1",
+    "hoek": "5.0.3"
   }
 }

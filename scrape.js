@@ -35,5 +35,21 @@ exports.getData = function(url) {
          }
        }, function(reason) {
           console.log("error", err);
-       }
+       });
 }
+
+return axios.get('https://api.github.com/repos/rutle/website/commits?per_page=3&sha=master')
+  .then(function(response) {
+    if(response.status === 200) {
+      const json = response.data;
+      const headers = response.headers;
+      console.log(json);
+    
+    fs.writeFile('apitest.json',
+         JSON.stringify(json, null, 4),
+         (err)=> console.log('File successfully written!'));
+   
+    }
+  }, function(reason) {
+    console.log("error", err);
+});

@@ -59,9 +59,10 @@ module.exports = function(app){
 	  });
   });
   app.get('/projects/website', getBreadcrumbs, function(req, res) {
-	console.log(req.breadcrumbs);
+	  console.log(req.breadcrumbs);
 	  res.render('project', {
-		breadcrumbs: req.breadcrumbs
+			breadcrumbs: req.breadcrumbs,
+			projectName: 'Personal website'
 	  });
   });
   app.get('/projects/scraper', getBreadcrumbs, function(req, res) {
