@@ -37,12 +37,37 @@ $("#navbar a").click(function () {
 */
 
 $(function() {
+  $('.ui.dropdown').dropdown({on: 'hover'}); // Initialize dropdown menu.
+
+  
+  $('#lesser_menu > .ui.container > a.item').click(function() {
+    $('.ui.labeled.icon.sidebar')
+      .sidebar('setting', 'transition', 'overlay')
+      .sidebar('toggle');
+  });
+
+  $('#full_menu > .ui.container > .ui.dropdown.item').click(function() {
+    console.log('dropdown click')
+    $(this).dropdown();
+  })
+  $('#githubmenu').click(function() {
+    console.log('text: ', $('#githubmenu').dropdown('get text'));
+    console.log('value: ', $('#githubmenu').dropdown('get value'));
+    $('#githubmenu').dropdown({
+      action: 'hide',
+      onChange: function(value, text, $selectedItem) {
+      // custom action
+      console.log(value, text, $selectedItem)
+    }
+  });
+  })
+  /*
   if (location.pathname.split("/")[1] === "") {
     $('#home').addClass('active');
   } else {
     $('#navbar nav a[href^="/' + location.pathname.split("/")[1] + '"]').addClass('active');
   }
-
+  */
 });
 /*
 $(document).ready(function() {

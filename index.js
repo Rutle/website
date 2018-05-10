@@ -2,8 +2,9 @@
 
 'use strict';
 
-const Game = require('./app/game');
 const path = require('path');
+var morgan = require('morgan');
+var helpers = require('handlebars-helpers')(['comparison', 'array']);
 const publicPath = path.join(__dirname, '/views');
 const express = require('express');
 const exphbs = require('express-handlebars');
@@ -16,15 +17,19 @@ var gameSessions = new Map();
 const app = express();
 
 app.engine('.hbs', exphbs({
-	defaultLayout: 'main',
+	defaultLayout: 'main3',
 	extname: '.hbs',
-	layoutsDir: path.join(__dirname, 'views/layouts')
+	layoutsDir: path.join(__dirname, 'views/layouts'),
+	helpers: helpers,
+	partialsDir: ['views/partials']
 }));
 app.set('view engine', '.hbs');
-//app.set('views', path.join(__dirname, 'views'))
 
-app.use('/wanakana', express.static(__dirname + '/node_modules/wanakana/lib/'));
+app.use('/bootstrap', express.static(__dirname + '/node_modules/bootstrap/'));
+app.use('/semantic', express.static(__dirname + '/semantic/'));
+app.use('/views/images', express.static(__dirname + '/images/'));
 app.use('/', express.static(publicPath));
+app.use(morgan('dev')); // log every request to the console
 app.use(session({
 	secret: "It's a secret!",
 	resave: false,
@@ -33,40 +38,6 @@ app.use(session({
 	})
 );
 
-app.get('/', (req, res) => { // '/' url it is listening
-  /*var { sessionID } = request;*/
-	//if () {	}
-	/*
-	if(request.session.page_views){
-		request.session.page_views++;
-		//response.send("You visited the page " + request.session.page_views + " times")
-	} else {
-		request.session.page_views = 1;
-		//response.send("Welcome to this page for the first time!")
-	}
-	console.log(request); */
-	res.render('home');
-});
-app.get('/game/:gameId/:translateTo?', (req, res) => {
-	console.log(req.params)
-	if(req.params.translateTo === undefined) {
-		res.render('game', {
-			gameId: req.params.gameId,
-			gameStart: false,
-		})
-	} else {
-		res.render('game', {
-			gameId: req.params.gameId,
-			translateTo: req.params.translateTo,
-			gameStart: true,
-		})
-	}
+require('./app/routes')(app);
 
-});
-app.get('/contact', (req, res) => {
-	res.render('contact');
-});
-app.get('/projects', (req, res) => {
-	res.render('projects');
-});
 app.listen(PORT, () => console.log('Listening on %d', PORT));

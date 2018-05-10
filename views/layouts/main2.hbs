@@ -10,63 +10,76 @@
     <title>Rulle's small website</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/semantic/dist/semantic.min.css">
 
     <!-- Custom styles for this template -->
-    <link href="/css/cover.css" rel="stylesheet">
+    <link href="/css/custom2.css" rel="stylesheet">
   </head>
 
   <body>
-
-    <div class="site-wrapper">
-
-      <div class="site-wrapper-inner">
-
-        <div class="cover-container">
-
-          <header class="masthead clearfix">
-            <div class="inner" id="navbar">
-              <h3 class="masthead-brand">Cover</h3>
-              <nav class="nav nav-masthead">
-                <a class="nav-link" id="home" href="/">Home</a>
-                <a class="nav-link" id="projects" href="/projects">Projects</a>
-                <a class="nav-link" id="contact" href="/contact">Contact</a>
-                <!--
-                <a class="nav-link dropdown-toggle dropdown" href="http://example.com" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Projects</a>
-				        <div class="dropdown-menu" aria-labelledby="dropdown01">
-					        <a class="dropdown-item" href="#">Hiragana</a>
-					        <a class="dropdown-item" href="#">Katakana</a>
-					        <a class="dropdown-item" href="#">Kanji</a>
-				        </div>-->
-              </nav>
-            </div>
-          </header>
-
-          <main role="main" class="inner cover">
-            {{{body}}}
-          </main>
-
-          <footer class="mastfoot">
-            <div class="inner">
-              <p>Cover template for <a href="https://getbootstrap.com/">Bootstrap</a>, by <a href="https://twitter.com/mdo">@mdo</a>. Modified by rulle.</p>
-            </div>
-          </footer>
-
-        </div>
-
+  <div class="main_wrap">
+    <div class="navi">
+      <div class="ui left vertical menu sidebar">
+        ...
       </div>
-
+      <div class="ui stackable attached menu">
+        <div class="ui container">
+          <a href="#" class="header item">
+            Rulle
+          </a>
+          <a href="/" class="item"><i class="home icon"></i>Home</a>
+          <a href="#" class="item">Projects</a>
+          <a href="#" class="item">Projects</a>
+          <a href="/test" class="item">test</a>
+          <!--
+          <div class="ui simple dropdown item">
+            Dropdown <i class="dropdown icon"></i>
+            <div class="menu">
+              <a class="item" href="#">Link Item</a>
+              <a class="item" href="#">Link Item</a>
+              <div class="divider"></div>
+              <div class="header">Header Item</div>
+              <div class="item">
+                <i class="dropdown icon"></i>
+                Sub Menu
+                <div class="menu">
+                  <a class="item" href="#">Link Item</a>
+                  <a class="item" href="#">Link Item</a>
+                </div>
+              </div>
+              <a class="item" href="#">Link Item</a>
+            </div>
+          </div>-->
+        </div>
+      </div>
     </div>
+    <div class="contentContainer">
+      <!-- Fix to get the scrollbar to the "main" section instead of the while page -->
+      <div style="position:relative; height: 100%">
+        <div style="overflow-y: auto; position: absolute; top: 0px; right:0; bottom: 0; left: 0;">
+          <div class="ui container pusher">
 
+            {{{body}}}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer border-top border-dark">
+      <div class="container">
+      </div>
+    </div>
+  </div>
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <!--
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script>window.jQuery || document.write('<script src="../../../../assets/js/vendor/jquery-slim.min.js"><\/script>')</script>-->
-    <script src="/js/jquery-3.2.1.min.js"></script>
-    <script src="/js/popper.min.js"></script>
-    <script src="/js/bootstrap.min.js"></script>
+
+
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+    <script src="/semantic/dist/semantic.min.js"></script>
+
 	  <script src="/js/page.js"></script>
   </body>
 </html>

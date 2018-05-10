@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../../../favicon.ico">
+
+    <title>Rulle's small website</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" type="text/css" href="/semantic/dist/semantic.min.css">
+    
+    <!-- Custom styles for this template -->
+    <link href="/css/custom3.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.12/css/all.css" integrity="sha384-G0fIWCsCzJIMAVNQPfjH08cyYaUtMwjJwqiRKxxE/rx96Uroj1BtIQ6MLJuheaO9" crossorigin="anonymous">
+  </head>
+
+  <body>
+    
+    <div class="ui left demo vertical inverted sidebar labeled icon menu">
+      <a class="item" href="/">
+        <i class="home icon"></i>
+        Home
+      </a>
+      <a class="item">
+        <i class="block layout icon"></i>
+        Topics
+      </a>
+      <a class="item">
+        <i class="smile icon"></i>
+        Friends
+      </a>
+      <a href="/test" class="item">test</a>
+    </div>
+    <div class="ui top large fixed menu" id="full_menu">
+      <div class="ui container">
+        <span class="header item">
+          Rulle
+        </span>
+        <a href="/" class="item"><i class="home icon"></i>Home</a>
+        <!--<a href="/projects" class="item">Projects</a>-->
+        <div class="ui dropdown item">
+          <i class="folder open icon"></i>Projects
+          <i class="dropdown icon"></i>
+          <div class="menu">
+            <a class="item" href="/projects/roguelike">Roguelike</a>
+            <a class="item" href="/projects/ohsiha">OhSiHa course project</a>
+            <a class="item" href="/projects/jodatut">Jodatut course project</a>
+            <a class="item" href="/projects/website">Website</a>
+            <a class="item" href="/projects/scraper">Price scraper</a>
+          </div>
+        </div>
+        <a href="/about" class="item"><i class="question icon"></i>About</a>
+        <div class="right menu">
+          <a href="#" class="ui item"><i class="twitter icon"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="ui top large fixed menu" id="lesser_menu">
+      <div class="ui container">
+        <a class="item">
+          <i class="sidebar icon"></i>
+          Menu
+        </a>
+      </div>
+    </div>
+    <div class="pusher">
+      <div class="content_wrap" style="padding-left: calc(100vw - 100%);">
+        <div class="ui container" style="padding-top: 1rem;">
+          <h3 class="ui header">
+          <div class="ui breadcrumb">
+          {{#equalsLength breadcrumbs 1}}
+          <p class="section">{{breadcrumbs.[0].breadcrumbName}}</p>
+          {{else}}
+          {{#forEach breadcrumbs}}
+            {{#if isLast}}
+              <p class="section">{{breadcrumbName}}</p>
+            {{else}}
+              <a href="{{breadcrumbUrl}}" class="section">{{breadcrumbName}}</a>
+              <span class="divider">/</span>
+            {{/if}}
+          {{/forEach}}
+          {{/equalsLength}}
+
+          </div>
+          </h3>
+          <div class="ui divider"></div>
+        </div>
+          {{{body}}}
+        </div> <!-- end of content_wrap -->
+      </div>  <!-- end of pusher -->
+
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+    <script src="/semantic/dist/semantic.min.js"></script>
+	  <script src="/js/page.js"></script>
+  </body>
+</html>

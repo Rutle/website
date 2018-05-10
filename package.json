@@ -15,10 +15,16 @@
   "author": "Jussi Ristimäki",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.16.2",
+    "axios": "^0.18.0",
+    "bootstrap": "^4.1.1",
+    "cheerio": "^1.0.0-rc.2",
+    "express": "^4.16.3",
     "express-handlebars": "^3.0.0",
     "express-session": "^1.15.6",
-    "redis": "^2.8.0",
-    "wanakana": "^2.3.4"
+    "handlebars-helpers": "^0.10.0",
+    "jquery": "^3.3.1",
+    "morgan": "^1.9.0",
+    "popper.js": "^1.14.3",
+    "semantic-ui": "^2.3.1"
   }
 }
