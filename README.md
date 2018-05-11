@@ -6,8 +6,8 @@ Personal website project for learning Node.js, Heroku and so on
 
  - express
  - express-handlebars
- - express-session
- - [wanakana](https://github.com/WaniKani/WanaKana)
+ - cheerio
+ - axios
 
 ## Start it up
 
