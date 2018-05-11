@@ -27,7 +27,8 @@ app.set('view engine', '.hbs');
 
 app.use('/bootstrap', express.static(__dirname + '/node_modules/bootstrap/'));
 app.use('/semantic', express.static(__dirname + '/semantic/'));
-app.use('/views/images', express.static(__dirname + '/images/'));
+app.use('/axios', express.static(__dirname + '/node_modules/axios/dist/'));
+
 app.use('/', express.static(publicPath));
 app.use(morgan('dev')); // log every request to the console
 app.use(session({

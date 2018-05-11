@@ -39,6 +39,10 @@ body {
   padding-left: 1em;
   padding-top: 5px;
 }
+.commit_message {
+  background:#f7f7f7!important;
+}
+
 /* Small devices (landscape phones, 576px and up) */
 @media (max-width: 575.98px) {
 
