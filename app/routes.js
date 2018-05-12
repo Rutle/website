@@ -124,6 +124,19 @@ module.exports = function(app) {
 			repo: 'twitch-program'
 	  });
 	});
+
+	app.post('/projects/:repo', function(req, res) {
+		console.log(req.params.repo);
+		return res.status(200).send(
+			{data: [{
+				committer: 'Jussi',
+				days: 5,
+				hours: 4,
+				minutes: 2,
+				message: 'Toimii'
+		}]});
+
+	});
 	/**
 	 * Renders 404 page when a page cannot be found.
 	 */
@@ -131,5 +144,5 @@ module.exports = function(app) {
 		res.status(404).render('404', {
 			breadcrumbs: [{breadcrumbName: "404", breadcrumbUrl: "/"}]
 		});
-  })
+	})
 }
