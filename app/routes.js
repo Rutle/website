@@ -13,67 +13,123 @@ function getBreadcrumbs(req, res, next) {
 	next();
 }
 
-module.exports = function(app){
+module.exports = function(app) {
 
+	/**
+	 * Main page.
+	 */
   app.get('/', getBreadcrumbs, function(req, res) { // '/' url it is listening
 	console.log(req.breadcrumbs.length);
   	res.render('home', {
 		  breadcrumbs: req.breadcrumbs
 	  });
-  });
-
+	});
+	
+	/**
+	 * Contact page.
+	 */
   app.get('/contact', getBreadcrumbs, (req, res) => {
   	res.render('contact', {
-		breadcrumbs: req.breadcrumbs
+			breadcrumbs: req.breadcrumbs
 		});
-  });
-
+	});
+	
+	/**
+	 * Projects page.
+	 */
   app.get('/projects', getBreadcrumbs, (req, res) => {
   	res.render('projects', {
-		breadcrumbs: req.breadcrumbs
+			breadcrumbs: req.breadcrumbs
 		});
-  });
-
+	});
+	
+	/**
+	 * About page.
+	 */
   app.get('/about', getBreadcrumbs, function(req, res) {
-	console.log(req.breadcrumbs);
+		console.log(req.breadcrumbs);
     res.render('about', {
-		breadcrumbs: req.breadcrumbs
+			breadcrumbs: req.breadcrumbs
 		});
 	});
+
+	/**
+	 * Ohjelmallinen Sisällönhallinta project route.
+	 */
   app.get('/projects/ohsiha', getBreadcrumbs, function(req, res) {
-	console.log(req.breadcrumbs);
-	res.render('project', {
-		breadcrumbs: req.breadcrumbs
+	  console.log(req.breadcrumbs);
+		res.render('project', {
+			breadcrumbs: req.breadcrumbs,
+			projectName: 'Ohjelmallinen Sisällönhallinta',
+			repo: 'ohsiha-website'
+		});
 	});
-  });
+	
+	/**
+	 * Roguelike game route.
+	 */
   app.get('/projects/roguelike', getBreadcrumbs, function(req, res) {
-	console.log(req.breadcrumbs);
+		console.log(req.breadcrumbs);
 	  res.render('project', {
-		breadcrumbs: req.breadcrumbs
+			breadcrumbs: req.breadcrumbs,
+			projectName: 'Roguelike',
+			repo: ''
 	  });
-  });
+	});
+	
+	/**
+	 * Johdanto Datatieteeseen project route.
+	 */
   app.get('/projects/jodatut', getBreadcrumbs, function(req, res) {
-	console.log(req.breadcrumbs);
+		console.log(req.breadcrumbs);
 	  res.render('project', {
-		breadcrumbs: req.breadcrumbs
+			breadcrumbs: req.breadcrumbs,
+			projectName: 'Johdanto Datatieteeseen',
+			repo: 'jodatut-ht'
 	  });
-  });
+	});
+
+	/**
+	 * Website project route.
+	 */
   app.get('/projects/website', getBreadcrumbs, function(req, res) {
 	  console.log(req.breadcrumbs);
 	  res.render('project', {
 			breadcrumbs: req.breadcrumbs,
-			projectName: 'Personal website'
+			projectName: 'Personal website',
+			repo: 'website'
 	  });
-  });
-  app.get('/projects/scraper', getBreadcrumbs, function(req, res) {
-	console.log(req.breadcrumbs);
-	  res.render('project', {
-		breadcrumbs: req.breadcrumbs
-	  });
-  });
-  app.use(function (req, res, next) {
-	res.status(404).render('404', {
-		breadcrumbs: [{breadcrumbName: "404", breadcrumbUrl: "/"}]
 	});
+
+	/**
+	 * Price scraper project route.
+	 */
+  app.get('/projects/scraper', getBreadcrumbs, function(req, res) {
+		console.log(req.breadcrumbs);
+	  res.render('project', {
+			breadcrumbs: req.breadcrumbs,
+			projectName: 'Sale price scraper',
+			repo: ''
+	  });
+	});
+
+	/**
+	 * Twitch application project route.
+	 */
+  app.get('/projects/twitch', getBreadcrumbs, function(req, res) {
+		console.log(req.breadcrumbs);
+	  res.render('project', {
+			breadcrumbs: req.breadcrumbs,
+			projectName: 'Twitch stream application',
+			repo: 'twitch-program'
+	  });
+	});
+	/**
+	 * Renders 404 page when a page cannot be found.
+	 */
+  app.use(function (req, res, next) {
+		res.status(404).render('404', {
+			breadcrumbs: [{breadcrumbName: "404", breadcrumbUrl: "/"}]
+		});
   })
 }

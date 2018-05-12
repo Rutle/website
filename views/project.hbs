@@ -1,5 +1,36 @@
 <div class="ui container">
+      <div class="ui two column stackable grid container">
+            <div class="eight wide column">
+                  <div class="ui test_border">
+                        {{projectName}}
+                  </div>
+            </div>
+            <div class="right floated five wide column">
+                  <div class="ui segments">
+                        <div class="ui secondary segment">
+                              <h5 class="ui top header">
+                                    Recent commits
+                              </h5>
+                        </div>
+                        <div class="ui segment">
+                              <div class="ui feed" id="commitFeed">
+                              </div>
+                        </div>
+                  </div>
+            </div>
+      </div>
 
-      {{> project_template}}
+</div>
+
+<script src="/axios/axios.min.js"></script>
+<script src="/js/project.js"></script>
+<script>
+    // Fetch commits once page has been fully loaded.
+    /*
+    $(function() {
+        document.body.onload = getCommits('website');
+    });
+    */
+</script>
 
 </div>
