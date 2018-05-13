@@ -2,6 +2,7 @@
 
 'use strict';
 
+require('dotenv').config()
 const path = require('path');
 var morgan = require('morgan');
 var helpers = require('handlebars-helpers')(['comparison', 'array']);

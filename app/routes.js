@@ -1,5 +1,7 @@
 'use strict'
 
+var gha = require('./githubapi');
+
 // Function for getting breadcrumbs of the page
 function getBreadcrumbs(req, res, next) {
 	const urls = req.originalUrl.split('/');
@@ -125,21 +127,23 @@ module.exports = function(app) {
 	  });
 	});
 
-	app.post('/projects/:repo', function(req, res) {
-		console.log(req.params.repo);
-		return res.status(200).send(
-			{data: [{
-				committer: 'Jussi',
-				days: 5,
-				hours: 4,
-				minutes: 2,
-				message: 'Toimii'
-		}]});
+  app.post('/projects/:repo', function(req, res) {
+    console.log(req.params.repo);
 
-	});
-	/**
-	 * Renders 404 page when a page cannot be found.
-	 */
+    gha.getCommits(req.params.repo)
+      .then(function(response) {
+        if(response.length === 1 && response[0].isError) {
+          return res.status(500).send('Something went wrong.')
+        } else {
+          return res.status(200).send({
+            data: response
+            });
+        }
+      });
+  });
+  /**
+  * Renders 404 page when a page cannot be found.
+  */
   app.use(function (req, res, next) {
 		res.status(404).render('404', {
 			breadcrumbs: [{breadcrumbName: "404", breadcrumbUrl: "/"}]
