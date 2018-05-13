@@ -26,7 +26,7 @@ function buildFeed(repo) {
  * @param {Object} dataObject Object containing necessary data to add an event
  */
 function addFeedEvent(dataObject) {
-    let feedDiv = document.getElementById('commitFeed');
+    let feedDiv = document.getElementById('commit_feed');
     let eventDiv = document.createElement('div');
     eventDiv.className = 'event';
 
@@ -74,4 +74,17 @@ function addFeedEvent(dataObject) {
     contentDiv.appendChild(commitMessageDiv);
     eventDiv.appendChild(contentDiv);
     feedDiv.appendChild(eventDiv);
+}
+
+function minimizeFeed() {
+    var feedDiv = document.getElementById('commit_feed');
+    var minIcon = document.getElementById('minimize_icon');
+    if (feedDiv.clientHeight) {
+      feedDiv.style.height = 0;
+      minIcon.className = 'angle down icon'
+    } else {
+      feedDiv.style.height = feedDiv.scrollHeight + "px";
+      minIcon.className = 'angle up icon';
+    }
+    // document.getElementById("more-button").value=document.getElementById("more-button").value=='Read more'?'Read less':'Read more';
 }

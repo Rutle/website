@@ -14,4 +14,15 @@ $(function() {
     $(this).dropdown();
   })
 
+  $('#commit_header > i').click(function() {
+      console.log("minimize click");
+      minimizeFeed();
+
+  });
+  $('#commit_header > i').hover(function() {
+    $(this).addClass('inverted')
+  }, function() {
+    $(this).removeClass('inverted')
+  })
+
 });

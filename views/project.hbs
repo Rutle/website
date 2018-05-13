@@ -48,12 +48,16 @@
             <div class="right floated five wide column">
                   <div class="ui segments">
                         <div class="ui secondary segment">
-                              <h5 class="ui top header">
+                            <div id="commit_header">
+                              <h5 class="ui top header" style="margin-bottom: 2px!important;">
                                     Recent commits for '{{projectName}}'
                               </h5>
+                              <i class="angle up icon" id="minimize_icon"></i>
+                            </div>
+
                         </div>
                         <div class="ui segment">
-                              <div class="ui feed" id="commitFeed">
+                              <div class="ui feed" id="commit_feed">
                               </div>
                         </div>
                   </div>
@@ -63,7 +67,7 @@
 </div>
 
 
-<script src="/js/queries.js"></script>
+<script src="/js/helpers.js"></script>
 <script>
     // Fetch commits once page has been fully loaded.
     

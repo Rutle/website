@@ -47,6 +47,27 @@ body {
   border: 1px solid rgba(0, 0, 0, 0.151);
   border-radius: 5px;
 }
+#commit_feed {
+    -moz-transition: height .5s!important;
+    -ms-transition: height .5s!important;
+    -o-transition: height .5s!important;
+    -webkit-transition: height .5s!important;
+    transition: height .5s!important;
+    overflow: hidden!important;
+}
+
+#commit_header {
+    position: relative!important;
+}
+
+#commit_header i {
+    position: absolute!important;
+    top: -5px!important;
+    right: -5px!important;
+    opacity: 0.6;
+    transition: 0.3s;
+    
+}
 /* Small devices (landscape phones, 576px and up) */
 @media (max-width: 575.98px) {
 
