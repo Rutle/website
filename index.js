@@ -5,7 +5,11 @@
 require('dotenv').config()
 
 const path          = require('path');
+var passport        = require('passport')
+var flash           = require('connect-flash');
 var morgan          = require('morgan');
+var cookieParser    = require('cookie-parser');
+var bodyParser      = require('body-parser');
 var mongoose        = require('mongoose');
 var helpers         = require('handlebars-helpers')(['comparison', 'array']);
 const publicPath    = path.join(__dirname, '/views');
@@ -26,6 +30,8 @@ mongoose.connect(uristring, function (err, res) {
 	}
 });
 
+require('./app/passport')(passport);
+
 const app = express();
 
 app.engine('.hbs', exphbs({
@@ -43,6 +49,7 @@ app.use('/axios', express.static(__dirname + '/node_modules/axios/dist/'));
 
 app.use('/', express.static(publicPath));
 app.use(morgan('dev')); // log every request to the console
+app.use(cookieParser()); // Adds additional information to request (req.cookie).
 app.use(session({
 	secret: "It's a secret!",
 	resave: false,
@@ -50,9 +57,13 @@ app.use(session({
 	cookie: { secure: false}
 	})
 );
+app.use(bodyParser.json()); // Adds additional information to request (req.body).
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(flash());
 
 
-
-require('./app/routes')(app);
+require('./app/routes.js')(app, passport);
 
 app.listen(PORT, () => console.log('Listening on %d', PORT));

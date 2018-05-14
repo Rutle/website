@@ -1,19 +1,24 @@
 {
-  "name": "japan",
+  "name": "personal-website",
   "version": "1.0.0",
-  "description": "Japanese hiragana and katakana practice app.",
+  "description": "Personal website for listing projects etc.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js"
   },
-  "keywords": [],
+  "keywords": ["website", "personal", "projects"],
+  "homepage": "",
   "author": "Jussi Ristimäki",
   "license": "MIT",
   "dependencies": {
     "axios": "^0.18.0",
+    "bcrypt-nodejs": "0.0.3",
+    "body-parser": "^1.18.2",
     "bootstrap": "^4.1.1",
     "cheerio": "^1.0.0-rc.2",
+    "connect-flash": "^0.1.1",
+    "cookie-parser": "^1.4.3",
     "dotenv": "^5.0.1",
     "express": "^4.16.3",
     "express-handlebars": "^3.0.0",
@@ -23,6 +28,8 @@
     "jquery": "^3.3.1",
     "mongoose": "^5.1.0",
     "morgan": "^1.9.0",
+    "passport": "^0.4.0",
+    "passport-local": "^1.0.0",
     "popper.js": "^1.14.3",
     "semantic-ui": "^2.3.1"
   }

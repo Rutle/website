@@ -25,6 +25,7 @@ body {
 
 .content_wrap {
   padding-top: 3rem;
+  height: 100%;
 }
 #full_menu {
   border-top-style: none;
@@ -91,6 +92,10 @@ body {
 #slider_caret {
     position: absolute; 
     top: 44%;
+}
+
+#login_form {
+    max-width: 450px;
 }
 /* Small devices (landscape phones, 576px and up) */
 @media (max-width: 575.98px) {
