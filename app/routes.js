@@ -30,7 +30,8 @@ module.exports = function (app, passport) {
     app.get('/', getBreadcrumbs, function (req, res) { // '/' url it is listening
         console.log(req.breadcrumbs.length);
         res.render('home', {
-            breadcrumbs: req.breadcrumbs
+            breadcrumbs: req.breadcrumbs,
+            userIsLogged : (req.user ? true : false)
         });
     });
 
