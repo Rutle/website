@@ -1,7 +1,7 @@
+'use strict'
 // app/models/project.js
-// Javascript file for MongoDB Article-schema intended for storing articles.
+// Javascript file for MongoDB project-schema intended for storing projects.
 // Useful info: https://alexanderzeitler.com/articles/mongoose-referencing-schema-in-properties-and-arrays/
-// I'm not sure if I should separate the comments into its own Schema.
 
 var mongoose = require('mongoose');
 
@@ -38,5 +38,12 @@ var projectSchema = mongoose.Schema({
 
 });
 
+// Virtual getter to a better formatted date.
+projectSchema.virtual('formattedDate').get(function() {
+    return new Date(this.dateCreated).toDateString();
+});
+projectSchema.set('toObject', { getters: true });
+projectSchema.set('toObject', { virtuals: true });
+projectSchema.set('toJSON', { virtuals: true });
 
 module.exports = mongoose.model('Project', projectSchema);
