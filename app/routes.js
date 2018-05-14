@@ -129,7 +129,7 @@ module.exports = function(app) {
 
   app.post('/projects/:repo', function(req, res) {
     console.log(req.params.repo);
-
+    /*
     gha.getCommits(req.params.repo)
       .then(function(response) {
         if(response.length === 1 && response[0].isError) {
@@ -140,6 +140,8 @@ module.exports = function(app) {
             });
         }
       });
+      */
+     return res.status(200).send({data: [{committer: 'Jussi Ristimäki', message: 'Toimiiko tama nyt oleenkaan', days: 5, hours: 4, minutes: 2}]});
   });
   /**
   * Renders 404 page when a page cannot be found.
