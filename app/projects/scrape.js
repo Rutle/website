@@ -46,7 +46,7 @@ return axios.get(url)
     })
     .then(function (data) {
         // Fetch each product's category and productId information, that are on sale.
-        getProductPages(data).then(function(data) {
+        return getProductPages(data).then(function(data) {
             return data;
         }, function(error) {
             console.log("Error [getProductPages]: ", error);
