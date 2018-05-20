@@ -31,14 +31,14 @@ module.exports = function (app, passport) {
         console.log(req.breadcrumbs.length);
         res.render('home', {
             breadcrumbs: req.breadcrumbs,
-            userIsLogged : (req.user ? true : false)
+            userIsLogged: (req.user ? true : false)
         });
     });
 
 	/**
 	 * Contact page.
 	 */
-    app.get('/contact', getBreadcrumbs, (req, res) => {
+    app.get('/contact', getBreadcrumbs, function (req, res) {
         res.render('contact', {
             breadcrumbs: req.breadcrumbs
         });
@@ -47,7 +47,7 @@ module.exports = function (app, passport) {
 	/**
 	 * Projects page.
 	 */
-    app.get('/projects', getBreadcrumbs, (req, res) => {
+    app.get('/projects', getBreadcrumbs, function (req, res) {
         res.render('projects', {
             breadcrumbs: req.breadcrumbs
         });
@@ -110,16 +110,24 @@ module.exports = function (app, passport) {
             repo: 'website'
         });
     });
+    app.get('/projects/website/scraper', getBreadcrumbs, function (req, res) {
+        console.log(req.breadcrumbs);
+        res.render('scraper', {
+            breadcrumbs: req.breadcrumbs,
+            projectName: 'Sale price scraper',
+            repo: 'scraper'
+        });
+    });
 
 	/**
 	 * Price scraper project route.
 	 */
     app.get('/projects/scraper', getBreadcrumbs, function (req, res) {
         console.log(req.breadcrumbs);
-        res.render('project', {
+        res.render('scraper', {
             breadcrumbs: req.breadcrumbs,
             projectName: 'Sale price scraper',
-            repo: ''
+            repo: 'Testi'
         });
     });
 
@@ -134,6 +142,19 @@ module.exports = function (app, passport) {
             repo: 'twitch-program'
         });
     });
+    app.get('/dashboard', getBreadcrumbs, function (req, res) {
+        res.render('dashboard', {
+            breadcrumbs: req.breadcrumbs,
+            user: req.user
+        })
+
+    })
+    app.post('/dashboard/:tab', getBreadcrumbs, function (req, res) {
+        console.log("tab: ", req.params.tab);
+        console.log(req.body);
+        res.status(200).send({message: 'tabi'+req.params.tab})
+ 
+    })
 
     app.post('/projects/:repo', function (req, res) {
         console.log(req.params.repo);
@@ -159,7 +180,8 @@ module.exports = function (app, passport) {
     app.get('/login', getBreadcrumbs, function (req, res) {
         res.render('login', {
             breadcrumbs: req.breadcrumbs,
-            message: req.flash('loginMessage') });
+            message: req.flash('loginMessage')
+        });
     });
 
     app.post('/login', passport.authenticate('local-login', {
@@ -167,13 +189,6 @@ module.exports = function (app, passport) {
         failureRedirect: '/login', // redirect back to the signup page if there is an error
         failureFlash: true // allow flash messages
     }));
-
-    app.get('/dashboard', getBreadcrumbs, isLoggedIn, function (req, res) {
-        res.render('dashboard', {
-            breadcrumbs: req.breadcrumbs,
-            user: req.user
-        });
-    });
 
     app.get('/logout', function (req, res) {
         req.logout();

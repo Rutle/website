@@ -21,7 +21,7 @@ const PORT          = process.env.PORT || 5000;
 // Connection to database.
 // Here we find an appropriate database to connect to, defaulting to
 // localhost if we don't find one.
-var uristring = process.env.MONGODB_URI || 'mongodb://localhost/personalwebsite';
+var uristring = process.env.MONGODB_URI || 'mongodb://localhost/rulleweb';
 mongoose.connect(uristring, function (err, res) {
 	if (err) {
 		console.log('ERROR connecting to: ' + uristring + '. ' + err);

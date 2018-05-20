@@ -1,0 +1,32 @@
+<div class="ui container">
+    <div class="ui grid">
+        <div class="three wide column">
+            <div class="ui vertical fluid menu pointing menu" id="dashboard_menu">
+                <a class="item" data-tab="current_projects">
+                    <i class="small archive icon"></i>
+                    Current Projects
+                </a>
+                <a class="item" data-tab="new_project">
+                    <i class="small edit outline icon"></i>
+                    New Project
+                </a>
+                <a class="item" data-tab="tab3">
+                    Updates
+                </a>
+
+            </div>
+        </div>
+        <div class="thirteen wide stretched column">
+            <div class="ui tab segment" data-tab="current_projects">
+                <h3 class="ui header">AJAX Tab first</h3>
+
+            </div>
+            <div class="ui tab segment" data-tab="new_project" style="margin-top: 0!important;">
+                {{> new_project}}
+            </div>
+            <div class="ui tab segment" data-tab="tab3" style="margin-top: 0!important; margin-bottom: 14px!important;">
+                <h3 class="ui header">AJAX Tab third</h3>
+            </div>
+        </div>
+    </div>
+</div>

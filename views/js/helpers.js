@@ -15,8 +15,8 @@ function buildFeed(repo) {
             });
 
         },
-        error: function (jqXHR, textStatus, err) {
-            alert(jqXHR.responseText);
+        error: function (jqXHR, textStatus, err, data) {
+            alert(data.errorMessage);
         }
     });
 }
@@ -87,4 +87,107 @@ function minimizeFeed() {
       minIcon.className = 'angle up icon';
     }
     // document.getElementById("more-button").value=document.getElementById("more-button").value=='Read more'?'Read less':'Read more';
+}
+
+function minimizeCard() {
+    let contentDiv = document.getElementById('')
+}
+
+
+/*
+        <div id="form_section_container">
+            <div class="fields">
+                <div class="five wide field">
+                    <div class="fields">
+                        <div class="sixteen wide field">
+                            <label>Section name</label>
+                            <input name="first-name" placeholder="First Name" type="text">
+                        </div>
+                    </div>
+                    <div class="fields">
+                        <div class="sixteen wide field">
+                            <button class="ui basic button">Remove this section</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="eleven wide field">
+                    <label>Text</label>
+                    <textarea placeholder="Paragraph for a section."></textarea>
+                </div>
+            </div>
+        </div>
+*/
+
+
+
+
+function addFormSection() {
+
+    let feedDiv = document.getElementById('form_section_container');
+    let fieldsDiv = document.createElement('div');
+    fieldsDiv.className = 'fields';
+
+    let fieldDiv = document.createElement('div');
+    fieldDiv.className = 'five wide field';
+
+    let sectionFieldsDiv = document.createElement('div');
+    innerFieldsDiv.className = 'fields';
+    let sectionNameFieldDiv = document.createElement('div');
+    sectionNameFieldDiv.className = 'sixteen wide field';
+    let labelName = document.createElement('label');
+    labelName.appendChild(document.createTextNode('Section name'));
+    sectionNameFieldDiv.appendChild(labelName);
+
+    let inputName = document.createElement('input');
+    inputName.setAttribute('name', 'section_name');
+    inputName.setAttribute('placeholder', 'e.g. Description');
+    inputName.setAttribute('type', 'text');
+    sectionNameFieldDiv.appendChild(inputName);
+    innerFieldsDiv.appendChild(sectionNameFieldDiv);
+    
+
+
+
+    let buttonFieldsDiv = document.createElement('div');
+    buttonFieldsDiv.className = 'fields';
+
+    iconDiv.appendChild(gitIcon);
+    eventDiv.appendChild(iconDiv);
+
+    let contentDiv = document.createElement('div');
+    contentDiv.className = 'content';
+
+    let summaryDiv = document.createElement('div');
+    summaryDiv.className = 'summary';
+
+    let linkEle = document.createElement('a');
+    linkEle.appendChild(document.createTextNode(dataObject.committer));
+    summaryDiv.appendChild(linkEle);
+    summaryDiv.appendChild(document.createTextNode(' committed on'));
+
+    let dateDiv = document.createElement('div');
+    dateDiv.className = 'date';
+    let commitDate = '';
+
+    // The time that has passed since the commit.
+    if (dataObject.days > 0) {
+        commitDate = dataObject.days + ' days ago';
+    } else if (dataObject.hours > 0) {
+        commitDate = dataObject.hours + ' hours and ' + dataObject.minutes + ' minutes ago';
+    } else if (dataObject.minutes > 0) {
+        commitDate = dataObject.minutes + ' minutes ago';
+    } else {
+        commitDate = 'Just now';
+    }
+    dateDiv.appendChild(document.createTextNode(commitDate));
+    summaryDiv.appendChild(dateDiv);
+    contentDiv.appendChild(summaryDiv);
+
+    let commitMessageDiv = document.createElement('div');
+    commitMessageDiv.className = 'extra text';
+    commitMessageDiv.appendChild(document.createTextNode(dataObject.message));
+
+    contentDiv.appendChild(commitMessageDiv);
+    eventDiv.appendChild(contentDiv);
+    feedDiv.appendChild(eventDiv);
 }

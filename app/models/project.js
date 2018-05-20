@@ -15,6 +15,8 @@ var projectSchema = mongoose.Schema({
 
     repositoryName: String,             // Name of the Github repository.
 
+    websiteProjectURL: String,          // For apps on website.
+
     sections: [{                        // Sections and text on a project page.
         title: {
             type: String,
