@@ -80,9 +80,8 @@ return axios.get('https://api.github.com/repos/rutle/website/commits?per_page=3&
 
 
 /**
- * Function to fetch the page of each given link in links-array.
+ * Function to fetch the page of each given link in links-array and add information back to the array.
  * @param {Array} links 
- * @param {Array} objList 
  */
 function getProductPages(links) {
     return axios.all(links.map(l => axios.get(l.url)))
