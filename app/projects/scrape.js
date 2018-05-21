@@ -41,7 +41,7 @@ return axios.get(url)
                  (err)=> console.log('File successfully written!'));
            */
         }
-    }, function (reason) {
+    }, function (err) {
         console.log("error ", err);
     })
     .then(function (data) {
@@ -53,7 +53,7 @@ return axios.get(url)
         })
  
     }, function (error) {
-        console.log("error ", err)
+        console.log("error ", error)
     });
 //}
 /*
@@ -71,7 +71,7 @@ return axios.get('https://api.github.com/repos/rutle/website/commits?per_page=3&
     return json;   
     }
     
-  }, function(reason) {
+  }, function(err) {
     console.log("error", err);
 })
 .then(function(response) {
@@ -106,7 +106,7 @@ function getProductPages(links) {
             });
             return links;
 
-        }, function (reason) {
+        }, function (err) {
             console.log("error", err);
         });
 }
