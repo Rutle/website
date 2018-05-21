@@ -34,32 +34,46 @@ $(function () {
         $(this).tab();
 
     })
-    
-    $('.ui.fluid.card').hover(function() {
+
+    $('.ui.fluid.card').hover(function () {
         console.log("hover in");
         //feedDiv.style.height = feedDiv.scrollHeight + "px";
-        let height = $(this).height()+"px";
+        let height = $(this).height() + "px";
         $(this).children('#content_hide').css("height", height)
         $(this).children('#content_hide').css("padding-top", "7px");
         $(this).children('#content_hide').css("padding-bottom", "7px");
 
-    }, function() {
+    }, function () {
         console.log("hover out")
         $(this).children('#content_hide').css("height", "0");
         $(this).children('#content_hide').css("padding-top", "0");
         $(this).children('#content_hide').css("padding-bottom", "0");
 
     })
-    $('.ext_top_row, .ext_middle_row, .ext_bottom_row').hover(function() {
+    $('.ext_top_row, .ext_middle_row, .ext_bottom_row').hover(function () {
         console.log("hover in");
         //feedDiv.style.height = feedDiv.scrollHeight + "px";
-        let height = $(this).height()+"px";
+        let height = $(this).height() + "px";
         $(this).children('#content_hide').css("height", height)
 
-    }, function() {
+    }, function () {
         console.log("hover out")
         $(this).children('#content_hide').css("height", "0");
 
     })
-    
+    $('#cat_dpn')
+        .dropdown({
+            apiSettings: {
+                // this url just returns a list of tags (with API response expected above)
+                url: 'http://localhost:5000/stores/'
+            },
+            filterRemoteData: false,
+
+            saveRemoteData: false,
+            fullTextSearch: 'exact',
+            direction: 'auto',
+            debug: true
+        })
+
+
 });

@@ -149,29 +149,52 @@ module.exports = function (app, passport) {
         })
 
     })
+
+    app.get('/stores', function (req, res) {
+        console.log("kutsu store api")
+        console.log("re param: ", req.params.query);
+        res.status(200).json({
+            success: true,
+            results: [
+                {
+                    name: 'Stores',
+                    value: 'categoryNameStore',
+                    text: 'Stores',
+                    disabled: true
+                },
+                {
+                    name: 'Jimms',
+                    value: 'storeJimms',
+                    text: 'Jimms',
+                    disabled: false
+                }
+            ]
+        });
+    });
+
     app.post('/dashboard/:tab', getBreadcrumbs, function (req, res) {
-        console.log("tab: ", req.params.tab);
-        console.log(req.body);
-        res.status(200).send({message: 'tabi'+req.params.tab})
- 
-    })
+            console.log("tab: ", req.params.tab);
+            console.log(req.body);
+            res.status(200).send({ message: 'tabi' + req.params.tab })
+
+        })
 
     app.post('/projects/:repo', function (req, res) {
-        console.log(req.params.repo);
-        /*
-        gha.getCommits(req.params.repo)
-          .then(function(response) {
-            if(response.length === 1 && response[0].isError) {
-              return res.status(500).send('Something went wrong.')
-            } else {
-              return res.status(200).send({
-                data: response
-                });
-            }
-          });
-          */
-        return res.status(200).send({ data: [{ committer: 'Jussi Ristimäki', message: 'Toimiiko tama nyt oleenkaan', days: 5, hours: 4, minutes: 2 }] });
-    });
+            console.log(req.params.repo);
+            /*
+            gha.getCommits(req.params.repo)
+              .then(function(response) {
+                if(response.length === 1 && response[0].isError) {
+                  return res.status(500).send('Something went wrong.')
+                } else {
+                  return res.status(200).send({
+                    data: response
+                    });
+                }
+              });
+              */
+            return res.status(200).send({ data: [{ committer: 'Jussi Ristimäki', message: 'Toimiiko tama nyt oleenkaan', days: 5, hours: 4, minutes: 2 }] });
+        });
 
     // ###############################################################################
     // ############################## AUTHENTICATION #################################

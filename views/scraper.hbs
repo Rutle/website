@@ -22,164 +22,50 @@
         <a class="item" data-tab="current_projects">
             All
         </a>
-        <a class="item" data-tab="new_project">
-            Messages
+        <a class="item" data-tab="categories">
+            By categories
         </a>
-        <a class="item"  data-tab="tab3">
-            Friends
+        <a class="item" data-tab="tab3">
+            Search
         </a>
-        <div class="right menu">
-            <a class="ui item">
-                Logout
-            </a>
-        </div>
     </div>
     <div class="ui tab segment" data-tab="current_projects">
-        
-        <!--
-        <div class="ui two column divided grid container">
+        <div class="ui center aligned basic segment">
+            <h3 class="ui header">All currently found sales</h3>
+        </div>
+        <div class="ui two column grid container">
             <div class="row">
                 <div class="column">
-                    <div class="ui fluid card small">
-                        <div class="content" style="background-color:#515861; padding: 0.5em 0.5em;">
-                            <div class="header" style="color:white;">Samsung 21,5" S22F350H</div>
-                        </div>
-
-                        <div class="content card_transition" id="content_hide" style="height: 0; padding-top:0; padding-bottom: 0;">
-                            <div class="meta">
-                                <span>Jimms</span>
-                                <span>Category</span>
-
-                                <a class="right floated">Product page</a>
-                            </div>
-                            <div class="description">
-                                Full HD -monitori, musta
-                            </div>
-                        </div>
-                        <div class="extra content" style="padding: 0 0!important;">
-                            <div class="card_extra_section_left">
-                                <span>currentPrice: 89</span>
-                            </div>
-                            <div class="card_extra_section_right">
-                                <span style="text-decoration: line-through;"> regularPrice: 119</span>
-                            </div>
-                        </div>
-                    </div>
+                    {{> saletable}}
                 </div>
                 <div class="column">
-                    <div class="ui fluid card">
-                        <div class="content">
-                            <div class="header">Cute Dog</div>
-                            <div class="meta">
-                                <span>2 days ago</span>
-                                <a>Animals</a>
-                            </div>
-                            <p></p>
-                        </div>
-                        <div class="extra content">
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="column">
-                    <div class="ui fluid card">
-                        <div class="content">
-                            <div class="header">Cute Dog</div>
-                            <div class="meta">
-                                <span>2 days ago</span>
-                                <a>Animals</a>
-                            </div>
-                            <p></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div> -->
-        
-        <div class="ext_container">
-            <div class="ext_top_row">
-                <div class="ext_top">
-                    <div class="ext_left">
-                        <span>Samsung 21,5" S22F350H</span>
-                    </div>
-                    <div class="ext_middle">
-                        <span>currentPrice: 89</span>
-                    </div>
-                    <div class="ext_right">
-                        <span style="text-decoration: line-through;"> regularPrice: 119</span>
-                    </div>
-                </div>
-                <div class="ext_bottom card_transition" id="content_hide" style="height: 0; padding-top:0; padding-bottom: 0;">
-                    <div class="ext_bottom_desc">
-                        Full HD -monitori, musta
-                    </div>
-                    <div class="ext_bottom_meta">
-                        <span>Jimms</span>
-                        <span>Category</span>
-
-                        <a class="right floated">Product page</a>
-                    </div>
-                </div>
-            </div>
-            <div class="ext_middle_row">
-                <div class="ext_top">
-                    <div class="ext_left">
-                        <span>Samsung 21,5" S22F350H</span>
-                    </div>
-                    <div class="ext_middle">
-                        <span>currentPrice: 89</span>
-                    </div>
-                    <div class="ext_right">
-                        <span style="text-decoration: line-through;"> regularPrice: 119</span>
-                    </div>
-                </div>
-                <div class="ext_bottom card_transition" id="content_hide" style="height: 0; padding-top:0; padding-bottom: 0;">
-                    <div class="ext_bottom_desc">
-                        Full HD -monitori, musta
-                    </div>
-                    <div class="ext_bottom_meta">
-                        <span>Jimms</span>
-                        <span>Category</span>
-
-                        <a class="right floated">Product page</a>
-                    </div>
-                </div>
-            </div>
-            <div class="ext_bottom_row">
-                <div class="ext_top">
-                    <div class="ext_left">
-                        <span>Samsung 21,5" S22F350H</span>
-                    </div>
-                    <div class="ext_middle">
-                        <span>currentPrice: 89</span>
-                    </div>
-                    <div class="ext_right">
-                        <span style="text-decoration: line-through;"> regularPrice: 119</span>
-                    </div>
-                </div>
-                <div class="ext_bottom card_transition" id="content_hide" style="height: 0; padding-top:0; padding-bottom: 0;">
-                    <div class="ext_bottom_desc">
-                        Full HD -monitori, musta
-                    </div>
-                    <div class="ext_bottom_meta">
-                        <span>Jimms</span>
-                        <span>Category</span>
-
-                        <a class="right floated">Product page</a>
-                    </div>
+                    {{> saletable}}
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="ui tab segment" data-tab="new_project" style="margin-top: 0!important;">
-        
-    </div>
-    <div class="ui tab segment" data-tab="tab3" style="margin-top: 0!important; margin-bottom: 14px!important;">
-        <h3 class="ui header">AJAX Tab third</h3>
+    <div class="ui tab segment" data-tab="categories" style="margin-top: 0!important;" id="categories_tab">
+        <div class="ui sub header">Stores</div>
+
+
+        <div class="ui selection dropdown" id="cat_dpn">
+            <div class="default text">Select store</div>
+            <i class="dropdown icon"></i>
+        </div>
+
+
+
     </div>
 </div>
+<div class="ui tab segment" data-tab="tab3" style="margin-top: 0!important; margin-bottom: 14px!important;">
+    <h3 class="ui header">AJAX Tab third</h3>
+</div>
+</div>
+<script>
+
+</script>
+
 <!--
 </div>
 
