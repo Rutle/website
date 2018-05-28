@@ -31,7 +31,7 @@ module.exports = function (app, passport) {
         console.log(req.breadcrumbs.length);
         res.render('home', {
             breadcrumbs: req.breadcrumbs,
-            userIsLogged: (req.user ? true : false)
+            user: req.user,
         });
     });
 
@@ -40,7 +40,8 @@ module.exports = function (app, passport) {
 	 */
     app.get('/contact', getBreadcrumbs, function (req, res) {
         res.render('contact', {
-            breadcrumbs: req.breadcrumbs
+            breadcrumbs: req.breadcrumbs,
+            user: req.user,
         });
     });
 
@@ -49,7 +50,8 @@ module.exports = function (app, passport) {
 	 */
     app.get('/projects', getBreadcrumbs, function (req, res) {
         res.render('projects', {
-            breadcrumbs: req.breadcrumbs
+            breadcrumbs: req.breadcrumbs,
+            user: req.user,
         });
     });
 
@@ -59,7 +61,8 @@ module.exports = function (app, passport) {
     app.get('/about', getBreadcrumbs, function (req, res) {
         console.log(req.breadcrumbs);
         res.render('about', {
-            breadcrumbs: req.breadcrumbs
+            breadcrumbs: req.breadcrumbs,
+            user: req.user,
         });
     });
 
@@ -71,7 +74,8 @@ module.exports = function (app, passport) {
         res.render('project', {
             breadcrumbs: req.breadcrumbs,
             projectName: 'Ohjelmallinen Sisällönhallinta',
-            repo: 'ohsiha-website'
+            repo: 'ohsiha-website',
+            user: req.user,
         });
     });
 
@@ -83,7 +87,8 @@ module.exports = function (app, passport) {
         res.render('project', {
             breadcrumbs: req.breadcrumbs,
             projectName: 'Roguelike',
-            repo: ''
+            repo: '',
+            user: req.user,
         });
     });
 
@@ -95,7 +100,8 @@ module.exports = function (app, passport) {
         res.render('project', {
             breadcrumbs: req.breadcrumbs,
             projectName: 'Johdanto Datatieteeseen',
-            repo: 'jodatut-ht'
+            repo: 'jodatut-ht',
+            user: req.user,
         });
     });
 
@@ -107,7 +113,8 @@ module.exports = function (app, passport) {
         res.render('project', {
             breadcrumbs: req.breadcrumbs,
             projectName: 'Personal website',
-            repo: 'website'
+            repo: 'website',
+            user: req.user,
         });
     });
     app.get('/projects/website/scraper', getBreadcrumbs, function (req, res) {
@@ -115,7 +122,8 @@ module.exports = function (app, passport) {
         res.render('scraper', {
             breadcrumbs: req.breadcrumbs,
             projectName: 'Sale price scraper',
-            repo: 'scraper'
+            repo: 'scraper',
+            user: req.user,
         });
     });
 
@@ -127,7 +135,8 @@ module.exports = function (app, passport) {
         res.render('scraper', {
             breadcrumbs: req.breadcrumbs,
             projectName: 'Sale price scraper',
-            repo: 'Testi'
+            repo: 'Testi',
+            user: req.user,
         });
     });
 
@@ -139,13 +148,14 @@ module.exports = function (app, passport) {
         res.render('project', {
             breadcrumbs: req.breadcrumbs,
             projectName: 'Twitch stream application',
-            repo: 'twitch-program'
+            repo: 'twitch-program',
+            user: req.user,
         });
     });
     app.get('/dashboard', getBreadcrumbs, function (req, res) {
         res.render('dashboard', {
             breadcrumbs: req.breadcrumbs,
-            user: req.user
+            user: req.user,
         })
 
     })
@@ -161,6 +171,12 @@ module.exports = function (app, passport) {
                     value: 'categoryNameStore',
                     text: 'Stores',
                     disabled: true
+                },
+                {
+                    name: 'All',
+                    value: 'storeAll',
+                    text: 'All stores',
+                    disabled: false
                 },
                 {
                     name: 'Jimms',
@@ -203,7 +219,8 @@ module.exports = function (app, passport) {
     app.get('/login', getBreadcrumbs, function (req, res) {
         res.render('login', {
             breadcrumbs: req.breadcrumbs,
-            message: req.flash('loginMessage')
+            message: req.flash('loginMessage'),
+            user: req.user,
         });
     });
 

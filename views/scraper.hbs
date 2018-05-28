@@ -1,38 +1,22 @@
 <div class="ui container">
-    <!--
-    <div class="ui grid">
-        <div class="three wide column">
-            <div class="ui vertical fluid menu pointing menu" id="dashboard_menu">
-                <a class="item" data-tab="current_projects">
-                    <i class="small archive icon"></i>
-                    All
-                </a>
-                <a class="item" data-tab="new_project">
-                    <i class="small edit outline icon"></i>
-                    Jimms
-                </a>
-                <a class="item" data-tab="tab3">
-                    Verkkokauppa.com
-                </a>
-
-            </div>
-        </div>
-        <div class="thirteen wide stretched column"> -->
     <div class="ui secondary pointing menu" id="dashboard_menu">
         <a class="item" data-tab="current_projects">
             All
         </a>
+        <!--
         <a class="item" data-tab="categories">
             By categories
         </a>
-        <a class="item" data-tab="tab3">
+        -->
+        <a class="item" data-tab="search">
             Search
         </a>
     </div>
     <div class="ui tab segment" data-tab="current_projects">
         <div class="ui center aligned basic segment">
-            <h3 class="ui header">All currently found sales</h3>
+            <h2 class="ui header">All currently found sales</h2>
         </div>
+        <!--
         <div class="ui two column grid container">
             <div class="row">
                 <div class="column">
@@ -42,32 +26,47 @@
                     {{> saletable}}
                 </div>
             </div>
+        </div>-->
+        <div class="ui two column grid">
+            <div class="row">
+                <div class="eleven wide column">
+                    <div class="ui vertical segment">
+                        {{> saletable}}
+                    </div>
+                    <div class="ui vertical segment">
+                        {{> saletable}}
+                    </div>
+
+                </div>
+
+
+                <div class="right floated four wide column">
+                    <div class="ui selection dropdown" id="cat_dpn">
+                        <div class="default text">Select store</div>
+                        <i class="dropdown icon"></i>
+                    </div>
+                </div>
+
+            </div>
+
         </div>
+
+
     </div>
 
     <div class="ui tab segment" data-tab="categories" style="margin-top: 0!important;" id="categories_tab">
         <div class="ui sub header">Stores</div>
 
-
+        <!--
         <div class="ui selection dropdown" id="cat_dpn">
             <div class="default text">Select store</div>
             <i class="dropdown icon"></i>
         </div>
-
+        -->
 
 
     </div>
+    <div class="ui tab segment" data-tab="search" style="margin-top: 0!important; margin-bottom: 14px!important;">
+        <h3 class="ui header">AJAX Tab third</h3>
+    </div>
 </div>
-<div class="ui tab segment" data-tab="tab3" style="margin-top: 0!important; margin-bottom: 14px!important;">
-    <h3 class="ui header">AJAX Tab third</h3>
-</div>
-</div>
-<script>
-
-</script>
-
-<!--
-</div>
-
-</div>
-</div>-->

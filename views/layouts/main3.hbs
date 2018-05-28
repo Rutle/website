@@ -65,11 +65,13 @@
                 <a href="https://twitter.com" class="item">
                     <i class="twitter icon"></i>
                 </a>
-                {{#if userIsLogged}}
+                {{#if user}}
                 <a href="/dashboard" class="item" id="admin_popup">
+                {{else}}
+                <a href="/login" class="item" id="admin_popup">
+                {{/if}}
                     <i class="fas fa-user-cog"></i>
                 </a>
-                {{/if}}
 
             </div>
         </div>

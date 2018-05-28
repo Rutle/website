@@ -5,15 +5,11 @@
                 .form({
                     fields: {
                         email: {
-                            identifier: 'email',
+                            identifier: 'username',
                             rules: [
                                 {
                                     type: 'empty',
                                     prompt: 'Please enter your e-mail'
-                                },
-                                {
-                                    type: 'email',
-                                    prompt: 'Please enter a valid e-mail'
                                 }
                             ]
                         },
@@ -34,6 +30,9 @@
                 });
         });
 </script>
+{{#if user}}
+<div class="ui message">You are already logged in.</div>
+{{else}}
 <div class="ui middle aligned center aligned grid container" style="height: 70%!important;">
     <div class="column" id="login_form">
         <h2 class="ui header">
@@ -46,7 +45,7 @@
                 <div class="field">
                     <div class="ui left icon input">
                         <i class="user icon"></i>
-                        <input type="email" name="email" placeholder="E-mail address">
+                        <input type="text" name="username" placeholder="Username">
                     </div>
                 </div>
                 <div class="field">
@@ -61,10 +60,11 @@
             <div class="ui error message"></div>
 
         </form>
-
-        <div class="ui message">
-            New to us?
-            <a href="#">Sign Up</a>
+        {{#if message}}
+        <div class="ui error message">
+            {{message}}
         </div>
+        {{/if}}
     </div>
 </div>
+{{/if}}
