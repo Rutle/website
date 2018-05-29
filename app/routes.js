@@ -159,8 +159,10 @@ module.exports = function (app, passport) {
         })
 
     })
-
-    app.get('/stores', function (req, res) {
+    /**
+     * Dropdown API for scraper project
+     */
+    app.get('/api/stores', function (req, res) {
         console.log("kutsu store api")
         console.log("re param: ", req.params.query);
         res.status(200).json({
@@ -187,7 +189,36 @@ module.exports = function (app, passport) {
             ]
         });
     });
-
+    /**
+     * 
+     */
+    app.get('/api/projects', function(req, res) {
+        console.log("kutsu projects api")
+        console.log("re param: ", req.params.query);
+        res.status(200).json({
+            success: true,
+            results: [
+                {
+                    name: 'All',
+                    value: '/projects',
+                    text: 'All',
+                    disabled: false
+                },
+                {
+                    name: 'Website',
+                    value: '/projects/website',
+                    text: 'Website',
+                    disabled: false
+                },
+                {
+                    name: 'Sale scraper',
+                    value: '/projects/website/scraper',
+                    text: 'Sale scraper',
+                    disabled: false
+                }
+            ]
+        });
+    });
     app.post('/dashboard/:tab', getBreadcrumbs, function (req, res) {
             console.log("tab: ", req.params.tab);
             console.log(req.body);

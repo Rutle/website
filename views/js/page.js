@@ -1,6 +1,6 @@
 
 $(function () {
-    $('.ui.dropdown').dropdown({ on: 'hover' }); // Initialize dropdown menu.
+    //$('.ui.dropdown').dropdown({ on: 'hover' }); // Initialize dropdown menu.
     $('#dashboard_menu > a.item').each(function (idx, element) {
         $(this).tab();
     });
@@ -8,11 +8,11 @@ $(function () {
     $('#lesser_menu > .ui.container > a.item').click(function () {
         $('.ui.labeled.icon.sidebar').sidebar('toggle');
     });
-
+    /*
     $('#full_menu > .ui.container > .ui.dropdown.item').click(function () {
-        console.log('dropdown click')
+        //console.log('dropdown click')
         $(this).dropdown();
-    })
+    })*/
 
     $('#commit_header > i').click(function () {
         console.log("minimize click");
@@ -76,7 +76,7 @@ $(function () {
     $('#cat_dpn')
         .dropdown({
             apiSettings: {
-                url: 'http://localhost:5000/stores/'
+                url: 'http://localhost:5000/api/stores/'
             },
             filterRemoteData: false,
 
@@ -85,6 +85,24 @@ $(function () {
             direction: 'auto',
             debug: true
         })
-
+        
+    $('#project_dd')
+        .dropdown({
+            apiSettings: {
+                url: 'http://localhost:5000/api/projects'
+            },
+            action: 'hide',
+            onChange: function(value, text, $selectedItem) {
+                console.log("Text: ", text);
+                console.log("Value: ", value);
+                console.log($selectedItem)
+                window.location = value;
+            },
+            filterRemoteData: false,
+            saveRemoteData: false,
+            direction: 'auto',
+            debug: true
+        });
+        
 
 });

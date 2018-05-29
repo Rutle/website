@@ -40,7 +40,7 @@
         </a>
         <a href="/test" class="item">test</a>
     </div>
-    <div class="ui pointing top large fixed menu" id="full_menu">
+    <div class="ui top large fixed inverted menu" id="full_menu">
         <div class="ui container">
             <span class="header item">
                 Rulle
@@ -48,7 +48,10 @@
             <a href="/" class="item">
                 <i class="home icon small"></i>Home</a>
             <!--<a href="/projects" class="item">Projects</a>-->
-            <div class="ui dropdown item">
+            <div class="ui dropdown item" id="project_dd">
+                Projects
+                <i class="dropdown icon"></i>
+                <!--
                 <i class="folder open icon small"></i>Projects
                 <i class="dropdown icon"></i>
                 <div class="menu">
@@ -57,26 +60,27 @@
                     <a class="item" href="/projects/jodatut">Jodat course project</a>
                     <a class="item" href="/projects/website">Website</a>
                     <a class="item" href="/projects/scraper">Price scraper</a>
-                </div>
+                </div>-->
             </div>
+            <!--
             <a href="/about" class="item">
-                <i class="question icon small"></i>About</a>
+                <i class="question icon small"></i>About</a>-->
             <div class="right menu">
                 <a href="https://twitter.com" class="item">
                     <i class="twitter icon"></i>
                 </a>
                 {{#if user}}
                 <a href="/dashboard" class="item" id="admin_popup">
-                {{else}}
-                <a href="/login" class="item" id="admin_popup">
-                {{/if}}
-                    <i class="fas fa-user-cog"></i>
-                </a>
+                    {{else}}
+                    <a href="/login" class="item" id="admin_popup">
+                        {{/if}}
+                        <i class="fas fa-user-cog"></i>
+                    </a>
 
             </div>
         </div>
     </div>
-    <div class="ui pointing top large fixed menu" id="lesser_menu">
+    <div class="ui top large fixed pointing menu" id="lesser_menu">
         <!-- minimized menu -->
         <div class="ui container">
             <a class="item">
