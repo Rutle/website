@@ -62,8 +62,8 @@ $(function () {
         $(this).children('#content_hide').css("height", "0");
 
     })*/
-    $('.ext_top_row, .ext_middle_row, .ext_bottom_row').click(function() {
-        if(!$(this).children('#content_hide').height()) {
+    $('.ext_top_row, .ext_middle_row, .ext_bottom_row').click(function () {
+        if (!$(this).children('#content_hide').height()) {
             let height = $(this).height() + "px";
             $(this).children('#content_hide').css("height", height)
             $(this).children('.ext_cat').children('i').removeClass().addClass('caret square up outline icon');
@@ -71,7 +71,7 @@ $(function () {
             $(this).children('#content_hide').css("height", "0");
             $(this).children('.ext_cat').children('i').removeClass().addClass('caret square down outline icon')
         }
-        
+
     })
     $('#cat_dpn')
         .dropdown({
@@ -85,14 +85,16 @@ $(function () {
             direction: 'auto',
             debug: true
         })
-        
+    /**
+     * Project list dropdown.
+     */
     $('#project_dd')
         .dropdown({
             apiSettings: {
                 url: 'http://localhost:5000/api/projects'
             },
             action: 'hide',
-            onChange: function(value, text, $selectedItem) {
+            onChange: function (value, text, $selectedItem) {
                 console.log("Text: ", text);
                 console.log("Value: ", value);
                 console.log($selectedItem)
@@ -103,6 +105,90 @@ $(function () {
             direction: 'auto',
             debug: true
         });
-        
 
+    /**
+     * Form configuration for adding new project.
+     */
+    $('#project_form')
+        .form({
+            on: 'blur',
+            fields: {
+                project_name: {
+                    identifier: 'project_name',
+                    rules: [
+                        {
+                            type: 'empty',
+                            prompt: 'Please enter project name.'
+                        }
+                    ]
+                },
+                short_name: {
+                    identifier: 'short_name',
+                    rules: [
+                        {
+                            type: 'empty',
+                            prompt: 'Please enter short name.'
+                        }
+                    ]
+                }
+            }
+            ,
+            onSuccess: function (event, fields) {
+                event.preventDefault();
+                $('.ui.form').addClass('loading');
+                $.ajax({
+                    method: 'POST',
+                    url: '/dashboard/new',
+                    data: {
+                        form: JSON.parse(JSON.stringify($('#project_form').serializeArray())),
+                        websiteProject: $("input:checkbox").is(":checked") ? 1 : 0
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        //console.log("vastaus: ", data);
+                        $('.ui.form').removeClass('loading');
+                    },
+                    error: function (jqXHR, textStatus, errorThrown, data) {
+                    }
+                });
+            },
+            onFailure: function (formErrors, fields) {
+                //console.log(formErrors);
+                //console.log(fields);
+                let eMessageDiv = document.getElementById('error_messages');
+                while (eMessageDiv.firstChild) {
+                    eMessageDiv.removeChild(eMessageDiv.firstChild);
+                }
+                let list = document.createElement('ul');
+                list.className = 'list';
+                formErrors.forEach(function (elem, idx) {
+                    let listItem = document.createElement('li');
+                    listItem.appendChild(document.createTextNode(elem));
+                    list.appendChild(listItem);
+                });
+                eMessageDiv.appendChild(list);
+                eMessageDiv.style.display = 'flex';
+                return false;
+            }
+        });
+    /*
+$('#testbtn').click(function (event) {
+    if ($('#project_form').form('is valid')) {
+        // form is valid (both email and name)
+        console.log("valid");
+        $('.ui.form').addClass('loading');
+        $.ajax({
+            type: 'POST',
+            url: '/dashboard/new',
+            data: { form: JSON.parse(JSON.stringify($('#project_form').serializeArray())) },
+            dataType: 'json',
+            success: function (data) {
+                console.log("vastaus: ", data);
+                $('.ui.form').removeClass('loading');
+            },
+            error: function (jqXHR, textStatus, errorThrown, data) {
+            }
+        });
+    }
+});*/
 });

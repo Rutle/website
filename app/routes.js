@@ -35,32 +35,12 @@ module.exports = function (app, passport) {
         });
     });
 
-	/**
-	 * Contact page.
-	 */
-    app.get('/contact', getBreadcrumbs, function (req, res) {
-        res.render('contact', {
-            breadcrumbs: req.breadcrumbs,
-            user: req.user,
-        });
-    });
 
 	/**
 	 * Projects page.
 	 */
     app.get('/projects', getBreadcrumbs, function (req, res) {
         res.render('projects', {
-            breadcrumbs: req.breadcrumbs,
-            user: req.user,
-        });
-    });
-
-	/**
-	 * About page.
-	 */
-    app.get('/about', getBreadcrumbs, function (req, res) {
-        console.log(req.breadcrumbs);
-        res.render('about', {
             breadcrumbs: req.breadcrumbs,
             user: req.user,
         });
@@ -152,7 +132,7 @@ module.exports = function (app, passport) {
             user: req.user,
         });
     });
-    app.get('/dashboard', getBreadcrumbs, function (req, res) {
+    app.get('/dashboard', isLoggedIn, getBreadcrumbs, function (req, res) {
         res.render('dashboard', {
             breadcrumbs: req.breadcrumbs,
             user: req.user,
@@ -163,8 +143,7 @@ module.exports = function (app, passport) {
      * Dropdown API for scraper project
      */
     app.get('/api/stores', function (req, res) {
-        console.log("kutsu store api")
-        console.log("re param: ", req.params.query);
+
         res.status(200).json({
             success: true,
             results: [
@@ -190,11 +169,10 @@ module.exports = function (app, passport) {
         });
     });
     /**
-     * 
+     * Dropdown API for main menu projects dropdown
      */
     app.get('/api/projects', function(req, res) {
-        console.log("kutsu projects api")
-        console.log("re param: ", req.params.query);
+
         res.status(200).json({
             success: true,
             results: [
@@ -219,10 +197,22 @@ module.exports = function (app, passport) {
             ]
         });
     });
-    app.post('/dashboard/:tab', getBreadcrumbs, function (req, res) {
-            console.log("tab: ", req.params.tab);
+    app.post('/dashboard/:tab', isLoggedIn, getBreadcrumbs, function (req, res) {
+            console.log("Submit: ", req.params.tab);
             console.log(req.body);
-            res.status(200).send({ message: 'tabi' + req.params.tab })
+            let tab = req.params.tab;
+            let formData = req.body.form;
+            let isWebProject = req.body.websiteProject;
+            if (tab === 'new') {    // New Project
+                formData.forEach(function(element, idx) {
+                    console.log(element.value);
+                });
+
+
+                console.log(isWebProject);
+
+            }
+            res.status(200).send()
 
         })
 
