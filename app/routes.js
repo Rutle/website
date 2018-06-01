@@ -35,7 +35,6 @@ module.exports = function (app, passport) {
         });
     });
 
-
 	/**
 	 * Projects page.
 	 */
@@ -97,6 +96,10 @@ module.exports = function (app, passport) {
             user: req.user,
         });
     });
+
+    /**
+     * 
+     */
     app.get('/projects/website/scraper', getBreadcrumbs, function (req, res) {
         console.log(req.breadcrumbs);
         res.render('scraper', {
@@ -132,13 +135,18 @@ module.exports = function (app, passport) {
             user: req.user,
         });
     });
+
+    /**
+     * Dashboard route.
+     */
     app.get('/dashboard', isLoggedIn, getBreadcrumbs, function (req, res) {
         res.render('dashboard', {
             breadcrumbs: req.breadcrumbs,
             user: req.user,
         })
 
-    })
+    });
+
     /**
      * Dropdown API for scraper project
      */
@@ -168,10 +176,11 @@ module.exports = function (app, passport) {
             ]
         });
     });
+
     /**
      * Dropdown API for main menu projects dropdown
      */
-    app.get('/api/projects', function(req, res) {
+    app.get('/api/projects', function (req, res) {
 
         res.status(200).json({
             success: true,
@@ -197,71 +206,73 @@ module.exports = function (app, passport) {
             ]
         });
     });
+    /**
+     * 
+     */
     app.post('/dashboard/:tab', isLoggedIn, getBreadcrumbs, function (req, res) {
-            console.log("Submit: ", req.params.tab);
-            console.log(req.body);
-            let tab = req.params.tab;
-            let formData = req.body.form;
-            let isWebProject = req.body.websiteProject;
-            if (tab === 'new') {    // New Project
-                formData.forEach(function(element, idx) {
-                    console.log(element.value);
-                });
-                let newProject = new Project();
-                newProject.author = req.user._id;
-                newProject.name = formData[0].value;
-                newProject.repositoryName = formData[1].value;
-                newProject.shortName = formData[2].value
-                newProject.websiteProject = Boolean(isWebProject);
-                let formSize = formData.length;
-                console.log(2+parseInt(isWebProject));
-                
-                for (var i = (3+parseInt(isWebProject)); i < formSize; i += 2) {
-                    console.log("i [", i, "]")
+        let tab = req.params.tab;
+        let formData = req.body.form;
+        let isWebProject = req.body.websiteProject;
+        if (tab === 'new') {    // New Project
+            formData.forEach(function (element, idx) {
+                console.log(element.value);
+            });
+            let newProject = new Project();
+            newProject.author = req.user._id;
+            newProject.name = formData[0].value;
+            newProject.repositoryName = formData[1].value;
+            newProject.shortName = formData[2].value
+            newProject.websiteProject = Boolean(isWebProject);
+            let formSize = formData.length;
 
-                    let sectionName = formData[i].value;
-                    let sectionText = formData[i+1].value
-                    newProject.sections.push({title: sectionName, text: sectionText})
-                }
-                newProject.save(function(err) {
-                    if(err) {
-                      console.error(err);
-                      return next(err);
-                    }
-                    res.status(200).send({message: 'success'});
-                });
+            for (var i = (3 + parseInt(isWebProject)); i < formSize; i += 2) {
 
-                //console.log(isWebProject);
-                
-
-            } else {
-                res.status(500).send(['Vdsasa', 'error tuli taas']);
+                let sectionName = formData[i].value;
+                let sectionText = formData[i + 1].value
+                newProject.sections.push({ title: sectionName, text: sectionText })
             }
-            
-
-        })
-
-    app.post('/projects/:repo', function (req, res) {
-            console.log(req.params.repo);
-            /*
-            gha.getCommits(req.params.repo)
-              .then(function(response) {
-                if(response.length === 1 && response[0].isError) {
-                  return res.status(500).send('Something went wrong.')
-                } else {
-                  return res.status(200).send({
-                    data: response
-                    });
+            newProject.save(function (err) {
+                if (err) {
+                    console.error(err);
+                    return next(err);
                 }
-              });
-              */
-            return res.status(200).send({ data: [{ committer: 'Jussi Ristimäki', message: 'Toimiiko tama nyt oleenkaan', days: 5, hours: 4, minutes: 2 }] });
-        });
+                res.status(200).send({ message: 'success' });
+            });
+        } else if (tab === 'updateScraperData') {
+        } else if (tab === 'fetchScraperData') {
+
+        } else {
+            res.status(500).send(['Vdsasa', 'error tuli taas']);
+        }
+
+
+    })
+    /**
+     * 
+     */
+    app.post('/projects/:repo', function (req, res) {
+        console.log(req.params.repo);
+        /*
+        gha.getCommits(req.params.repo)
+          .then(function(response) {
+            if(response.length === 1 && response[0].isError) {
+              return res.status(500).send('Something went wrong.')
+            } else {
+              return res.status(200).send({
+                data: response
+                });
+            }
+          });
+          */
+        return res.status(200).send({ data: [{ committer: 'Jussi Ristimäki', message: 'Toimiiko tama nyt oleenkaan', days: 5, hours: 4, minutes: 2 }] });
+    });
 
     // ###############################################################################
     // ############################## AUTHENTICATION #################################
     // ###############################################################################
-
+    /**
+     * Login page
+     */
     app.get('/login', getBreadcrumbs, function (req, res) {
         res.render('login', {
             breadcrumbs: req.breadcrumbs,
