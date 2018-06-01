@@ -1,7 +1,7 @@
 'use strict'
 
 var gha = require('./githubapi');
-
+var Project = require('./models/project');
 // Function for getting breadcrumbs of the page
 function getBreadcrumbs(req, res, next) {
     const urls = req.originalUrl.split('/');
@@ -207,12 +207,37 @@ module.exports = function (app, passport) {
                 formData.forEach(function(element, idx) {
                     console.log(element.value);
                 });
+                let newProject = new Project();
+                newProject.author = req.user._id;
+                newProject.name = formData[0].value;
+                newProject.repositoryName = formData[1].value;
+                newProject.shortName = formData[2].value
+                newProject.websiteProject = Boolean(isWebProject);
+                let formSize = formData.length;
+                console.log(2+parseInt(isWebProject));
+                
+                for (var i = (3+parseInt(isWebProject)); i < formSize; i += 2) {
+                    console.log("i [", i, "]")
 
+                    let sectionName = formData[i].value;
+                    let sectionText = formData[i+1].value
+                    newProject.sections.push({title: sectionName, text: sectionText})
+                }
+                newProject.save(function(err) {
+                    if(err) {
+                      console.error(err);
+                      return next(err);
+                    }
+                    res.status(200).send({message: 'success'});
+                });
 
-                console.log(isWebProject);
+                //console.log(isWebProject);
+                
 
+            } else {
+                res.status(500).send(['Vdsasa', 'error tuli taas']);
             }
-            res.status(200).send()
+            
 
         })
 

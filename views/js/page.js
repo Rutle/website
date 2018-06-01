@@ -145,10 +145,37 @@ $(function () {
                     },
                     dataType: 'json',
                     success: function (data) {
-                        //console.log("vastaus: ", data);
+                        console.log("vastaus: ", data.message);
                         $('.ui.form').removeClass('loading');
+                        $('.ui.form').form('clear')
+                        let eMessageDiv = document.getElementById('error_messages');
+                        eMessageDiv.style.display = 'none';
+
+
                     },
-                    error: function (jqXHR, textStatus, errorThrown, data) {
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        let error = errorThrown;
+                        let customErrorMessages = JSON.parse(jqXHR.responseText);
+                        //console.log("jqXHR: ", jqXHR);
+                        //console.log("textStatus: ", textStatus);
+                        //console.log("errorThrown: ", errorThrown);
+                        console.log("responseText: ", customErrorMessages);
+
+                        let eMessageDiv = document.getElementById('error_messages');
+                        while (eMessageDiv.firstChild) {
+                            eMessageDiv.removeChild(eMessageDiv.firstChild);
+                        }
+                        let list = document.createElement('ul');
+                        list.className = 'list';
+                        customErrorMessages.forEach(function (elem, idx) {
+                            let listItem = document.createElement('li');
+                            listItem.appendChild(document.createTextNode(elem));
+                            list.appendChild(listItem);
+                        });
+                        eMessageDiv.appendChild(list);
+                        eMessageDiv.style.display = 'inherit';
+                        $('.ui.form').removeClass('loading');
+
                     }
                 });
             },
@@ -191,4 +218,14 @@ $('#testbtn').click(function (event) {
         });
     }
 });*/
+
+
+    $('#project_form_clear').click(function (event) {
+        console.log("clear");
+        let eMessageDiv = document.getElementById('error_messages');
+        while (eMessageDiv.firstChild) {
+            eMessageDiv.removeChild(eMessageDiv.firstChild);
+        }
+        eMessageDiv.style.display = 'none';
+    })
 });
