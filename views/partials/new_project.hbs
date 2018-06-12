@@ -1,7 +1,7 @@
 <script>
     $(document)
         .ready(function () {
-            
+
 
         });
 </script>
@@ -38,12 +38,12 @@
         </div>
         <div class="ui horizontal divider">Project text sections</div>
         <div id="form_section_container">
-            <div class="fields">
+            <div class="fields" >
                 <div class="five wide field">
                     <div class="fields">
                         <div class="sixteen wide field">
                             <label>Section name</label>
-                            <input name="section_name1" placeholder="First Name" type="text">
+                            <input name="section_name" placeholder="First Name" type="text">
                         </div>
                     </div>
                     <div class="fields">
@@ -54,9 +54,10 @@
                 </div>
                 <div class="eleven wide field">
                     <label>Text</label>
-                    <textarea name="section_text1" placeholder="Paragraph for a section."></textarea>
+                    <textarea name="section_text" placeholder="Paragraph for a section."></textarea>
                 </div>
             </div>
+            
         </div>
         <div class="ui divider"></div>
         <div class="fields">
@@ -66,13 +67,13 @@
                 </div>
             </div>
             <div class="field">
-                <button class="ui teal labeled icon button">
+                <button class="ui teal labeled icon button" id="add_new_section">
                     Add new section
                     <i class="add icon"></i>
                 </button>
             </div>
             <div class="field">
-                <button class="ui clear button" id="project_form_clear">clear</button>
+                <button class="ui button" id="project_form_clear">Clear</button>
             </div>
 
         </div>

@@ -131,8 +131,7 @@ $(function () {
                         }
                     ]
                 }
-            }
-            ,
+            },
             onSuccess: function (event, fields) {
                 event.preventDefault();
                 $('.ui.form').addClass('loading');
@@ -147,7 +146,7 @@ $(function () {
                     success: function (data) {
                         console.log("vastaus: ", data.message);
                         $('.ui.form').removeClass('loading');
-                        $('.ui.form').form('clear')
+                        $('.ui.form').form('clear');
                         let eMessageDiv = document.getElementById('error_messages');
                         eMessageDiv.style.display = 'none';
 
@@ -213,13 +212,13 @@ $('#testbtn').click(function (event) {
                 console.log("vastaus: ", data);
                 $('.ui.form').removeClass('loading');
             },
-            error: function (jqXHR, textStatus, errorThrown, data) {
+            error: function (jqXHR, textStatus, errorThrown) {
             }
         });
     }
 });*/
 
-
+    /*
     $('#project_form_clear').click(function (event) {
         console.log("clear");
         let eMessageDiv = document.getElementById('error_messages');
@@ -228,4 +227,34 @@ $('#testbtn').click(function (event) {
         }
         eMessageDiv.style.display = 'none';
     })
+    */
+    $('#update_sales_data').click(function(event) {
+        $.ajax({
+            type: 'POST',
+            url: '/dashboard/updates',
+            data: { type: 'updateScraperData' },
+            dataType: 'json',
+            success: function(data) {
+
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+
+            }
+        });
+    });
+    $('#add_new_section').click(function(event) {
+        event.preventDefault();
+        addFormSection();
+    });
+    $('#project_form_clear').click(function(event) {
+        console.log("clear");
+        event.preventDefault();
+        document.getElementById("project_form").reset();
+        let eMessageDiv = document.getElementById('error_messages');
+        while (eMessageDiv.firstChild) {
+            eMessageDiv.removeChild(eMessageDiv.firstChild);
+        }
+        eMessageDiv.style.display = 'none';
+    })
+
 });
