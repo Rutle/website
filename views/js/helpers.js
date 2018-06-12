@@ -93,36 +93,17 @@ function minimizeCard() {
     let contentDiv = document.getElementById('')
 }
 
-
-/*
-        <div id="form_section_container">
-            <div class="fields">
-                <div class="five wide field">
-                    <div class="fields">
-                        <div class="sixteen wide field">
-                            <label>Section name</label>
-                            <input name="first-name" placeholder="First Name" type="text">
-                        </div>
-                    </div>
-                    <div class="fields">
-                        <div class="sixteen wide field">
-                            <button class="ui basic button">Remove this section</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="eleven wide field">
-                    <label>Text</label>
-                    <textarea placeholder="Paragraph for a section."></textarea>
-                </div>
-            </div>
-        </div>
-*/
+function removeSection(target) {
+    let sectionContainer = target.parentElement.parentElement.parentElement.parentElement.parentElement;
+    let section = target.parentElement.parentElement.parentElement.parentElement;
+    sectionContainer.removeChild(section);
+}
 
 function addFormSection() {
-    console.log('creating new form section')
     let projectDiv = document.getElementById('form_section_container');
     let fieldsDiv = document.createElement('div');
     fieldsDiv.className = 'fields';
+    fieldsDiv.setAttribute('id', 'section');
 
         let fieldDiv = document.createElement('div');
         fieldDiv.className = 'five wide field';
@@ -153,6 +134,10 @@ function addFormSection() {
                     let button = document.createElement('button');
                     button.className = 'ui basic button';
                     button.appendChild(document.createTextNode('Remove this section'));
+                    button.setAttribute('id', 'remove_section')
+                    button.addEventListener('click', function(event) {
+                        removeSection(event.target);
+                    });
                 sectionButtonFieldDiv.appendChild(button);
             buttonFieldsDiv.appendChild(sectionButtonFieldDiv);
         fieldDiv.appendChild(buttonFieldsDiv);
@@ -169,4 +154,5 @@ function addFormSection() {
         sectionTextFieldDiv.appendChild(textArea);
     fieldsDiv.appendChild(sectionTextFieldDiv);
     projectDiv.appendChild(fieldsDiv);
+
 }

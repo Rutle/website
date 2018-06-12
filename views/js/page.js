@@ -255,6 +255,14 @@ $('#testbtn').click(function (event) {
             eMessageDiv.removeChild(eMessageDiv.firstChild);
         }
         eMessageDiv.style.display = 'none';
+    });
+
+    $('#remove_section').click(function(event) {
+        event.preventDefault();
+        //console.log($(this).parent().parent().parent().parent());
+        console.log($(this).parents('#section'));
+        $(this).parents('#section').remove();
+        
     })
 
 });
