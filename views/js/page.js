@@ -130,9 +130,31 @@ $(function () {
                             prompt: 'Please enter short name.'
                         }
                     ]
-                }
+                },
+                section_name: {
+                    identifier: 'section_name',
+                    rules: [
+                        {
+                            type: 'empty',
+                            prompt: 'Please enter section name.'
+                        }
+                    ]
+
+                },
+                section_text: {
+                    identifier: 'section_text',
+                    rules: [
+                        {
+                            type: 'empty',
+                            prompt: 'Please write text for section.'
+                        }
+                    ]
+                },
+                
             },
+            debug: true,
             onSuccess: function (event, fields) {
+                console.log(fields);
                 event.preventDefault();
                 $('.ui.form').addClass('loading');
                 $.ajax({
@@ -149,6 +171,13 @@ $(function () {
                         $('.ui.form').form('clear');
                         let eMessageDiv = document.getElementById('error_messages');
                         eMessageDiv.style.display = 'none';
+                        let sMessageDiv = document.getElementById('success_messages');
+
+                        let header = document.createElement('div');
+                        header.className = 'header';
+                        header.appendChild(document.createTextNode(data.message));
+                        sMessageDiv.appendChild(header);
+                        sMessageDiv.style.display = 'flex';
 
 
                     },
@@ -179,8 +208,8 @@ $(function () {
                 });
             },
             onFailure: function (formErrors, fields) {
-                //console.log(formErrors);
-                //console.log(fields);
+                console.log(formErrors);
+                console.log(fields);
                 let eMessageDiv = document.getElementById('error_messages');
                 while (eMessageDiv.firstChild) {
                     eMessageDiv.removeChild(eMessageDiv.firstChild);
@@ -245,16 +274,22 @@ $('#testbtn').click(function (event) {
     $('#add_new_section').click(function(event) {
         event.preventDefault();
         addFormSection();
+        
     });
     $('#project_form_clear').click(function(event) {
         console.log("clear");
         event.preventDefault();
         document.getElementById("project_form").reset();
+        let sMessageDiv = document.getElementById('success_messages');
         let eMessageDiv = document.getElementById('error_messages');
         while (eMessageDiv.firstChild) {
             eMessageDiv.removeChild(eMessageDiv.firstChild);
         }
+        while(sMessageDiv.firstChild) {
+            sMessageDiv.removeChild(sMessageDiv.firstChild);
+        }
         eMessageDiv.style.display = 'none';
+        sMessageDiv.style.display = 'none';
     });
 
     $('#remove_section').click(function(event) {

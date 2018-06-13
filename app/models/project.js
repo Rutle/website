@@ -17,13 +17,25 @@ var projectSchema = mongoose.Schema({
         required: true
     },
 
-    repositoryName: String,             // Name of the Github repository.
+    repositoryName: {                       // Name of the Github repository.
+        type: String,
+        unique: true,
+        dropDups: true,
+    },             
 
-    websiteProjectURL: String,          // For apps on website.
+    websiteProjectURL: {// For apps on website.
+        type: String,
+        unique: true,
+        dropDups: true,
+    },      
 
     websiteProject: Boolean,
 
-    shortName: String,                  // If lacking repository
+    shortName: {
+        type: String,                  // If lacking repository
+        unique: true,
+        dropDups: true,
+    },
 
     sections: [{                        // Sections and text on a project page.
         title: {

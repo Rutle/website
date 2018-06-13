@@ -98,9 +98,10 @@ function removeSection(target) {
     let section = target.parentElement.parentElement.parentElement.parentElement;
     sectionContainer.removeChild(section);
 }
-
+let formCounter = 1;
 function addFormSection() {
     let projectDiv = document.getElementById('form_section_container');
+    formCounter += 1;
     let fieldsDiv = document.createElement('div');
     fieldsDiv.className = 'fields';
     fieldsDiv.setAttribute('id', 'section');
@@ -118,9 +119,12 @@ function addFormSection() {
                 sectionNameFieldDiv.appendChild(labelName);
 
                     let inputName = document.createElement('input');
-                    inputName.setAttribute('name', 'section_name');
+                    let inputId = 'section_name'+formCounter
+                    inputName.setAttribute('name', inputId);
+                    inputName.setAttribute('id', inputId);
                     inputName.setAttribute('placeholder', 'e.g. Description');
                     inputName.setAttribute('type', 'text');
+                    
                 sectionNameFieldDiv.appendChild(inputName);
             sectionFieldsDiv.appendChild(sectionNameFieldDiv);
         fieldDiv.appendChild(sectionFieldsDiv);
@@ -148,11 +152,36 @@ function addFormSection() {
             let labelText = document.createElement('label');
             labelText.appendChild(document.createTextNode('Text'));
             let textArea = document.createElement('textarea');
-            textArea.setAttribute('name', 'section_text');
+            let textId = 'section_text'+formCounter
+            textArea.setAttribute('name', textId);
+            textArea.setAttribute('id', textId);
             textArea.setAttribute('placeholder', 'Paragraph for a section.');
+            
         sectionTextFieldDiv.appendChild(labelText);
         sectionTextFieldDiv.appendChild(textArea);
     fieldsDiv.appendChild(sectionTextFieldDiv);
     projectDiv.appendChild(fieldsDiv);
-
+    console.log(inputId);
+    $('#project_form').form('add rule', inputId, ['empty']);
+    /*
+    $('#project_form').form('add field', inputId, {
+        identifier: inputId,
+        rules: [
+            {
+                type: 'empty',
+                prompt: 'Please add section number '+formCounter+' name.'
+            }
+        ]
+    })
+    .form('add field', textId, {
+        identifier: textId,
+        rules: [
+            {
+                type: 'empty',
+                prompt: 'Please add section number '+formCounter+' text.'
+            }
+        ]
+    });
+    console.log($('#project_form').form('has field', textId))
+    $('#project_form').form('validate form');*/
 }

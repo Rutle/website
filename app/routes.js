@@ -22,6 +22,16 @@ function isLoggedIn(req, res, next) {
     res.redirect('/');
 }
 
+/**
+ * 
+ */
+function isAdmin(req, res, next) {
+    if(req.user.rights === 'admin') {
+        return next();
+    }
+    res.redirect('/')
+}
+
 module.exports = function (app, passport) {
 
 	/**
@@ -214,9 +224,11 @@ module.exports = function (app, passport) {
         let formData = req.body.form;
         let isWebProject = req.body.websiteProject;
         if (tab === 'new') {    // New Project
+            
             formData.forEach(function (element, idx) {
                 console.log(element.value);
             });
+            Project.findOne({})
             let newProject = new Project();
             newProject.author = req.user._id;
             newProject.name = formData[0].value;
@@ -226,17 +238,22 @@ module.exports = function (app, passport) {
             let formSize = formData.length;
 
             for (var i = (3 + parseInt(isWebProject)); i < formSize; i += 2) {
-
+                
                 let sectionName = formData[i].value;
                 let sectionText = formData[i + 1].value
+                if (sectionName === '' || sectionText === '') {
+                    return res.status(500).send(['Validation failed.']);
+                }
                 newProject.sections.push({ title: sectionName, text: sectionText })
             }
+
             newProject.save(function (err) {
                 if (err) {
                     console.error(err);
-                    return next(err);
+                    return res.status(500).send(['Validation failed.']);
+                    //return next(err);
                 }
-                res.status(200).send({ message: 'success' });
+                res.status(200).send({ message: 'Project successfully added to database.' });
             });
         } else if (tab === 'updateScraperData') {
             
