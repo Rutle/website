@@ -114,11 +114,34 @@ $(function () {
         list.className = 'list';
         messages.forEach(function (elem, idx) {
             let listItem = document.createElement('li');
-            listItem.appendChild(document.createTextNode(elem));
+            listItem.appendChild(document.createTextNode(elem.value));
             list.appendChild(listItem);
+            addErrorInfo(elem.name);
         });
         eMessageDiv.appendChild(list);
         eMessageDiv.style.display = 'inherit';
+    }
+
+    function addErrorInfo(id) {
+        
+        let inputNode = document.getElementById(id);
+        inputNode.style.color = '#9f3a38';
+        inputNode.style.borderColor = '#e0b4b4';
+        inputNode.style.backgroundColor = '#fff6f6';
+        let label = document.getElementById(id).previousSibling;
+        label.style.color = '#9f3a38';
+
+
+    }
+
+    function clearErrorInfo(id) {
+        let inputNode = document.getElementById(id);
+        inputNode.style.color = 'rgba(0,0,0,.95)';
+        inputNode.style.borderColor = '#85b7d9';
+        inputNode.style.backgroundColor = '#fff';
+        let label = document.getElementById(id).previousSibling;
+        label.style.color = 'rgba(0,0,0,.87)';
+
     }
     /**
      * Form configuration for adding new project.
@@ -173,18 +196,25 @@ $(function () {
                 $('.ui.form').addClass('loading');
                 let isWebProject = $("input:checkbox").is(":checked") ? 1 : 0;
                 let errorMessages = [];
-                for (var i = (3 + parseInt(isWebProject)); i < formSize; i += 2) {
+                let formData = $('#project_form').serializeArray();
+                console.log(formData);
+                for (var i = (3 + parseInt(isWebProject)); i < formData.length; i += 2) {
                     let sectionName = formData[i];
                     let sectionText = formData[i + 1];
+                    console.log(sectionName);
+                    console.log(sectionText);
                     if (sectionName.value === '') {
-                        errorMessages.sections.push('Please write name for section '+sectionName.name.slice(-1)+'.')
+                        errorMessages.push({name: sectionName.name, value: 'Please write name for section '+sectionName.name.slice(-1)+'.'})
                     }
                     if (sectionText.value === '') {
-                        errorMessages.sections.push('Please write name for section '+sectionText.name.slice(-1)+'.')
+                        errorMessages.push({name: sectionText.name, value: 'Please write name for section '+sectionText.name.slice(-1)+'.'})
                     }
                 }
-                if (!errorMessages.length) {
+                if (errorMessages.length > 0) {
+                    console.log('errors', errorMessages)
                     addErrorMessages(errorMessages);
+                    
+                    $('.ui.form').removeClass('loading');
                 } else {
                     $.ajax({
                         method: 'POST',
