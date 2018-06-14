@@ -105,7 +105,21 @@ $(function () {
             direction: 'auto',
             debug: true
         });
-
+    function addErrorMessages(messages) {
+        let eMessageDiv = document.getElementById('error_messages');
+        while (eMessageDiv.firstChild) {
+            eMessageDiv.removeChild(eMessageDiv.firstChild);
+        }
+        let list = document.createElement('ul');
+        list.className = 'list';
+        messages.forEach(function (elem, idx) {
+            let listItem = document.createElement('li');
+            listItem.appendChild(document.createTextNode(elem));
+            list.appendChild(listItem);
+        });
+        eMessageDiv.appendChild(list);
+        eMessageDiv.style.display = 'inherit';
+    }
     /**
      * Form configuration for adding new project.
      */
@@ -154,58 +168,76 @@ $(function () {
             },
             debug: true,
             onSuccess: function (event, fields) {
-                console.log(fields);
+                //console.log(fields);
                 event.preventDefault();
                 $('.ui.form').addClass('loading');
-                $.ajax({
-                    method: 'POST',
-                    url: '/dashboard/new',
-                    data: {
-                        form: JSON.parse(JSON.stringify($('#project_form').serializeArray())),
-                        websiteProject: $("input:checkbox").is(":checked") ? 1 : 0
-                    },
-                    dataType: 'json',
-                    success: function (data) {
-                        console.log("vastaus: ", data.message);
-                        $('.ui.form').removeClass('loading');
-                        $('.ui.form').form('clear');
-                        let eMessageDiv = document.getElementById('error_messages');
-                        eMessageDiv.style.display = 'none';
-                        let sMessageDiv = document.getElementById('success_messages');
-
-                        let header = document.createElement('div');
-                        header.className = 'header';
-                        header.appendChild(document.createTextNode(data.message));
-                        sMessageDiv.appendChild(header);
-                        sMessageDiv.style.display = 'flex';
-
-
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        let error = errorThrown;
-                        let customErrorMessages = JSON.parse(jqXHR.responseText);
-                        //console.log("jqXHR: ", jqXHR);
-                        //console.log("textStatus: ", textStatus);
-                        //console.log("errorThrown: ", errorThrown);
-                        console.log("responseText: ", customErrorMessages);
-
-                        let eMessageDiv = document.getElementById('error_messages');
-                        while (eMessageDiv.firstChild) {
-                            eMessageDiv.removeChild(eMessageDiv.firstChild);
-                        }
-                        let list = document.createElement('ul');
-                        list.className = 'list';
-                        customErrorMessages.forEach(function (elem, idx) {
-                            let listItem = document.createElement('li');
-                            listItem.appendChild(document.createTextNode(elem));
-                            list.appendChild(listItem);
-                        });
-                        eMessageDiv.appendChild(list);
-                        eMessageDiv.style.display = 'inherit';
-                        $('.ui.form').removeClass('loading');
-
+                let isWebProject = $("input:checkbox").is(":checked") ? 1 : 0;
+                let errorMessages = [];
+                for (var i = (3 + parseInt(isWebProject)); i < formSize; i += 2) {
+                    let sectionName = formData[i];
+                    let sectionText = formData[i + 1];
+                    if (sectionName.value === '') {
+                        errorMessages.sections.push('Please write name for section '+sectionName.name.slice(-1)+'.')
                     }
-                });
+                    if (sectionText.value === '') {
+                        errorMessages.sections.push('Please write name for section '+sectionText.name.slice(-1)+'.')
+                    }
+                }
+                if (!errorMessages.length) {
+                    addErrorMessages(errorMessages);
+                } else {
+                    $.ajax({
+                        method: 'POST',
+                        url: '/dashboard/new',
+                        data: {
+                            form: JSON.parse(JSON.stringify($('#project_form').serializeArray())),
+                            websiteProject: $("input:checkbox").is(":checked") ? 1 : 0
+                        },
+                        dataType: 'json',
+                        success: function (data) {
+                            console.log("vastaus: ", data.message);
+                            $('.ui.form').removeClass('loading');
+                            $('.ui.form').form('clear');
+                            let eMessageDiv = document.getElementById('error_messages');
+                            eMessageDiv.style.display = 'none';
+                            let sMessageDiv = document.getElementById('success_messages');
+    
+                            let header = document.createElement('div');
+                            header.className = 'header';
+                            header.appendChild(document.createTextNode(data.message));
+                            sMessageDiv.appendChild(header);
+                            sMessageDiv.style.display = 'flex';
+    
+    
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            let error = errorThrown;
+                            let customErrorMessages = JSON.parse(jqXHR.responseText);
+                            //console.log("jqXHR: ", jqXHR);
+                            //console.log("textStatus: ", textStatus);
+                            //console.log("errorThrown: ", errorThrown);
+                            console.log("responseText: ", customErrorMessages);
+    
+                            let eMessageDiv = document.getElementById('error_messages');
+                            while (eMessageDiv.firstChild) {
+                                eMessageDiv.removeChild(eMessageDiv.firstChild);
+                            }
+                            let list = document.createElement('ul');
+                            list.className = 'list';
+                            customErrorMessages.forEach(function (elem, idx) {
+                                let listItem = document.createElement('li');
+                                listItem.appendChild(document.createTextNode(elem));
+                                list.appendChild(listItem);
+                            });
+                            eMessageDiv.appendChild(list);
+                            eMessageDiv.style.display = 'inherit';
+                            $('.ui.form').removeClass('loading');
+    
+                        }
+                    });
+                }
+
+
             },
             onFailure: function (formErrors, fields) {
                 console.log(formErrors);
