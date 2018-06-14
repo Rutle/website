@@ -191,7 +191,17 @@ module.exports = function (app, passport) {
      * Dropdown API for main menu projects dropdown
      */
     app.get('/api/projects', function (req, res) {
-
+        console.log('fetch routes');
+        Project.find({})
+               .sort({websiteProject: 'desc'})
+               .select('name repositoryName websiteProjectUrl dateCreated formattedDate websiteProject -_id')
+               .exec(function(err, projects) {
+                if (err) {
+                    console.log(err);
+                }
+                console.log(projects)
+               });
+               
         res.status(200).json({
             success: true,
             results: [
@@ -235,6 +245,7 @@ module.exports = function (app, passport) {
             newProject.repositoryName = formData[1].value;
             newProject.shortName = formData[2].value
             newProject.websiteProject = Boolean(isWebProject);
+            newProject.websiteProjectUrl = '/projects/website'+formData[2].value;
             let formSize = formData.length;
 
             for (var i = (3 + parseInt(isWebProject)); i < formSize; i += 2) {
