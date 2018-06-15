@@ -2,6 +2,8 @@
 
 var gha = require('./githubapi');
 var Project = require('./models/project');
+//var scraper = require('./projects/scrape.js');
+
 // Function for getting breadcrumbs of the page
 function getBreadcrumbs(req, res, next) {
     const urls = req.originalUrl.split('/');
