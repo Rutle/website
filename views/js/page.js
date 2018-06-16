@@ -162,9 +162,9 @@ $(function () {
                         console.log("vastaus: ", data.message);
                         $('.ui.form').removeClass('loading');
                         $('.ui.form').form('clear');
-                        let eMessageDiv = document.getElementById('error_messages');
+                        let eMessageDiv = document.getElementById('store_error_messages');
                         eMessageDiv.style.display = 'none';
-                        let sMessageDiv = document.getElementById('success_messages');
+                        let sMessageDiv = document.getElementById('store_success_messages');
                         let header = document.createElement('div');
                         header.className = 'header';
                         header.appendChild(document.createTextNode(data.message));
@@ -180,7 +180,7 @@ $(function () {
                         //console.log("errorThrown: ", errorThrown);
                         console.log("responseText: ", customErrorMessages);
 
-                        let eMessageDiv = document.getElementById('error_messages');
+                        let eMessageDiv = document.getElementById('store_error_messages');
                         while (eMessageDiv.firstChild) {
                             eMessageDiv.removeChild(eMessageDiv.firstChild);
                         }

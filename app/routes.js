@@ -164,7 +164,15 @@ module.exports = function (app, passport) {
      * Dropdown API for scraper project
      */
     app.get('/api/stores', function (req, res) {
-
+        Store.find({})
+               .sort({name: 'desc'})
+               .select('name url -_id')
+               .exec(function(err, projects) {
+                if (err) {
+                    console.log(err);
+                }
+                console.log(projects)
+               });
         res.status(200).json({
             success: true,
             results: [
@@ -280,10 +288,11 @@ module.exports = function (app, passport) {
             newStore.save(function (err) {
                 if(err) {
                     console.log(err);
-                    let errMess = "";
+                    let errMessage = "";
+                    // Duplicate error.
                     if(err.code === 11000 || err.name === 'MongoError') {
                         console.log(err.message);
-                        if(err.message.includes('name')) {
+                        if(err.message.includes(formData[0].value.trim())) {
                             errMessage = 'That name already exists.';
                         } else {
                             errMessage = 'That URL already exists.';
