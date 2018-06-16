@@ -34,7 +34,9 @@ exports.parseArr = function(objectList) {
         currentPrice: parseFloat(objectList[i].currentPrice.match(/\d+(?:\,\d+)?/g)),
         url: jimmsUrl+objectList[i].url,
         regularPrice: parseFloat(price),
-        productCode: ""
+        productId: "",
+        category: "",
+        categoryUrl: ""
       }
       newCounter++;
 
