@@ -130,8 +130,6 @@ $(function () {
         inputNode.style.backgroundColor = '#fff6f6';
         let label = document.getElementById(id).previousSibling;
         label.style.color = '#9f3a38';
-
-
     }
 
     function clearErrorInfo(id) {
@@ -141,8 +139,67 @@ $(function () {
         inputNode.style.backgroundColor = '#fff';
         let label = document.getElementById(id).previousSibling;
         label.style.color = 'rgba(0,0,0,.87)';
-
     }
+    $('#new_store_form')
+        .form({
+            on: 'blur',
+            fields: {
+                store_name: 'empty',
+                store_url: ['empty', 'url']
+            },
+            debug: true,
+            onSuccess: function(event, fields) {
+                event.preventDefault();
+                $('.ui.form').addClass('loading');
+                $.ajax({
+                    method: 'POST',
+                    url: '/dashboard/newstore',
+                    data: {
+                        form: JSON.parse(JSON.stringify($('#new_store_form').serializeArray())),
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        console.log("vastaus: ", data.message);
+                        $('.ui.form').removeClass('loading');
+                        $('.ui.form').form('clear');
+                        let eMessageDiv = document.getElementById('error_messages');
+                        eMessageDiv.style.display = 'none';
+                        let sMessageDiv = document.getElementById('success_messages');
+                        let header = document.createElement('div');
+                        header.className = 'header';
+                        header.appendChild(document.createTextNode(data.message));
+                        sMessageDiv.appendChild(header);
+                        sMessageDiv.style.display = 'flex';
+
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        let error = errorThrown;
+                        let customErrorMessages = JSON.parse(jqXHR.responseText);
+                        //console.log("jqXHR: ", jqXHR);
+                        //console.log("textStatus: ", textStatus);
+                        //console.log("errorThrown: ", errorThrown);
+                        console.log("responseText: ", customErrorMessages);
+
+                        let eMessageDiv = document.getElementById('error_messages');
+                        while (eMessageDiv.firstChild) {
+                            eMessageDiv.removeChild(eMessageDiv.firstChild);
+                        }
+                        let list = document.createElement('ul');
+                        list.className = 'list';
+                        customErrorMessages.forEach(function (elem, idx) {
+                            let listItem = document.createElement('li');
+                            listItem.appendChild(document.createTextNode(elem));
+                            list.appendChild(listItem);
+                        });
+                        eMessageDiv.appendChild(list);
+                        eMessageDiv.style.display = 'inherit';
+                        $('.ui.form').removeClass('loading');
+
+                    }
+                });
+            }
+        });
+        
     /**
      * Form configuration for adding new project.
      */

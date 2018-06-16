@@ -2,7 +2,8 @@
 
 var gha = require('./githubapi');
 var Project = require('./models/project');
-//var scraper = require('./projects/scrape.js');
+var Store = require('./models/store')
+var scraper = require('./projects/scrape.js');
 
 // Function for getting breadcrumbs of the page
 function getBreadcrumbs(req, res, next) {
@@ -240,7 +241,7 @@ module.exports = function (app, passport) {
             formData.forEach(function (element, idx) {
                 console.log(element.value);
             });
-            Project.findOne({})
+            //Project.findOne({})
             let newProject = new Project();
             newProject.author = req.user._id;
             newProject.name = formData[0].value;
@@ -272,6 +273,26 @@ module.exports = function (app, passport) {
             
         } else if (tab === 'fetchScraperData') {
 
+        } else if (tab === 'newstore') {
+            let newStore = new Store();
+            newStore.name = formData[0].value.trim();
+            newStore.url = formData[1].value.trim();
+            newStore.save(function (err) {
+                if(err) {
+                    console.log(err);
+                    let errMess = "";
+                    if(err.code === 11000 || err.name === 'MongoError') {
+                        console.log(err.message);
+                        if(err.message.includes('name')) {
+                            errMessage = 'That name already exists.';
+                        } else {
+                            errMessage = 'That URL already exists.';
+                        }
+                    }
+                    return res.status(500).send([errMessage])
+                }
+                res.status(200).send({ message: 'Store successfully added to database.'})
+            })
         } else {
             res.status(500).send(['Vdsasa', 'error tuli taas']);
         }

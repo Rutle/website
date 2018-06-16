@@ -9,10 +9,17 @@ var mongoose = require('mongoose');
 var storeSchema = mongoose.Schema({
     name: {                             // Name of the product
         type: String,
-        required: true,
+        required: [true, 'Name is required.'],
+        unique: true,
+        dropDups: true
     },
 
-    storeUrl: String,                 // Url of the product page
+    url: {                         // Url of the product page
+        type: String,
+        required: [true, 'URL is required.'],
+        unique: true,
+        dropDubs: true                 
+    },
 
     dateCreated: {                      // Date when this product was found.
         type: Date,
