@@ -9,9 +9,56 @@ var url = 'https://www.jimms.fi/';
  * Fetches data from a website defined by url.
  * @param {String} url 
  */
-//exports.getData = function (url) {
-return axios.get(url)
-    .then(function (response) {
+//exports.getData = function () {
+return axios.all([
+    axios.get('https://www.jimms.fi/'),
+    axios.get('https://www.verkkokauppa.com/')
+])
+    .then(axios.spread((...args) => {
+        var listV = []
+        for (let i = 0; i < args.length; i++) {
+            if (args[i].config.url === 'https://www.jimms.fi/' && args[i].status === 200) {
+                const html = args[i].data;
+                const $ = cheerio.load(html);
+                var productList = []
+                $('div.pcol > div.productitem').each(function (i, elem) {
+                    productList[i] = {
+                        pname: $(this).children('.p_name').children().first().text().trim(),
+                        currentPrice: $(this).children('.p_bottom').children('.p_price').first().text().trim(),
+                        url: $(this).children('.p_name').children().first().attr('href'),
+                    }
+                });
+                // Remove first element from array.
+                productList.shift();
+
+                // Clean up undefined elements.
+                var pListTrimmed = productList.filter(n => n != undefined);
+
+                // Parse relevant data and modify it to desired format.
+                pListTrimmed = parseData.parseArr(pListTrimmed, args[i].config.url);
+                let obj = {
+                    url: args[i].config.url,
+                    products: pListTrimmed,
+                    status: args[i].status
+                }
+                listV[i] = obj;
+            } else if (args[i].config.url === 'https://www.verkkokauppa.com/') {
+                let obj = {
+                    url: args[i].config.url,
+                    status: args[i].status
+                }
+                listV[i] = obj;
+            } else {
+                let obj = {
+                    url: args[i].config.url,
+                    status: args[i].status
+                }
+                listV[i] = obj;
+            }
+        }
+        //console.log(listV[0]);
+        return listV;
+        /*
         if (response.status === 200) {
             const html = response.data;
             const $ = cheerio.load(html);
@@ -39,19 +86,20 @@ return axios.get(url)
             fs.writeFile('productList.json',
                  JSON.stringify(pListTrimmed, null, 4),
                  (err)=> console.log('File successfully written!'));
-           */
-        }
+           
+    }*/
     }, function (err) {
         console.log("error ", err);
-    })
+    }))
     .then(function (data) {
+        console.log(data[0].products[0]);
         // Fetch each product's category and productId information, that are on sale.
-        return getProductPages(data).then(function(data) {
-            return data;
-        }, function(error) {
-            console.log("Error [getProductPages]: ", error);
-        })
- 
+        //return getProductPages(data).then(function(data) {
+        //    return data;
+        //}, function(error) {
+        //    console.log("Error [getProductPages]: ", error);
+        //})
+
     }, function (error) {
         console.log("error ", error)
     });
@@ -95,12 +143,12 @@ function getProductPages(links) {
                     links[idx].category = $('.breadcrumb').children().last().prev().children('a').first().children('span').first().text();
                     links[idx].categoryUrl = $('.breadcrumb').children().last().prev().children('a').first().attr('href');
                     links[idx].productId = $('#pinfo_propinfo > div:nth-child(1) > div:nth-child(2)').text();
-                    
+
                     //let category = $('.breadcrumb').children().last().prev().children('a').first().children('span').first().text();
                     //let categoryUrl = $('.breadcrumb').children().last().prev().children('a').first().attr('href');
                     //let productId = $('#pinfo_propinfo > div:nth-child(1) > div:nth-child(2)').text();
-                    console.log('cat: ', links[idx].category );
-                    console.log('url: ', links[idx].categoryUrl );
+                    console.log('cat: ', links[idx].category);
+                    console.log('url: ', links[idx].categoryUrl);
                     console.log('id: ', links[idx].productId, '\n');
                 }
             });
