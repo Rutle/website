@@ -379,8 +379,8 @@ $('#testbtn').click(function (event) {
     $('#update_sales_data').click(function(event) {
         $.ajax({
             type: 'POST',
-            url: '/dashboard/updates',
-            data: { type: 'updateScraperData' },
+            url: '/dashboard/scraper',
+            data: { action: 'update' },
             dataType: 'json',
             success: function(data) {
 

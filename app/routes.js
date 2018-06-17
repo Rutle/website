@@ -165,51 +165,36 @@ module.exports = function (app, passport) {
      */
     app.get('/api/stores', function (req, res) {
         Store.find({})
-               .sort({name: 'desc'})
-               .select('name url -_id')
-               .exec(function(err, projects) {
+            .sort({name: 'desc'})
+            .select('name url -_id')
+            .exec(function(err, projects) {
                 if (err) {
                     console.log(err);
+                    return res.status(500).json({success: false})
                 }
-                console.log(projects)
-               });
-        res.status(200).json({
-            success: true,
-            results: [
-                {
-                    name: 'Stores',
-                    value: 'categoryNameStore',
-                    text: 'Stores',
-                    disabled: true
-                },
-                {
-                    name: 'All',
-                    value: 'storeAll',
-                    text: 'All stores',
-                    disabled: false
-                },
-                {
-                    name: 'Jimms',
-                    value: 'storeJimms',
-                    text: 'Jimms',
-                    disabled: false
-                }
-            ]
-        });
+                let result = [];
+                result.push({name: 'Stores', value: 'Stores', text: 'Stores', disabled: true})
+                result.push({name: 'All', value: 'All', text: 'All stores', disabled: false})
+                projects.forEach(function(elem, idx) {
+                    result.push({name: elem.name, value: elem.name, text: elem.name, disabled: false})
+                })
+                return res.status(200).json({success: true, results: result})
+            });
     });
 
     /**
      * Dropdown API for main menu projects dropdown
      */
     app.get('/api/projects', function (req, res) {
-        console.log('fetch routes');
         Project.find({})
                .sort({websiteProject: 'desc'})
                .select('name repositoryName websiteProjectUrl dateCreated formattedDate websiteProject -_id')
                .exec(function(err, projects) {
                 if (err) {
                     console.log(err);
+                    return res.status(500).json({success: false})
                 }
+                let result = [];
                 console.log(projects)
                });
                
@@ -238,7 +223,7 @@ module.exports = function (app, passport) {
         });
     });
     /**
-     * 
+     * Dashboard route
      */
     app.post('/dashboard/:tab', isLoggedIn, getBreadcrumbs, function (req, res) {
         let tab = req.params.tab;
@@ -277,7 +262,23 @@ module.exports = function (app, passport) {
                 }
                 res.status(200).send({ message: 'Project successfully added to database.' });
             });
-        } else if (tab === 'updateScraperData') {
+        } else if (tab === 'scraper') {
+            if(req.body.action === 'update') {
+                Store.find({})
+                .sort({name: 'desc'})
+                .select('name url -_id')
+                .exec(function(err, projects) {
+                    if (err) {
+                        console.log(err);
+                        return res.status(500).json({success: false})
+                    }
+                    projects.forEach(function(elem, idx) {
+                        result.push({name: elem.name, value: elem.name, text: elem.name, disabled: false})
+                    })
+                    return res.status(200).json({success: true, results: result})
+                });
+                scraper.getData()
+            }
             
         } else if (tab === 'fetchScraperData') {
 
