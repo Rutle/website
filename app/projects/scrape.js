@@ -3,26 +3,30 @@ var axios = require('axios');
 var cheerio = require('cheerio');
 var fs = require('fs');
 var parseData = require('./parser.js')
-var url = 'https://www.jimms.fi/';
+var urlList = ['https://www.jimms.fi/','https://www.verkkokauppa.com/'];
 
 /**
  * Fetches data from a website defined by url.
- * @param {String} url 
+ * @param {String} urlList
  */
-//exports.getData = function () {
-return axios.all([
-    axios.get('https://www.jimms.fi/'),
-    axios.get('https://www.verkkokauppa.com/')
-])
+//exports.getData = function (urlList) {
+return axios.all(urlList.map(l => axios.get(l))
+/*  [axios.get('https://www.jimms.fi/'),
+    axios.get('https://www.verkkokauppa.com/')]*/
+)
     .then(axios.spread((...args) => {
-        var listV = []
+        var siteData = []
         for (let i = 0; i < args.length; i++) {
-            if (args[i].config.url === 'https://www.jimms.fi/' && args[i].status === 200) {
+            if (args[i].status === 200 && args[i].config.url === 'https://www.jimms.fi/') {
                 const html = args[i].data;
                 const $ = cheerio.load(html);
-                var productList = []
+                let productList = []
+                let storeUrl = args[i].config.url;
+                let status = args[i].status;
                 $('div.pcol > div.productitem').each(function (i, elem) {
                     productList[i] = {
+                        storeUrl: storeUrl,
+                        status: status,
                         pname: $(this).children('.p_name').children().first().text().trim(),
                         currentPrice: $(this).children('.p_bottom').children('.p_price').first().text().trim(),
                         url: $(this).children('.p_name').children().first().attr('href'),
@@ -32,32 +36,34 @@ return axios.all([
                 productList.shift();
 
                 // Clean up undefined elements.
-                var pListTrimmed = productList.filter(n => n != undefined);
+                productList = productList.filter(n => n != undefined);
 
                 // Parse relevant data and modify it to desired format.
-                pListTrimmed = parseData.parseArr(pListTrimmed, args[i].config.url);
+                productList = parseData.parseArr(productList, args[i].config.url);
+
+                // Add elements from productList to siteData.
+                siteData.push(...productList);
+                
+            } else if (args[i].config.url === 'https://www.verkkokauppa.com/' && args[i].status === 200) {
+
                 let obj = {
                     url: args[i].config.url,
-                    products: pListTrimmed,
                     status: args[i].status
                 }
-                listV[i] = obj;
-            } else if (args[i].config.url === 'https://www.verkkokauppa.com/') {
-                let obj = {
-                    url: args[i].config.url,
-                    status: args[i].status
-                }
-                listV[i] = obj;
+                siteData.push(obj);
             } else {
                 let obj = {
                     url: args[i].config.url,
                     status: args[i].status
                 }
-                listV[i] = obj;
+                siteData.push(obj);
             }
         }
-        //console.log(listV[0]);
-        return listV;
+        console.log("Eka site data: ", siteData.filter(function(l) {
+            return l.status === 200;
+        }).map((li) => li.url ));
+        
+        return siteData;
         /*
         if (response.status === 200) {
             const html = response.data;
@@ -89,19 +95,19 @@ return axios.all([
            
     }*/
     }, function (err) {
-        console.log("error ", err);
+        console.log("First error ", err);
     }))
     .then(function (data) {
-        console.log(data[0].products[0]);
         // Fetch each product's category and productId information, that are on sale.
-        //return getProductPages(data).then(function(data) {
-        //    return data;
-        //}, function(error) {
-        //    console.log("Error [getProductPages]: ", error);
-        //})
+        return getProductPages(data).then(function(refinedData) {
+            console.log("refined Data: ", refinedData);
+            return refinedData;
+        }, function(error) {
+            console.log("Error [getProductPages]: ", error);
+        })
 
     }, function (error) {
-        console.log("error ", error)
+        console.log("Second error ", error)
     });
 //}
 /*
@@ -132,11 +138,13 @@ return axios.get('https://api.github.com/repos/rutle/website/commits?per_page=3&
  * @param {Array} links 
  */
 function getProductPages(links) {
-    return axios.all(links.map(l => axios.get(l.url)))
+    return axios.all(links.filter(function(l) {
+        return l.status === 200
+    }).map((li) => axios.get(li.url) ))
         .then(function (results) {
-
             results.forEach(element => {
-                if (element.status === 200) {
+                console.log("status: ", element.status)
+                if (element.status === 200 && element.config.url.includes('https://www.jimms.fi/')) {
                     let $ = cheerio.load(element.data);
                     console.log("config: ", element.config.url);
                     let idx = links.findIndex(item => item.url === element.config.url);
@@ -150,12 +158,18 @@ function getProductPages(links) {
                     console.log('cat: ', links[idx].category);
                     console.log('url: ', links[idx].categoryUrl);
                     console.log('id: ', links[idx].productId, '\n');
+                } else if (element.status === 200 && element.config.url.includes('https://www.verkkokauppa.com/')) {
+                    let idx = links.findIndex(item => item.url === element.config.url);
+                    links[idx].category = 'Testi'
+                    links[idx].categoryUrl = 'Testi'
+                    links[idx].productId = 'Testi'
+
                 }
             });
             return links;
 
         }, function (err) {
-            console.log("error", err);
+            console.log("Third error", err);
         });
 }
 

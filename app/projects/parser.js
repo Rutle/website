@@ -32,6 +32,8 @@ exports.parseArr = function(objectList, url) {
           var price = tarjousStr.match(/\d+(?:\,\d+)?/g);
     
           newObjectList[newCounter] = {
+            storeUrl: objectList[i].storeUrl,
+            status: objectList[i].status,
             pname: productItem,
             currentPrice: parseFloat(objectList[i].currentPrice.match(/\d+(?:\,\d+)?/g)),
             url: jimmsUrl.slice(0, -1)+objectList[i].url,
@@ -47,5 +49,7 @@ exports.parseArr = function(objectList, url) {
         }
       }
     return newObjectList;
+  } else if (url === verkkokauppa) {
+      
   }
 }
