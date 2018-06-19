@@ -9,11 +9,12 @@ var parseData = require('./parser.js')
  * @readonly
  * @enum {String}
  */
-export const gitHubAction = {
+const gitHubAction = {
     GETDESCRIPTIONS: 'getDescriptions',
     GETREPOSITORY: 'getRepository',
     INVALIDACTION: 'Invalid action'
 };
+module.exports = { gitHubAction };
 
 /**
  * Fetches data from a website defined by url.
