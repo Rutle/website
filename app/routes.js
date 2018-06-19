@@ -29,7 +29,7 @@ function isLoggedIn(req, res, next) {
  * 
  */
 function isAdmin(req, res, next) {
-    if(req.user.rights === 'admin') {
+    if (req.user.rights === 'admin') {
         return next();
     }
     res.redirect('/')
@@ -165,20 +165,20 @@ module.exports = function (app, passport) {
      */
     app.get('/api/stores', function (req, res) {
         Store.find({})
-            .sort({name: 'desc'})
+            .sort({ name: 'desc' })
             .select('name url')
-            .exec(function(err, projects) {
+            .exec(function (err, projects) {
                 if (err) {
                     console.log(err);
-                    return res.status(500).json({success: false})
+                    return res.status(500).json({ success: false })
                 }
                 let result = [];
-                result.push({name: 'Stores', value: 'Stores', text: 'Stores', disabled: true})
-                result.push({name: 'All', value: 'All', text: 'All stores', disabled: false})
-                projects.forEach(function(elem, idx) {
-                    result.push({name: elem.name, value: elem._id, text: elem.name, disabled: false})
+                result.push({ name: 'Stores', value: 'Stores', text: 'Stores', disabled: true })
+                result.push({ name: 'All', value: 'All', text: 'All stores', disabled: false })
+                projects.forEach(function (elem, idx) {
+                    result.push({ name: elem.name, value: elem._id, text: elem.name, disabled: false })
                 })
-                return res.status(200).json({success: true, results: result})
+                return res.status(200).json({ success: true, results: result })
             });
     });
     /**
@@ -186,42 +186,60 @@ module.exports = function (app, passport) {
      */
     app.get(['/api/storekeywords', '/api/storekeywords/:id'], isLoggedIn, function (req, res) {
         console.log('param: ', req.params.id);
-        if(!req.params.id) {
+        if (!req.params.id) {
             Store.find({})
-            .sort({name: 'desc'})
-            .select('name url')
-            .exec(function(err, projects) {
-                if (err) {
-                    console.log(err);
-                    return res.status(500).json({success: false})
-                }
-                let result = [];
-                projects.forEach(function(elem, idx) {
-                    result.push({name: elem.name, value: elem._id, text: elem.name, disabled: false})
-                })
-                return res.status(200).json({success: true, results: result})
-            });
+                .sort({ name: 'desc' })
+                .select('name url')
+                .exec(function (err, projects) {
+                    if (err) {
+                        console.log(err);
+                        return res.status(500).json({ success: false })
+                    }
+                    let result = [];
+                    projects.forEach(function (elem, idx) {
+                        result.push({ name: elem.name, value: elem._id, text: elem.name, disabled: false })
+                    })
+                    return res.status(200).json({ success: true, results: result })
+                });
         } else {
             console.log("param");
-            return res.status(200).json({success: true, results: [{name: 'testi', value: 'testi2', text: 'testi3', disabled: false}]})
+            return res.status(200).json({ success: true, results: [{ name: 'testi', value: 'testi2', text: 'testi3', disabled: false }] })
         }
-        
+
+    });
+    app.post('/dashboard/scraper/:action', isLoggedIn, function (req, res) {
+        let keyword = req.body.keyword;
+        let storeId = req.body.storeId;
+        let action = req.params.action;
+        if(action === 'removekeyword') {
+            Store.findById(storeId, 'keywords', function(err, store) {
+                if(err) {
+                    return res.status(500).json({message: 'Error in finding store.'});
+                }
+                if(!store.keywords.includes(keyword)) {
+                    return res.status(500).json({message: 'Keyword was not found.'});
+                }
+                store.keywords = store.keywords.filter(e => e !== keyword);
+                return res.status(200).json({message: 'Selected keyword removed.'})
+            })
+        }
+
     });
     /**
      * Dropdown API for main menu projects dropdown
      */
     app.get('/api/projects', function (req, res) {
         Project.find({})
-               .sort({websiteProject: 'desc'})
-               .select('name repositoryName websiteProjectUrl dateCreated formattedDate websiteProject -_id')
-               .exec(function(err, projects) {
+            .sort({ websiteProject: 'desc' })
+            .select('name repositoryName websiteProjectUrl dateCreated formattedDate websiteProject -_id')
+            .exec(function (err, projects) {
                 if (err) {
                     console.log(err);
-                    return res.status(500).json({success: false})
+                    return res.status(500).json({ success: false })
                 }
                 let result = [];
                 console.log(projects)
-               });
+            });
         /*
         res.status(200).json({
             success: true,
@@ -255,7 +273,7 @@ module.exports = function (app, passport) {
         let formData = req.body.form;
         let isWebProject = req.body.websiteProject;
         if (tab === 'new') {    // New Project
-            
+
             formData.forEach(function (element, idx) {
                 console.log(element.value);
             });
@@ -266,11 +284,11 @@ module.exports = function (app, passport) {
             newProject.repositoryName = formData[1].value;
             newProject.shortName = formData[2].value
             newProject.websiteProject = Boolean(isWebProject);
-            newProject.websiteProjectUrl = '/projects/website'+formData[2].value;
+            newProject.websiteProjectUrl = '/projects/website' + formData[2].value;
             let formSize = formData.length;
 
             for (var i = (3 + parseInt(isWebProject)); i < formSize; i += 2) {
-                
+
                 let sectionName = formData[i].value;
                 let sectionText = formData[i + 1].value
                 if (sectionName === '' || sectionText === '') {
@@ -288,23 +306,23 @@ module.exports = function (app, passport) {
                 res.status(200).send({ message: 'Project successfully added to database.' });
             });
         } else if (tab === 'scraper') {
-            if(req.body.action === 'update') {
+            if (req.body.action === 'update') {
                 Store.find({})
-                .sort({name: 'desc'})
-                .select('name url -_id')
-                .exec(function(err, projects) {
-                    if (err) {
-                        console.log(err);
-                        return res.status(500).json({success: false})
-                    }
-                    projects.forEach(function(elem, idx) {
-                        result.push({name: elem.name, value: elem.name, text: elem.name, disabled: false})
-                    })
-                    return res.status(200).json({success: true, results: result})
-                });
+                    .sort({ name: 'desc' })
+                    .select('name url -_id')
+                    .exec(function (err, projects) {
+                        if (err) {
+                            console.log(err);
+                            return res.status(500).json({ success: false })
+                        }
+                        projects.forEach(function (elem, idx) {
+                            result.push({ name: elem.name, value: elem.name, text: elem.name, disabled: false })
+                        })
+                        return res.status(200).json({ success: true, results: result })
+                    });
                 scraper.getData()
             }
-            
+
         } else if (tab === 'fetchScraperData') {
 
         } else if (tab === 'newstore') {
@@ -312,13 +330,13 @@ module.exports = function (app, passport) {
             newStore.name = formData[0].value.trim();
             newStore.url = formData[1].value.trim();
             newStore.save(function (err) {
-                if(err) {
+                if (err) {
                     console.log(err);
                     let errMessage = "";
                     // Duplicate error.
-                    if(err.code === 11000 || err.name === 'MongoError') {
+                    if (err.code === 11000 || err.name === 'MongoError') {
                         console.log(err.message);
-                        if(err.message.includes(formData[0].value.trim())) {
+                        if (err.message.includes(formData[0].value.trim())) {
                             errMessage = 'That name already exists.';
                         } else {
                             errMessage = 'That URL already exists.';
@@ -326,7 +344,7 @@ module.exports = function (app, passport) {
                     }
                     return res.status(500).send([errMessage])
                 }
-                res.status(200).send({ message: 'Store successfully added to database.'})
+                res.status(200).send({ message: 'Store successfully added to database.' })
             })
         } else {
             res.status(500).send(['Vdsasa', 'error tuli taas']);

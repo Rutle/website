@@ -86,7 +86,7 @@ $(function () {
             saveRemoteData: false,
             fullTextSearch: 'exact',
             direction: 'auto',
-            debug: true
+            debug: false
         })
 
     $('#store_keywords')
@@ -94,16 +94,13 @@ $(function () {
             apiSettings: {
                 url: 'http://localhost:5000/api/storekeywords/'
             },
-            onChange: function(value, text, $selectedItem) {
+            onChange: function (value, text, $selectedItem) {
                 console.log("Selected: ", value);
                 $('#sale_keywords').dropdown({
                     apiSettings: {
-                        url: 'http://localhost:5000/api/storekeywords/'+value
+                        url: 'http://localhost:5000/api/storekeywords/' + value
                     },
-                    debug: true,
-                    onChange: function(value, text, $selectedItem) {
-
-                    }
+                    debug: false
                 });
 
             },
@@ -111,8 +108,34 @@ $(function () {
             saveRemoteData: false,
             fullTextSearch: 'exact',
             direction: 'auto',
-            debug: true
+            debug: false
         })
+    $('#remove_keyword').click(function (event) {
+        event.preventDefault();
+        //let storeId = document.getElementById();
+        if ($('#store_keywords').dropdown('get value') === '') {
+            console.log('tyhjä');
+        } else {
+            console.log($('#store_keywords').dropdown('get value'), $('#sale_keywords').dropdown('get text'));
+            
+            $.ajax({
+                type: 'POST',
+                url: '/dashboard/scraper/removekeyword',
+                data: {
+                    storeId: $('#store_keywords').dropdown('get value'),
+                    keyword: $('#sale_keywords').dropdown('get text')
+                },
+                dataType: 'json',
+                success: function (data) {
+
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+
+                }
+            });
+        }
+
+    })
     /**
      * Project list dropdown.
      */
@@ -151,7 +174,7 @@ $(function () {
     }
 
     function addErrorInfo(id) {
-        
+
         let inputNode = document.getElementById(id);
         inputNode.style.color = '#9f3a38';
         inputNode.style.borderColor = '#e0b4b4';
@@ -176,7 +199,7 @@ $(function () {
                 store_url: ['empty', 'url']
             },
             debug: true,
-            onSuccess: function(event, fields) {
+            onSuccess: function (event, fields) {
                 event.preventDefault();
                 $('.ui.form').addClass('loading');
                 $.ajax({
@@ -227,7 +250,7 @@ $(function () {
                 });
             }
         });
-        
+
     /**
      * Form configuration for adding new project.
      */
@@ -272,7 +295,7 @@ $(function () {
                         }
                     ]
                 },
-                
+
             },
             debug: true,
             onSuccess: function (event, fields) {
@@ -289,16 +312,16 @@ $(function () {
                     console.log(sectionName);
                     console.log(sectionText);
                     if (sectionName.value === '') {
-                        errorMessages.push({name: sectionName.name, value: 'Please write name for section '+sectionName.name.slice(-1)+'.'})
+                        errorMessages.push({ name: sectionName.name, value: 'Please write name for section ' + sectionName.name.slice(-1) + '.' })
                     }
                     if (sectionText.value === '') {
-                        errorMessages.push({name: sectionText.name, value: 'Please write name for section '+sectionText.name.slice(-1)+'.'})
+                        errorMessages.push({ name: sectionText.name, value: 'Please write name for section ' + sectionText.name.slice(-1) + '.' })
                     }
                 }
                 if (errorMessages.length > 0) {
                     console.log('errors', errorMessages)
                     addErrorMessages(errorMessages);
-                    
+
                     $('.ui.form').removeClass('loading');
                 } else {
                     $.ajax({
@@ -316,14 +339,14 @@ $(function () {
                             let eMessageDiv = document.getElementById('error_messages');
                             eMessageDiv.style.display = 'none';
                             let sMessageDiv = document.getElementById('success_messages');
-    
+
                             let header = document.createElement('div');
                             header.className = 'header';
                             header.appendChild(document.createTextNode(data.message));
                             sMessageDiv.appendChild(header);
                             sMessageDiv.style.display = 'flex';
-    
-    
+
+
                         },
                         error: function (jqXHR, textStatus, errorThrown) {
                             let error = errorThrown;
@@ -332,7 +355,7 @@ $(function () {
                             //console.log("textStatus: ", textStatus);
                             //console.log("errorThrown: ", errorThrown);
                             console.log("responseText: ", customErrorMessages);
-    
+
                             let eMessageDiv = document.getElementById('error_messages');
                             while (eMessageDiv.firstChild) {
                                 eMessageDiv.removeChild(eMessageDiv.firstChild);
@@ -347,7 +370,7 @@ $(function () {
                             eMessageDiv.appendChild(list);
                             eMessageDiv.style.display = 'inherit';
                             $('.ui.form').removeClass('loading');
-    
+
                         }
                     });
                 }
@@ -404,26 +427,26 @@ $('#testbtn').click(function (event) {
         eMessageDiv.style.display = 'none';
     })
     */
-    $('#update_sales_data').click(function(event) {
+    $('#update_sales_data').click(function (event) {
         $.ajax({
             type: 'POST',
             url: '/dashboard/scraper',
             data: { action: 'update' },
             dataType: 'json',
-            success: function(data) {
+            success: function (data) {
 
             },
-            error: function(jqXHR, textStatus, errorThrown) {
+            error: function (jqXHR, textStatus, errorThrown) {
 
             }
         });
     });
-    $('#add_new_section').click(function(event) {
+    $('#add_new_section').click(function (event) {
         event.preventDefault();
         addFormSection();
-        
+
     });
-    $('#project_form_clear').click(function(event) {
+    $('#project_form_clear').click(function (event) {
         console.log("clear");
         event.preventDefault();
         document.getElementById("project_form").reset();
@@ -432,19 +455,19 @@ $('#testbtn').click(function (event) {
         while (eMessageDiv.firstChild) {
             eMessageDiv.removeChild(eMessageDiv.firstChild);
         }
-        while(sMessageDiv.firstChild) {
+        while (sMessageDiv.firstChild) {
             sMessageDiv.removeChild(sMessageDiv.firstChild);
         }
         eMessageDiv.style.display = 'none';
         sMessageDiv.style.display = 'none';
     });
 
-    $('#remove_section').click(function(event) {
+    $('#remove_section').click(function (event) {
         event.preventDefault();
         //console.log($(this).parent().parent().parent().parent());
         console.log($(this).parents('#section'));
         $(this).parents('#section').remove();
-        
+
     })
 
 });

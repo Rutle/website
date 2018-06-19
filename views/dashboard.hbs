@@ -110,10 +110,6 @@
 
                             <div class="fields">
                                 <div class="field">
-                                    <label>New keyword</label>
-                                    <input name="store_url" placeholder="Store URL" type="url" required>
-                                </div>
-                                <div class="field">
                                     <label>Sale match keywords</label>
                                     <div class="ui selection dropdown" id="sale_keywords">
                                         <div class="default text">Select store</div>
@@ -123,14 +119,25 @@
                                 </div>
                                 <div class="field">
                                     <label>Keyword</label>
-                                    <button class="ui tiny labeled icon button">
+                                    <button class="ui tiny labeled icon button" id="remove_keyword">
                                         <i class="delete icon"></i>
                                         Remove
                                     </button>
                                 </div>
                             </div>
-
-                            <button class="ui tiny primary button" type="submit" id="add_store">Submit keyword</button>
+                            <div class="fields">
+                                <div class="field">
+                                    <label>Removal</label>
+                                    <input name="keyword" placeholder="Keyword" type="text">
+                                </div>
+                                <div class="field">
+                                    <label>Addition</label>
+                                    <button class="ui tiny labeled icon button" id="add_keyword">
+                                        <i class="plus icon"></i>
+                                        Add
+                                    </button>
+                                </div>
+                            </div>
 
                             <div class="ui error message" id="store_error_messages"></div>
                             <div class="ui success message" id="store_success_messages"></div>
