@@ -166,7 +166,7 @@ module.exports = function (app, passport) {
     app.get('/api/stores', function (req, res) {
         Store.find({})
             .sort({name: 'desc'})
-            .select('name url -_id')
+            .select('name url')
             .exec(function(err, projects) {
                 if (err) {
                     console.log(err);
@@ -176,12 +176,37 @@ module.exports = function (app, passport) {
                 result.push({name: 'Stores', value: 'Stores', text: 'Stores', disabled: true})
                 result.push({name: 'All', value: 'All', text: 'All stores', disabled: false})
                 projects.forEach(function(elem, idx) {
-                    result.push({name: elem.name, value: elem.name, text: elem.name, disabled: false})
+                    result.push({name: elem.name, value: elem._id, text: elem.name, disabled: false})
                 })
                 return res.status(200).json({success: true, results: result})
             });
     });
-
+    /**
+     * Getting keywords for stores.
+     */
+    app.get(['/api/storekeywords', '/api/storekeywords/:id'], isLoggedIn, function (req, res) {
+        console.log('param: ', req.params.id);
+        if(!req.params.id) {
+            Store.find({})
+            .sort({name: 'desc'})
+            .select('name url')
+            .exec(function(err, projects) {
+                if (err) {
+                    console.log(err);
+                    return res.status(500).json({success: false})
+                }
+                let result = [];
+                projects.forEach(function(elem, idx) {
+                    result.push({name: elem.name, value: elem._id, text: elem.name, disabled: false})
+                })
+                return res.status(200).json({success: true, results: result})
+            });
+        } else {
+            console.log("param");
+            return res.status(200).json({success: true, results: [{name: 'testi', value: 'testi2', text: 'testi3', disabled: false}]})
+        }
+        
+    });
     /**
      * Dropdown API for main menu projects dropdown
      */
@@ -197,7 +222,7 @@ module.exports = function (app, passport) {
                 let result = [];
                 console.log(projects)
                });
-               
+        /*
         res.status(200).json({
             success: true,
             results: [
@@ -220,7 +245,7 @@ module.exports = function (app, passport) {
                     disabled: false
                 }
             ]
-        });
+        });*/
     });
     /**
      * Dashboard route

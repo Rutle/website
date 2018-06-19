@@ -20,6 +20,9 @@ var storeSchema = mongoose.Schema({
         unique: true,
         dropDubs: true                 
     },
+    keywords: [{
+        type:String
+    }],
 
     dateCreated: {                      // Date when this product was found.
         type: Date,

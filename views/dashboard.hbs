@@ -68,6 +68,8 @@
                         </tfoot>
                     </table>
                 </div>
+            </div>
+            <div class="two column row">
                 <div class="column">
                     <div class="ui top segment secondary">
                         <h4 class="ui header">Add new store</h4>
@@ -86,6 +88,49 @@
                             <button class="ui tiny primary button" type="submit" id="add_store">Submit</button>
 
                             <button class="ui tiny clear button">Clear</button>
+
+                            <div class="ui error message" id="store_error_messages"></div>
+                            <div class="ui success message" id="store_success_messages"></div>
+                        </form>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="ui top segment secondary">
+                        <h4 class="ui header">Modify sale matching keywords</h4>
+                    </div>
+                    <div class="ui blue segment">
+                        <form class="ui small form" id="modify_store_keywords_form">
+                            <div class="field">
+                                <label>Store name</label>
+                                <div class="ui selection dropdown" id="store_keywords">
+                                    <div class="default text">Select store</div>
+                                    <i class="dropdown icon"></i>
+                                </div>
+                            </div>
+
+                            <div class="fields">
+                                <div class="field">
+                                    <label>New keyword</label>
+                                    <input name="store_url" placeholder="Store URL" type="url" required>
+                                </div>
+                                <div class="field">
+                                    <label>Sale match keywords</label>
+                                    <div class="ui selection dropdown" id="sale_keywords">
+                                        <div class="default text">Select store</div>
+                                        <i class="dropdown icon"></i>
+                                    </div>
+
+                                </div>
+                                <div class="field">
+                                    <label>Keyword</label>
+                                    <button class="ui tiny labeled icon button">
+                                        <i class="delete icon"></i>
+                                        Remove
+                                    </button>
+                                </div>
+                            </div>
+
+                            <button class="ui tiny primary button" type="submit" id="add_store">Submit keyword</button>
 
                             <div class="ui error message" id="store_error_messages"></div>
                             <div class="ui success message" id="store_success_messages"></div>

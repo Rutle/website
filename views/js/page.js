@@ -73,13 +73,41 @@ $(function () {
         }
 
     })
+
+    /**
+     * 
+     */
     $('#cat_dpn')
         .dropdown({
             apiSettings: {
                 url: 'http://localhost:5000/api/stores/'
             },
             filterRemoteData: false,
+            saveRemoteData: false,
+            fullTextSearch: 'exact',
+            direction: 'auto',
+            debug: true
+        })
 
+    $('#store_keywords')
+        .dropdown({
+            apiSettings: {
+                url: 'http://localhost:5000/api/storekeywords/'
+            },
+            onChange: function(value, text, $selectedItem) {
+                console.log("Selected: ", value);
+                $('#sale_keywords').dropdown({
+                    apiSettings: {
+                        url: 'http://localhost:5000/api/storekeywords/'+value
+                    },
+                    debug: true,
+                    onChange: function(value, text, $selectedItem) {
+
+                    }
+                });
+
+            },
+            filterRemoteData: false,
             saveRemoteData: false,
             fullTextSearch: 'exact',
             direction: 'auto',
