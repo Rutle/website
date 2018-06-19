@@ -3,24 +3,12 @@ var axios = require('axios');
 var cheerio = require('cheerio');
 //var fs = require('fs');
 var parseData = require('./parser.js')
-<<<<<<< HEAD
-//var url = 'https://www.jimms.fi/';
-=======
 var urlList = ['https://www.jimms.fi/','https://www.verkkokauppa.com/'];
->>>>>>> scraperproject
 
 /**
  * Fetches data from a website defined by url.
  * @param {String} urlList
  */
-<<<<<<< HEAD
-exports.getData = function (url) {
-    return axios.get(url)
-        .then(function (response) {
-            if (response.status === 200) {
-                const html = response.data;
-                const $ = cheerio.load(html);
-=======
 //exports.getData = function (urlList) {
 return axios.all(urlList.map(l => axios.get(l))
 /*  [axios.get('https://www.jimms.fi/'),
@@ -80,7 +68,6 @@ return axios.all(urlList.map(l => axios.get(l))
         if (response.status === 200) {
             const html = response.data;
             const $ = cheerio.load(html);
->>>>>>> scraperproject
 
                 var productList = []
                 $('div.pcol > div.productitem').each(function (i, elem) {
@@ -99,31 +86,6 @@ return axios.all(urlList.map(l => axios.get(l))
                 // Parse relevant data and modify it to desired format.
                 pListTrimmed = parseData.parseArr(pListTrimmed);
 
-<<<<<<< HEAD
-                // Return axios promise object.
-                return pListTrimmed;
-                /*
-                fs.writeFile('productList.json',
-                     JSON.stringify(pListTrimmed, null, 4),
-                     (err)=> console.log('File successfully written!'));
-               */
-            }
-        }, function (err) {
-            console.log("error ", err);
-        })
-        .then(function (data) {
-            // Fetch each product's category and productId information, that are on sale.
-            return getProductPages(data).then(function (data) {
-                return data;
-            }, function (error) {
-                console.log("Error [getProductPages]: ", error);
-            })
-
-        }, function (error) {
-            console.log("error ", error)
-        });
-}
-=======
             // Return axios promise object.
             return pListTrimmed;
             /*
@@ -148,7 +110,6 @@ return axios.all(urlList.map(l => axios.get(l))
         console.log("Second error ", error)
     });
 //}
->>>>>>> scraperproject
 /*
 return axios.get('https://api.github.com/repos/rutle/website/commits?per_page=3&sha=master')
   .then(function(response) {
