@@ -104,11 +104,9 @@ $(function () {
                 });
 
             },
-            filterRemoteData: false,
             saveRemoteData: false,
             fullTextSearch: 'exact',
-            direction: 'auto',
-            debug: false
+            direction: 'auto'
         })
     /**
       * Event handling for adding new keyword.
@@ -126,6 +124,7 @@ $(function () {
         } else if (inputKeyword.value === '') {
             addErrorMessages([{ name: 'keyword', value: 'Please type a keyword.' }], 'store_keyword_error_messages', 'dropdown');
         } else {
+            $('#modify_store_keywords_form').addClass('loading');
             $.ajax({
                 type: 'POST',
                 url: '/dashboard/scraper/addkeyword',
@@ -135,9 +134,11 @@ $(function () {
                 },
                 dataType: 'json',
                 success: function (data) {
+                    $('#modify_store_keywords_form').removeClass('loading');
 
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
+                    $('#modify_store_keywords_form').removeClass('loading');
                     let customErrorMessages = JSON.parse(jqXHR.responseText);
                     console.log("Given error response: ", customErrorMessages);
                 }
@@ -157,6 +158,7 @@ $(function () {
         } else if ($('#sale_keywords').dropdown('get value') === '') {
             addErrorMessages([{ name: 'sale_keywords', value: 'Please select a keyword first.' }], 'store_keyword_error_messages', 'dropdown');
         } else {
+            $('#modify_store_keywords_form').addClass('loading');
             $.ajax({
                 type: 'POST',
                 url: '/dashboard/scraper/removekeyword',
@@ -166,9 +168,11 @@ $(function () {
                 },
                 dataType: 'json',
                 success: function (data) {
+                    $('#modify_store_keywords_form').removeClass('loading');
 
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
+                    $('#modify_store_keywords_form').removeClass('loading');
                     let customErrorMessages = JSON.parse(jqXHR.responseText);
                     console.log("Given error response: ", customErrorMessages);
                 }

@@ -35,73 +35,51 @@ function isAdmin(req, res, next) {
     res.redirect('/')
 }
 
+function getProjects(req, res, next) {
+    Project.find({ websiteProject: true })
+        .sort({ name: 'desc' })
+        .select('name websiteProjectURL -_id')
+        .exec(function (err, projects) {
+            if (err) {
+                console.log(err);
+            }
+            res.locals.siteProjects = projects;
+            return next();
+        })
+}
+
+
 module.exports = function (app, passport) {
 
 	/**
 	 * Main page.
 	 */
-    app.get('/', getBreadcrumbs, function (req, res) { // '/' url it is listening
-        console.log(req.breadcrumbs.length);
+    app.get('/', getBreadcrumbs, getProjects, function (req, res) {
+        console.log(res.locals.projects);
         res.render('home', {
             breadcrumbs: req.breadcrumbs,
             user: req.user,
         });
+
     });
 
 	/**
 	 * Projects page.
 	 */
-    app.get('/projects', getBreadcrumbs, function (req, res) {
+    app.get('/projects', getBreadcrumbs, getProjects, function (req, res) {
         res.render('projects', {
             breadcrumbs: req.breadcrumbs,
             user: req.user,
         });
     });
 
-	/**
-	 * Ohjelmallinen Sisällönhallinta project route.
-	 */
-    app.get('/projects/ohsiha', getBreadcrumbs, function (req, res) {
-        console.log(req.breadcrumbs);
-        res.render('project', {
-            breadcrumbs: req.breadcrumbs,
-            projectName: 'Ohjelmallinen Sisällönhallinta',
-            repo: 'ohsiha-website',
-            user: req.user,
-        });
-    });
-
-	/**
-	 * Roguelike game route.
-	 */
-    app.get('/projects/roguelike', getBreadcrumbs, function (req, res) {
-        console.log(req.breadcrumbs);
-        res.render('project', {
-            breadcrumbs: req.breadcrumbs,
-            projectName: 'Roguelike',
-            repo: '',
-            user: req.user,
-        });
-    });
-
-	/**
-	 * Johdanto Datatieteeseen project route.
-	 */
-    app.get('/projects/jodatut', getBreadcrumbs, function (req, res) {
-        console.log(req.breadcrumbs);
-        res.render('project', {
-            breadcrumbs: req.breadcrumbs,
-            projectName: 'Johdanto Datatieteeseen',
-            repo: 'jodatut-ht',
-            user: req.user,
-        });
-    });
 
 	/**
 	 * Website project route.
 	 */
-    app.get('/projects/website', getBreadcrumbs, function (req, res) {
+    app.get('/projects/website', getBreadcrumbs, getProjects, function (req, res) {
         console.log(req.breadcrumbs);
+        console.log()
         res.render('project', {
             breadcrumbs: req.breadcrumbs,
             projectName: 'Personal website',
@@ -113,8 +91,8 @@ module.exports = function (app, passport) {
     /**
      * 
      */
-    app.get('/projects/website/scraper', getBreadcrumbs, function (req, res) {
-        console.log(req.breadcrumbs);
+    app.get('/projects/website/scraper', getBreadcrumbs, getProjects, function (req, res) {
+        console.log("website scraper", req.breadcrumbs);
         res.render('scraper', {
             breadcrumbs: req.breadcrumbs,
             projectName: 'Sale price scraper',
@@ -126,7 +104,7 @@ module.exports = function (app, passport) {
 	/**
 	 * Price scraper project route.
 	 */
-    app.get('/projects/scraper', getBreadcrumbs, function (req, res) {
+    app.get('/projects/scraper', getBreadcrumbs, getProjects, function (req, res) {
         console.log(req.breadcrumbs);
         res.render('scraper', {
             breadcrumbs: req.breadcrumbs,
@@ -136,23 +114,10 @@ module.exports = function (app, passport) {
         });
     });
 
-	/**
-	 * Twitch application project route.
-	 */
-    app.get('/projects/twitch', getBreadcrumbs, function (req, res) {
-        console.log(req.breadcrumbs);
-        res.render('project', {
-            breadcrumbs: req.breadcrumbs,
-            projectName: 'Twitch stream application',
-            repo: 'twitch-program',
-            user: req.user,
-        });
-    });
-
     /**
      * Dashboard route.
      */
-    app.get('/dashboard', isLoggedIn, getBreadcrumbs, function (req, res) {
+    app.get('/dashboard', isLoggedIn, getBreadcrumbs, getProjects, function (req, res) {
         res.render('dashboard', {
             breadcrumbs: req.breadcrumbs,
             user: req.user,
@@ -201,22 +166,22 @@ module.exports = function (app, passport) {
                     })
                     return res.status(200).json({ success: true, results: result })
                 });
-        } else {            
+        } else {
             Store.findById(req.params.id)
-                 .select('keywords')
-                 .exec(function(err, store) {
-                     if(err) {
-                         console.log(err);
-                         return res.status(500).json({success: false});
-                     }
-                     let result = [];
-                     store.keywords.forEach(function(elem, idx) {
-                         console.log(elem);
-                         result.push({name: elem, value: elem, text: elem, disabled: false})
-                     });
-                     return res.status(200).json({ success: true, results: result })
-                 });
-            
+                .select('keywords')
+                .exec(function (err, store) {
+                    if (err) {
+                        console.log(err);
+                        return res.status(500).json({ success: false });
+                    }
+                    let result = [];
+                    store.keywords.forEach(function (elem, idx) {
+                        console.log(elem);
+                        result.push({ name: elem, value: elem, text: elem, disabled: false })
+                    });
+                    return res.status(200).json({ success: true, results: result })
+                });
+
         }
 
     });
@@ -224,29 +189,29 @@ module.exports = function (app, passport) {
         let keyword = req.body.keyword;
         let storeId = req.body.storeId;
         let action = req.params.action;
-        if(action === 'removekeyword') {
-            Store.findById(storeId, 'keywords', function(err, store) {
-                if(err) {
-                    return res.status(500).json({message: 'Error in finding store.'});
+        if (action === 'removekeyword') {
+            Store.findById(storeId, 'keywords', function (err, store) {
+                if (err) {
+                    return res.status(500).json({ message: 'Error in finding store.' });
                 }
-                if(!store.keywords.includes(keyword)) {
-                    return res.status(500).json({message: 'Keyword was not found.'});
+                if (!store.keywords.includes(keyword)) {
+                    return res.status(500).json({ message: 'Keyword was not found.' });
                 }
                 store.keywords = store.keywords.filter(e => e !== keyword);
-                return res.status(200).json({message: 'Selected keyword removed.'})
+                return res.status(200).json({ message: 'Selected keyword removed.' })
             })
         } else if (action === 'addkeyword') {
             console.log('Add new keyword');
-            if(keyword === '') return res.status(500).json({message: 'Please type non-empty keyword.'})
-            Store.findById(store, 'keywords', function(err, store) {
-                if(err) {
-                    return res.status(500).json({message: 'Error in finding store from database.'});
+            if (keyword === '') return res.status(500).json({ message: 'Please type non-empty keyword.' })
+            Store.findById(store, 'keywords', function (err, store) {
+                if (err) {
+                    return res.status(500).json({ message: 'Error in finding store from database.' });
                 }
-                if(store.keywords.includes(keyword)) {
-                    return res.status(500).json({message: 'Keyword is already exists.'});
+                if (store.keywords.includes(keyword)) {
+                    return res.status(500).json({ message: 'Keyword is already exists.' });
                 }
                 store.keywords.push(keyword);
-                return res.status(200).json({message: 'Keyword '+keyword+' added to the list.'})
+                return res.status(200).json({ message: 'Keyword ' + keyword + ' added to the list.' })
             })
         }
 
@@ -255,7 +220,7 @@ module.exports = function (app, passport) {
      * Dropdown API for main menu projects dropdown
      */
     app.get('/api/projects', function (req, res) {
-        Project.find({websiteProject: false})
+        Project.find({ websiteProject: false })
             .sort({ websiteProject: 'desc' })
             .select('name repositoryName websiteProjectUrl dateCreated formattedDate websiteProject -_id')
             .exec(function (err, projects) {
@@ -265,38 +230,17 @@ module.exports = function (app, passport) {
                 }
 
                 let result = [];
-                projects.forEach(function(elem, idx) {
-                    result.push({name: elem.name, value: elem.websiteProjectUrl,
-                                 text: elem.title, disabled: false })
+                projects.forEach(function (elem, idx) {
+                    result.push({
+                        name: elem.name, value: elem.websiteProjectUrl,
+                        text: elem.title, disabled: false
+                    })
                 })
-                return res.status(200).json({success: true, results: result})
+                return res.status(200).json({ success: true, results: result })
 
             });
-        /*
-        res.status(200).json({
-            success: true,
-            results: [
-                {
-                    name: 'All',
-                    value: '/projects',
-                    text: 'All',
-                    disabled: false
-                },
-                {
-                    name: 'Website',
-                    value: '/projects/website',
-                    text: 'Website',
-                    disabled: false
-                },
-                {
-                    name: 'Sale scraper',
-                    value: '/projects/website/scraper',
-                    text: 'Sale scraper',
-                    disabled: false
-                }
-            ]
-        });*/
     });
+
     /**
      * Dashboard route
      */
@@ -318,11 +262,11 @@ module.exports = function (app, passport) {
             newProject.repositoryName = formData[1].value;
             newProject.shortName = formData[2].value
             newProject.websiteProject = isWebProject;
-            
-            if(isWebProject) {
-                newProject.websiteProjectURL = '/projects/website' + formData[2].value;
+
+            if (isWebProject) {
+                newProject.websiteProjectURL = '/projects/website/' + formData[2].value;
             } else {
-                newProject.websiteProjectURL = '/projects/'+formData[1].value;
+                newProject.websiteProjectURL = '/projects/' + formData[1].value;
             }
             console.log(newProject.websiteProjectURL)
             let formSize = formData.length;
@@ -419,7 +363,7 @@ module.exports = function (app, passport) {
     /**
      * Login page
      */
-    app.get('/login', getBreadcrumbs, function (req, res) {
+    app.get('/login', getBreadcrumbs, getProjects, function (req, res) {
         res.render('login', {
             breadcrumbs: req.breadcrumbs,
             message: req.flash('loginMessage'),
@@ -441,9 +385,19 @@ module.exports = function (app, passport) {
     * Renders 404 page when a page cannot be found.
     */
     app.use(function (req, res, next) {
-        res.status(404).render('404', {
-            breadcrumbs: [{ breadcrumbName: "404", breadcrumbUrl: "/" }]
-        });
+        Project.find({ websiteProject: true })
+        .sort({ name: 'desc' })
+        .select('name websiteProjectURL -_id')
+        .exec(function (err, projects) {
+            if (err) {
+                console.log(err);
+            }
+            return res.status(404).render('404', {
+                breadcrumbs: [{ breadcrumbName: "404", breadcrumbUrl: "/" }],
+                siteProjects: projects
+            });
+        })
+ 
     })
 
 }

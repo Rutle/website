@@ -47,21 +47,15 @@
             </span>
             <a href="/" class="item">
                 <i class="home icon small"></i>Home</a>
-            <!--<a href="/projects" class="item">Projects</a>-->
             <div class="ui dropdown item" id="project_dd">
                 Projects
                 <i class="dropdown icon"></i>
-                <!--
-                <i class="folder open icon small"></i>Projects
-                <i class="dropdown icon"></i>
-                <div class="menu">
-                    <a class="item" href="/projects/roguelike">Roguelike</a>
-                    <a class="item" href="/projects/ohsiha">Ohsiha course project</a>
-                    <a class="item" href="/projects/jodatut">Jodat course project</a>
-                    <a class="item" href="/projects/website">Website</a>
-                    <a class="item" href="/projects/scraper">Price scraper</a>
-                </div>-->
+
             </div>
+            
+            {{#forEach siteProjects}}
+            <a href="{{websiteProjectURL}}" class="item">{{name}}</a>
+            {{/forEach}}
             <!--
             <a href="/about" class="item">
                 <i class="question icon small"></i>About</a>-->
