@@ -201,9 +201,22 @@ module.exports = function (app, passport) {
                     })
                     return res.status(200).json({ success: true, results: result })
                 });
-        } else {
-            console.log("param");
-            return res.status(200).json({ success: true, results: [{ name: 'testi', value: 'testi2', text: 'testi3', disabled: false }] })
+        } else {            
+            Store.findById(req.params.id)
+                 .select('keywords')
+                 .exec(function(err, store) {
+                     if(err) {
+                         console.log(err);
+                         return res.status(500).json({success: false});
+                     }
+                     let result = [];
+                     store.keywords.forEach(function(elem, idx) {
+                         console.log(elem);
+                         result.push({name: elem, value: elem, text: elem, disabled: false})
+                     });
+                     return res.status(200).json({ success: true, results: result })
+                 });
+            
         }
 
     });
@@ -222,6 +235,19 @@ module.exports = function (app, passport) {
                 store.keywords = store.keywords.filter(e => e !== keyword);
                 return res.status(200).json({message: 'Selected keyword removed.'})
             })
+        } else if (action === 'addkeyword') {
+            console.log('Add new keyword');
+            if(keyword === '') return res.status(500).json({message: 'Please type non-empty keyword.'})
+            Store.findById(store, 'keywords', function(err, store) {
+                if(err) {
+                    return res.status(500).json({message: 'Error in finding store from database.'});
+                }
+                if(store.keywords.includes(keyword)) {
+                    return res.status(500).json({message: 'Keyword is already exists.'});
+                }
+                store.keywords.push(keyword);
+                return res.status(200).json({message: 'Keyword '+keyword+' added to the list.'})
+            })
         }
 
     });
@@ -229,7 +255,7 @@ module.exports = function (app, passport) {
      * Dropdown API for main menu projects dropdown
      */
     app.get('/api/projects', function (req, res) {
-        Project.find({})
+        Project.find({websiteProject: false})
             .sort({ websiteProject: 'desc' })
             .select('name repositoryName websiteProjectUrl dateCreated formattedDate websiteProject -_id')
             .exec(function (err, projects) {
@@ -237,8 +263,14 @@ module.exports = function (app, passport) {
                     console.log(err);
                     return res.status(500).json({ success: false })
                 }
+
                 let result = [];
-                console.log(projects)
+                projects.forEach(function(elem, idx) {
+                    result.push({name: elem.name, value: elem.websiteProjectUrl,
+                                 text: elem.title, disabled: false })
+                })
+                return res.status(200).json({success: true, results: result})
+
             });
         /*
         res.status(200).json({
@@ -271,7 +303,9 @@ module.exports = function (app, passport) {
     app.post('/dashboard/:tab', isLoggedIn, getBreadcrumbs, function (req, res) {
         let tab = req.params.tab;
         let formData = req.body.form;
-        let isWebProject = req.body.websiteProject;
+        let isWebProject = (req.body.websiteProject === '1');
+        console.log(isWebProject);
+
         if (tab === 'new') {    // New Project
 
             formData.forEach(function (element, idx) {
@@ -283,8 +317,14 @@ module.exports = function (app, passport) {
             newProject.name = formData[0].value;
             newProject.repositoryName = formData[1].value;
             newProject.shortName = formData[2].value
-            newProject.websiteProject = Boolean(isWebProject);
-            newProject.websiteProjectUrl = '/projects/website' + formData[2].value;
+            newProject.websiteProject = isWebProject;
+            
+            if(isWebProject) {
+                newProject.websiteProjectURL = '/projects/website' + formData[2].value;
+            } else {
+                newProject.websiteProjectURL = '/projects/'+formData[1].value;
+            }
+            console.log(newProject.websiteProjectURL)
             let formSize = formData.length;
 
             for (var i = (3 + parseInt(isWebProject)); i < formSize; i += 2) {
@@ -329,6 +369,7 @@ module.exports = function (app, passport) {
             let newStore = new Store();
             newStore.name = formData[0].value.trim();
             newStore.url = formData[1].value.trim();
+            newStore.keywords = formData[2].value.trim().split(';');
             newStore.save(function (err) {
                 if (err) {
                     console.log(err);

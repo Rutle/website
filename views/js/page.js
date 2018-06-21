@@ -95,7 +95,7 @@ $(function () {
                 url: 'http://localhost:5000/api/storekeywords/'
             },
             onChange: function (value, text, $selectedItem) {
-                console.log("Selected: ", value);
+                //console.log("Selected: ", value);
                 $('#sale_keywords').dropdown({
                     apiSettings: {
                         url: 'http://localhost:5000/api/storekeywords/' + value
@@ -110,14 +110,53 @@ $(function () {
             direction: 'auto',
             debug: false
         })
+    /**
+      * Event handling for adding new keyword.
+     */
+    $('#add_keyword').click(function (event) {
+        event.preventDefault();
+        clearErrorInfo('store_keywords', 'store_keyword_error_messages');
+        clearErrorInfo('sale_keywords', 'store_keyword_error_messages');
+        clearErrorInfo('keyword', 'store_keyword_error_messages')
+        let inputKeyword = document.getElementById('keyword');
+
+        // Basic 'validation' to see if a store has been selected and keyword typed.
+        if ($('#store_keywords').dropdown('get value') === '') {
+            addErrorMessages([{ name: 'store_keywords', value: 'Please select a store first.' }], 'store_keyword_error_messages', 'dropdown');
+        } else if (inputKeyword.value === '') {
+            addErrorMessages([{ name: 'keyword', value: 'Please type a keyword.' }], 'store_keyword_error_messages', 'dropdown');
+        } else {
+            $.ajax({
+                type: 'POST',
+                url: '/dashboard/scraper/addkeyword',
+                data: {
+                    storeId: $('#store_keywords').dropdown('get value'),
+                    keyword: $('#sale_keywords').dropdown('get text')
+                },
+                dataType: 'json',
+                success: function (data) {
+
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    let customErrorMessages = JSON.parse(jqXHR.responseText);
+                    console.log("Given error response: ", customErrorMessages);
+                }
+            });
+        }
+    })
+    /**
+      * Event handling for removing new keyword.
+     */
     $('#remove_keyword').click(function (event) {
         event.preventDefault();
-        //let storeId = document.getElementById();
+        clearErrorInfo('store_keywords', 'store_keyword_error_messages');
+        clearErrorInfo('sale_keywords', 'store_keyword_error_messages');
+        // Basic 'validation' to see if a store and keyword has been selected.
         if ($('#store_keywords').dropdown('get value') === '') {
-            console.log('tyhjä');
+            addErrorMessages([{ name: 'store_keywords', value: 'Please select a store first.' }], 'store_keyword_error_messages', 'dropdown');
+        } else if ($('#sale_keywords').dropdown('get value') === '') {
+            addErrorMessages([{ name: 'sale_keywords', value: 'Please select a keyword first.' }], 'store_keyword_error_messages', 'dropdown');
         } else {
-            console.log($('#store_keywords').dropdown('get value'), $('#sale_keywords').dropdown('get text'));
-            
             $.ajax({
                 type: 'POST',
                 url: '/dashboard/scraper/removekeyword',
@@ -130,7 +169,8 @@ $(function () {
 
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
-
+                    let customErrorMessages = JSON.parse(jqXHR.responseText);
+                    console.log("Given error response: ", customErrorMessages);
                 }
             });
         }
@@ -151,13 +191,12 @@ $(function () {
                 console.log($selectedItem)
                 window.location = value;
             },
-            filterRemoteData: false,
             saveRemoteData: false,
-            direction: 'auto',
-            debug: true
+            direction: 'auto'
         });
-    function addErrorMessages(messages) {
-        let eMessageDiv = document.getElementById('error_messages');
+
+    function addErrorMessages(messages, divId, type) {
+        let eMessageDiv = document.getElementById(divId);
         while (eMessageDiv.firstChild) {
             eMessageDiv.removeChild(eMessageDiv.firstChild);
         }
@@ -167,29 +206,46 @@ $(function () {
             let listItem = document.createElement('li');
             listItem.appendChild(document.createTextNode(elem.value));
             list.appendChild(listItem);
-            addErrorInfo(elem.name);
+            addErrorInfo(elem.name, type);
         });
         eMessageDiv.appendChild(list);
         eMessageDiv.style.display = 'inherit';
     }
-
-    function addErrorInfo(id) {
-
+    /**
+     * Function to add error messages to a form.
+     * @param {String} id Id of the input field.
+     * @param {String} messageBoxId Id of the form's error message box.
+     */
+    function addErrorInfo(id, type) {
         let inputNode = document.getElementById(id);
         inputNode.style.color = '#9f3a38';
         inputNode.style.borderColor = '#e0b4b4';
         inputNode.style.backgroundColor = '#fff6f6';
-        let label = document.getElementById(id).previousSibling;
+        let label = '';
+        if (type === 'input') {
+            label = document.getElementById(id).previousSibling;
+        } else if (type === 'dropdown') {
+            label = inputNode.previousElementSibling
+        }
         label.style.color = '#9f3a38';
     }
-
-    function clearErrorInfo(id) {
+    /**
+     * Function to clear error messages from a form.
+     * @param {String} id Id of the input field.
+     * @param {String} messageBoxId Id of the form's error message box.
+     */
+    function clearErrorInfo(id, messageBoxId) {
         let inputNode = document.getElementById(id);
         inputNode.style.color = 'rgba(0,0,0,.95)';
         inputNode.style.borderColor = '#85b7d9';
         inputNode.style.backgroundColor = '#fff';
-        let label = document.getElementById(id).previousSibling;
+        let label = inputNode.previousElementSibling;
         label.style.color = 'rgba(0,0,0,.87)';
+        let eMessageDiv = document.getElementById(messageBoxId);
+        while (eMessageDiv.firstChild) {
+            eMessageDiv.removeChild(eMessageDiv.firstChild);
+        }
+        eMessageDiv.style.display = 'none';
     }
     $('#new_store_form')
         .form({
@@ -201,7 +257,7 @@ $(function () {
             debug: true,
             onSuccess: function (event, fields) {
                 event.preventDefault();
-                $('.ui.form').addClass('loading');
+                $('#new_store_form').addClass('loading');
                 $.ajax({
                     method: 'POST',
                     url: '/dashboard/newstore',
@@ -211,8 +267,8 @@ $(function () {
                     dataType: 'json',
                     success: function (data) {
                         console.log("vastaus: ", data.message);
-                        $('.ui.form').removeClass('loading');
-                        $('.ui.form').form('clear');
+                        $('#new_store_form').removeClass('loading');
+                        //$('.ui.form').form('clear');
                         let eMessageDiv = document.getElementById('store_error_messages');
                         eMessageDiv.style.display = 'none';
                         let sMessageDiv = document.getElementById('store_success_messages');
@@ -226,9 +282,6 @@ $(function () {
                     error: function (jqXHR, textStatus, errorThrown) {
                         let error = errorThrown;
                         let customErrorMessages = JSON.parse(jqXHR.responseText);
-                        //console.log("jqXHR: ", jqXHR);
-                        //console.log("textStatus: ", textStatus);
-                        //console.log("errorThrown: ", errorThrown);
                         console.log("responseText: ", customErrorMessages);
 
                         let eMessageDiv = document.getElementById('store_error_messages');
@@ -244,7 +297,7 @@ $(function () {
                         });
                         eMessageDiv.appendChild(list);
                         eMessageDiv.style.display = 'inherit';
-                        $('.ui.form').removeClass('loading');
+                        $('#new_store_form').removeClass('loading');
 
                     }
                 });
@@ -319,11 +372,12 @@ $(function () {
                     }
                 }
                 if (errorMessages.length > 0) {
-                    console.log('errors', errorMessages)
-                    addErrorMessages(errorMessages);
+                    
+                    addErrorMessages(errorMessages, 'error_messages', 'input');
 
                     $('.ui.form').removeClass('loading');
                 } else {
+                    console.log('checkbox', $("input:checkbox").is(":checked") ? 1 : 0)
                     $.ajax({
                         method: 'POST',
                         url: '/dashboard/new',
@@ -351,9 +405,6 @@ $(function () {
                         error: function (jqXHR, textStatus, errorThrown) {
                             let error = errorThrown;
                             let customErrorMessages = JSON.parse(jqXHR.responseText);
-                            //console.log("jqXHR: ", jqXHR);
-                            //console.log("textStatus: ", textStatus);
-                            //console.log("errorThrown: ", errorThrown);
                             console.log("responseText: ", customErrorMessages);
 
                             let eMessageDiv = document.getElementById('error_messages');
@@ -396,37 +447,7 @@ $(function () {
                 return false;
             }
         });
-    /*
-$('#testbtn').click(function (event) {
-    if ($('#project_form').form('is valid')) {
-        // form is valid (both email and name)
-        console.log("valid");
-        $('.ui.form').addClass('loading');
-        $.ajax({
-            type: 'POST',
-            url: '/dashboard/new',
-            data: { form: JSON.parse(JSON.stringify($('#project_form').serializeArray())) },
-            dataType: 'json',
-            success: function (data) {
-                console.log("vastaus: ", data);
-                $('.ui.form').removeClass('loading');
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-            }
-        });
-    }
-});*/
 
-    /*
-    $('#project_form_clear').click(function (event) {
-        console.log("clear");
-        let eMessageDiv = document.getElementById('error_messages');
-        while (eMessageDiv.firstChild) {
-            eMessageDiv.removeChild(eMessageDiv.firstChild);
-        }
-        eMessageDiv.style.display = 'none';
-    })
-    */
     $('#update_sales_data').click(function (event) {
         $.ajax({
             type: 'POST',

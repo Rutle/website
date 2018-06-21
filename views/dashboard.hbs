@@ -84,7 +84,10 @@
                                 <label>Store URL</label>
                                 <input name="store_url" placeholder="Store URL" type="url" required>
                             </div>
-
+                            <div class="field">
+                                <label>Store Keywords</label>
+                                <textarea name="store_keywords" rows="2" placeholder="Separate keywords with ';: Normaalihinta;norm;alennus..." type="url"></textarea>
+                            </div>
                             <button class="ui tiny primary button" type="submit" id="add_store">Submit</button>
 
                             <button class="ui tiny clear button">Clear</button>
@@ -112,7 +115,7 @@
                                 <div class="field">
                                     <label>Sale match keywords</label>
                                     <div class="ui selection dropdown" id="sale_keywords">
-                                        <div class="default text">Select store</div>
+                                        <div class="default text">Select a keyword</div>
                                         <i class="dropdown icon"></i>
                                     </div>
 
@@ -127,7 +130,7 @@
                             </div>
                             <div class="fields">
                                 <div class="field">
-                                    <label>Removal</label>
+                                    <label>New keyword</label>
                                     <input name="keyword" placeholder="Keyword" type="text">
                                 </div>
                                 <div class="field">
@@ -139,8 +142,8 @@
                                 </div>
                             </div>
 
-                            <div class="ui error message" id="store_error_messages"></div>
-                            <div class="ui success message" id="store_success_messages"></div>
+                            <div class="ui error message" id="store_keyword_error_messages"></div>
+                            <div class="ui success message" id="store_keyword_success_messages"></div>
                         </form>
                     </div>
                 </div>
