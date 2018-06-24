@@ -14,13 +14,13 @@ const gitHubAction = {
     GETREPOSITORY: 'getRepository',
     INVALIDACTION: 'Invalid action'
 };
-module.exports = { gitHubAction };
+
 
 /**
  * Fetches data from a website defined by url.
  * @param {Array} stores List of stores to fetch data from.
  */
-exports.getData = function (stores) {
+function getData(stores) {
     return axios.all(stores.map(l => axios.get(l.url)))
         .then(axios.spread((...args) => {
             var siteData = []
@@ -104,7 +104,7 @@ exports.getData = function (stores) {
  * @param {String} repo Name of the Github repository.
  * @param {Enum} action What is fetched.
  */
-exports.getRepository = function (repo, action) {
+function getRepository(repo, action) {
     switch (action) {
         case gitHubAction.GETREPOSITORY:
             return axios.get('https://api.github.com/repos/rutle/' + repo + '/commits?per_page=3&sha=master')
@@ -190,3 +190,8 @@ function getProductPages(links) {
         });
 }
 
+module.exports = {
+    gitHubAction: gitHubAction,
+    getData: getData,
+    getRepository: getRepository
+};
