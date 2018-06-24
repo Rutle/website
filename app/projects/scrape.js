@@ -18,11 +18,10 @@ module.exports = { gitHubAction };
 
 /**
  * Fetches data from a website defined by url.
- * @param {Array} urlList Store url list.
- * @param {Array} salesMatchList For parsing sales from non-sales.
+ * @param {Array} stores List of stores to fetch data from.
  */
-exports.getData = function (urlList, salesMatchList) {
-    return axios.all(urlList.map(l => axios.get(l)))
+exports.getData = function (stores) {
+    return axios.all(stores.map(l => axios.get(l.url)))
         .then(axios.spread((...args) => {
             var siteData = []
             for (let i = 0; i < args.length; i++) {
@@ -47,8 +46,12 @@ exports.getData = function (urlList, salesMatchList) {
                     // Clean up undefined elements.
                     productList = productList.filter(n => n != undefined);
 
+                    let store = stores.find(function(store) {
+                        return store.url === args[i].config.url;
+                    });
+
                     // Parse relevant data and modify it to desired format.
-                    productList = parseData.parseArr(productList, args[i].config.url);
+                    productList = parseData.parseArr(productList, args[i].config.url, store.keywords);
 
                     // Add elements from productList to siteData.
                     siteData.push(...productList);

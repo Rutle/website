@@ -18,14 +18,16 @@ var verkkokauppa = "https://www.verkkokauppa.com/"
 /**
  * Parses an array containing objects.
  * @param {Array} objectList 
+ * @param {String} url
+ * @param {Array} keywords
  */
-exports.parseArr = function(objectList, url) {
+exports.parseArr = function(objectList, url, keywords) {
 
   var newObjectList = [];
   var newCounter = 0;
   if (url === jimmsUrl) {
     for(var i = 0; i < objectList.length; i++) {
-        var indexBegin = objectList[i].pname.indexOf(containsAny(objectList[i].pname, matchListJimms));
+        var indexBegin = objectList[i].pname.indexOf(containsAny(objectList[i].pname, keywords));
         if(indexBegin !== -1) {
           var productItem = objectList[i].pname.slice(0, indexBegin).trim();
           var tarjousStr = objectList[i].pname.slice(indexBegin, objectList[i].pname.length);
