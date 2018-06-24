@@ -1,7 +1,7 @@
 'use strict'
 var axios = require('axios');
 var cheerio = require('cheerio');
-var fs = require('fs');
+//var fs = require('fs');
 var parseData = require('./parser.js')
 
 /**

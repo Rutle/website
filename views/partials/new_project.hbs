@@ -1,117 +1,11 @@
-<script>
-    $(document)
-        .ready(function () {
-            $('#project_form')
-                .form({
-                    on: 'blur',
-                    fields: {
-                        project_name: {
-                            identifier: 'project_name',
-                            rules: [
-                                {
-                                    type: 'empty',
-                                    prompt: 'Please enter project name.'
-                                }
-                            ]
-                        },
-                        short_name: {
-                            identifier: 'short_name',
-                            rules: [
-                                {
-                                    type: 'empty',
-                                    prompt: 'Please enter short name.'
-                                }
-                            ]
-                        }
-
-                    }
-                    ,
-                    onSuccess: function (event, fields) {
-                        event.preventDefault();
-                        $('.ui.form').addClass('loading');
-                        $.ajax({
-                            method: 'POST',
-                            url: '/dashboard/new',
-                            data: { form: JSON.parse(JSON.stringify($('#project_form').serializeArray())) },
-                            dataType: 'json',
-                            success: function (data) {
-
-                                //console.log("vastaus: ", data);
-                                $('.ui.form').removeClass('loading');
-                            },
-                            error: function (jqXHR, textStatus, errorThrown, data) {
-
-                            }
-                        });
-                    },
-                    onFailure: function (formErrors, fields) {
-                        //console.log(formErrors);
-                        //console.log(fields);
-                        let eMessageDiv = document.getElementById('error_messages');
-                        while (eMessageDiv.firstChild) {
-                            eMessageDiv.removeChild(eMessageDiv.firstChild);
-                        }
-                        let list = document.createElement('ul');
-                        list.className = 'list';
-                        formErrors.forEach(function (elem, idx) {
-                            let listItem = document.createElement('li');
-                            listItem.appendChild(document.createTextNode(elem));
-                            list.appendChild(listItem);
-                        });
-                        eMessageDiv.appendChild(list);
-                        eMessageDiv.style.display = 'flex';
-                        return false;
-
-                    }
-                });
-            /*
-        $('#testbtn').click(function (event) {
-            if ($('#project_form').form('is valid')) {
-                // form is valid (both email and name)
-                console.log("valid");
-                $('.ui.form').addClass('loading');
-                $.ajax({
-                    type: 'POST',
-                    url: '/dashboard/new',
-                    data: { form: JSON.parse(JSON.stringify($('#project_form').serializeArray())) },
-                    dataType: 'json',
-                    success: function (data) {
-
-                        console.log("vastaus: ", data);
-                        $('.ui.form').removeClass('loading');
-                    },
-                    error: function (jqXHR, textStatus, errorThrown, data) {
-
-                    }
-                });
-            }
-        });*/
-
-        });
-</script>
-
-<div class="ui top attached segment secondary ">
-    <h3 class="ui header">Add new project</h3>
+<div class="ui center aligned basic segment">
+    <h2 class="ui header">New project</h2>
+</div>
+<div class="ui top segment secondary">
+    <h4 class="ui header">Add new project</h4>
 
 </div>
-<div class="ui attached menu">
-    <div class="header item">
-        Options
-    </div>
-    <div class="item">
-        <button class="ui teal labeled icon button">
-            Add new section
-            <i class="add icon"></i>
-        </button>
-    </div>
-    <div class="item">
-        <button class="ui basic button">Reset</button>
-    </div>
-    <div class="item floated right">
-        <button class="ui button" id="testbtn" form="project_form">Submit</button>
-    </div>
-</div>
-<div class="ui form attached segment">
+<div class="ui form segment">
     <form id="project_form">
         <div class="fields">
             <!-- Project title etc. -->
@@ -131,32 +25,33 @@
         <div class="fields">
             <div class="five wide field">
                 <div class="ui checkbox">
-                    <input name="example" type="checkbox">
+                    <input name="website_project" type="checkbox">
                     <label>Website project</label>
                 </div>
             </div>
         </div>
         <div class="ui horizontal divider">Project text sections</div>
         <div id="form_section_container">
-            <div class="fields">
+            <div class="fields" id="section">
                 <div class="five wide field">
                     <div class="fields">
                         <div class="sixteen wide field">
                             <label>Section name</label>
-                            <input name="first-name" placeholder="First Name" type="text">
+                            <input name="section_name" placeholder="First Name" type="text">
                         </div>
                     </div>
                     <div class="fields">
                         <div class="sixteen wide field">
-                            <button class="ui basic button">Remove this section</button>
+                            <button class="ui basic button" id="remove_section">Remove this section</button>
                         </div>
                     </div>
                 </div>
                 <div class="eleven wide field">
                     <label>Text</label>
-                    <textarea placeholder="Paragraph for a section."></textarea>
+                    <textarea name="section_text" placeholder="Paragraph for a section."></textarea>
                 </div>
             </div>
+
         </div>
         <div class="ui divider"></div>
         <div class="fields">
@@ -165,9 +60,19 @@
                     <button class="ui primary button" id="submitbtn">Submit</button>
                 </div>
             </div>
+            <div class="field">
+                <button class="ui teal labeled icon button" id="add_new_section">
+                    Add new section
+                    <i class="add icon"></i>
+                </button>
+            </div>
+            <div class="field">
+                <button class="ui button" id="project_form_clear">Clear</button>
+            </div>
 
         </div>
         <div class="ui error message" id="error_messages"></div>
+        <div class="ui success message" id="success_messages"></div>
     </form>
 </div>
 <script src="/js/helpers.js"></script>

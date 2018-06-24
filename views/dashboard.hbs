@@ -1,32 +1,160 @@
 <div class="ui container">
-    <div class="ui grid">
-        <div class="three wide column">
-            <div class="ui vertical fluid menu pointing menu" id="dashboard_menu">
-                <a class="item" data-tab="current_projects">
-                    <i class="small archive icon"></i>
-                    Current Projects
-                </a>
-                <a class="item" data-tab="new_project">
-                    <i class="small edit outline icon"></i>
-                    New Project
-                </a>
-                <a class="item" data-tab="tab3">
-                    Updates
-                </a>
 
-            </div>
-        </div>
-        <div class="thirteen wide stretched column">
-            <div class="ui tab segment" data-tab="current_projects">
-                <h3 class="ui header">AJAX Tab first</h3>
+    <div class="ui small inverted top attached pointing menu" id="dashboard_menu">
+        <a class="item active" data-tab="current_projects">
+            <i class="small archive icon"></i>
+            Current projects
+        </a>
+        <a class="item" data-tab="new_project">
+            <i class="small edit outline icon"></i>
+            New project
+        </a>
+        <a class="item" data-tab="tab3">
+            Sales scraper
+        </a>
 
-            </div>
-            <div class="ui tab segment" data-tab="new_project" style="margin-top: 0!important;">
-                {{> new_project}}
-            </div>
-            <div class="ui tab segment" data-tab="tab3" style="margin-top: 0!important; margin-bottom: 14px!important;">
-                <h3 class="ui header">AJAX Tab third</h3>
-            </div>
+    </div>
+
+    <div class="ui bottom attached tab segment active" data-tab="current_projects" style="margin-bottom: 5rem!important;">
+        <div class="ui center aligned basic segment">
+            <h2 class="ui header">Current projects</h2>
         </div>
     </div>
+    <div class="ui bottom attached tab segment" data-tab="new_project" style="margin-bottom: 5rem!important;">
+        {{> new_project}}
+    </div>
+    <div class="ui bottom attached tab segment" data-tab="tab3" style="margin-bottom: 5rem!important;">
+        <div class="ui center aligned basic segment">
+            <h2 class="ui header">Sales scraper</h2>
+        </div>
+        <div class="ui stackable two column grid">
+            <div class="two column row">
+                <div class="column">
+                    <div class="ui top segment secondary">
+                        <h4 class="ui header">Sales scraper data</h4>
+                    </div>
+                    
+                    <table class="ui blue compact celled table">
+                        <thead>
+                            <tr>
+                                <th>Webstore</th>
+                                <th>Total products in DB</th>
+                                <th>Last updated</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Jimms</td>
+                                <td>200</td>
+                                <td>Today</td>
+
+                            </tr>
+                            <tr>
+                                <td>Verkkokauppa.com</td>
+                                <td>3000</td>
+                                <td>Today</td>
+
+                            </tr>
+
+                        </tbody>
+                        <tfoot class="full-width">
+                            <tr>
+                                <th colspan="3">
+                                    <div class="ui tiny primary button" id="update_sales_data">
+                                        Update
+                                    </div>
+                                </th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                    
+                </div>
+            </div>
+            <div class="two column row">
+                <div class="column">
+                    <div class="ui top segment secondary">
+                        <h4 class="ui header">Add new store</h4>
+                    </div>
+                    <div class="ui blue segment">
+                        <form class="ui small form" id="new_store_form">
+                            <div class="field">
+                                <label>Store name</label>
+                                <input name="store_name" placeholder="Store Name" type="text" required>
+                            </div>
+                            <div class="field">
+                                <label>Store URL</label>
+                                <input name="store_url" placeholder="Store URL" type="url" required>
+                            </div>
+                            <div class="field">
+                                <label>Store Keywords</label>
+                                <textarea name="store_keywords" rows="2" placeholder="Separate keywords with ';: Normaalihinta;norm;alennus..." type="url"></textarea>
+                            </div>
+                            <button class="ui tiny primary button" type="submit" id="add_store">Submit</button>
+
+                            <button class="ui tiny clear button">Clear</button>
+
+                            <div class="ui error message" id="store_error_messages"></div>
+                            <div class="ui success message" id="store_success_messages"></div>
+                        </form>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="ui top segment secondary">
+                        <h4 class="ui header">Modify sale matching keywords</h4>
+                    </div>
+                    <div class="ui blue segment">
+                        <form class="ui small form" id="modify_store_keywords_form">
+                            <div class="field">
+                                <label>Store name</label>
+                                <div class="ui selection dropdown" id="store_keywords">
+                                    <div class="default text">Select store</div>
+                                    <i class="dropdown icon"></i>
+                                </div>
+                            </div>
+
+                            <div class="fields">
+                                <div class="field">
+                                    <label>Sale match keywords</label>
+                                    <div class="ui selection dropdown" id="sale_keywords">
+                                        <div class="default text">Select a keyword</div>
+                                        <i class="dropdown icon"></i>
+                                    </div>
+
+                                </div>
+                                <div class="field">
+                                    <label>Keyword</label>
+                                    <button class="ui tiny labeled icon button" id="remove_keyword">
+                                        <i class="delete icon"></i>
+                                        Remove
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="fields">
+                                <div class="field">
+                                    <label>New keyword</label>
+                                    <input name="keyword" placeholder="Keyword" type="text">
+                                </div>
+                                <div class="field">
+                                    <label>Addition</label>
+                                    <button class="ui tiny labeled icon button" id="add_keyword">
+                                        <i class="plus icon"></i>
+                                        Add
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="ui error message" id="store_keyword_error_messages"></div>
+                            <div class="ui success message" id="store_keyword_success_messages"></div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
 </div>

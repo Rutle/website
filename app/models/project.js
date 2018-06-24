@@ -7,15 +7,35 @@ var mongoose = require('mongoose');
 
 // MongoDB schema for a project model.
 var projectSchema = mongoose.Schema({
-
-    name: {                             // Article title.
+    author: {                           // ObjectId of the author of the project.
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'User'
+    },
+    name: {                             // Project title.
         type: String,
         required: true
     },
 
-    repositoryName: String,             // Name of the Github repository.
+    repositoryName: {                       // Name of the Github repository.
+        type: String,
+        unique: true,
+        dropDups: true,
+    },             
 
-    websiteProjectURL: String,          // For apps on website.
+    websiteProjectURL: {// For apps on website.
+        type: String,
+        unique: true,
+        dropDups: true,
+    },      
+
+    websiteProject: Boolean,
+
+    shortName: {
+        type: String,                  // If lacking repository
+        unique: true,
+        dropDups: true,
+    },
 
     sections: [{                        // Sections and text on a project page.
         title: {
@@ -41,7 +61,7 @@ var projectSchema = mongoose.Schema({
 });
 
 // Virtual getter to a better formatted date.
-projectSchema.virtual('formattedDate').get(function() {
+projectSchema.virtual('formattedDate').get(function () {
     return new Date(this.dateCreated).toDateString();
 });
 projectSchema.set('toObject', { getters: true });

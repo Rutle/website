@@ -40,41 +40,41 @@
         </a>
         <a href="/test" class="item">test</a>
     </div>
-    <div class="ui pointing top large fixed menu" id="full_menu">
+    <div class="ui top large fixed inverted menu" id="full_menu">
         <div class="ui container">
             <span class="header item">
                 Rulle
             </span>
             <a href="/" class="item">
                 <i class="home icon small"></i>Home</a>
-            <!--<a href="/projects" class="item">Projects</a>-->
-            <div class="ui dropdown item">
-                <i class="folder open icon small"></i>Projects
+            <div class="ui dropdown item" id="project_dd">
+                Projects
                 <i class="dropdown icon"></i>
-                <div class="menu">
-                    <a class="item" href="/projects/roguelike">Roguelike</a>
-                    <a class="item" href="/projects/ohsiha">Ohsiha course project</a>
-                    <a class="item" href="/projects/jodatut">Jodat course project</a>
-                    <a class="item" href="/projects/website">Website</a>
-                    <a class="item" href="/projects/scraper">Price scraper</a>
-                </div>
+
             </div>
+            
+            {{#forEach siteProjects}}
+            <a href="{{websiteProjectURL}}" class="item">{{name}}</a>
+            {{/forEach}}
+            <!--
             <a href="/about" class="item">
-                <i class="question icon small"></i>About</a>
+                <i class="question icon small"></i>About</a>-->
             <div class="right menu">
                 <a href="https://twitter.com" class="item">
                     <i class="twitter icon"></i>
                 </a>
-                {{#if userIsLogged}}
+                {{#if user}}
                 <a href="/dashboard" class="item" id="admin_popup">
-                    <i class="fas fa-user-cog"></i>
-                </a>
-                {{/if}}
+                    {{else}}
+                    <a href="/login" class="item" id="admin_popup">
+                        {{/if}}
+                        <i class="fas fa-user-cog"></i>
+                    </a>
 
             </div>
         </div>
     </div>
-    <div class="ui pointing top large fixed menu" id="lesser_menu">
+    <div class="ui top large fixed pointing menu" id="lesser_menu">
         <!-- minimized menu -->
         <div class="ui container">
             <a class="item">
@@ -112,12 +112,16 @@
             <!-- footer -->
             <div class="ui container">
                 <div class="ui stackable inverted divided equal height stackable grid">
-                    <div class="column">
+                    <div class="five wide column">
                         <h4 class="ui inverted header">Copyright</h4>
                         <p>
                             &copy;
                             <script>document.write(new Date().getFullYear());</script>, Jussi Ristimäki, All Rights Reserved.
                         </p>
+                    </div>
+                    <div class="seven wide column">
+                        <h4 class="ui inverted header">Website details</h4>
+                        <p>Website build with Node.js, Express and MongoDB backing.</p>
                     </div>
                 </div>
             </div>

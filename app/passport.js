@@ -39,29 +39,31 @@ module.exports = function (passport) {
     // Signup locally without OAuth etc.
     // Add our own strategy into passport that is used when new user signups
     passport.use('local-signup', new LocalStrategy({
-        usernameField: 'email',
+        usernameField: 'username',
         passwordField: 'password',
         passReqToCallback: true
     },
-        function (req, email, password, done) {
+        function (req, username, password, done) {
+            /*
             if (email)
                 email = email.toLowerCase(); // Use lower-case e-mails to avoid case-sensitive e-mail matching
+            */
             process.nextTick(function () {
-                User.findOne({ 'local.email': email }, function (err, user) {
+                User.findOne({ 'local.username': username }, function (err, user) {
                     if (err)
                         return done(err)
 
                     if (user) {
                         // User with given email already exists.
-                        return done(null, false, req.flash('signupMessage', 'That email is already in use by another user.'));
+                        return done(null, false, req.flash('signupMessage', 'That username is already in use by another user.'));
                     } else {
                         // Create a new user. Not logged in.
                         var newUser = new User();
-                        newUser.local.email = email;
+                        newUser.local.username = username;
                         // Use the model method genHash() to hash the password.
                         newUser.local.password = newUser.genHash(password);
-                        newUser.local.firstName = req.body.fname;
-                        newUser.local.lastName = req.body.lname;
+                        //newUser.local.firstName = req.body.fname;
+                        //newUser.local.lastName = req.body.lname;
                         // Add new user into MongoDB.
                         newUser.save(function (err) {
                             if (err)
@@ -72,17 +74,17 @@ module.exports = function (passport) {
                 });
             });
 
-    }));
+        }));
     // Login locally without OAuth etc.
     // Add our own strategy into passport that is used when new user logs in.
     passport.use('local-login', new LocalStrategy({
-        usernameField: 'email',
+        usernameField: 'username',
         passwordField: 'password',
         passReqToCallback: true
     },
-        function (req, email, password, done) {
+        function (req, username, password, done) {
             // Find a user with the same email address.
-            User.findOne({ 'local.email': email }, function (err, user) {
+            User.findOne({ 'local.username': username }, function (err, user) {
                 // if there are any errors, return the error before anything else
                 if (err)
                     return done(err);
@@ -93,8 +95,8 @@ module.exports = function (passport) {
                 if (!user.validPassword(password))
                     return done(null, false, req.flash('loginMessage', 'Oops! Wrong password.'));
                 return done(null, user);
-        });
+            });
 
-    }));
+        }));
 
 };

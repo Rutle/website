@@ -93,101 +93,95 @@ function minimizeCard() {
     let contentDiv = document.getElementById('')
 }
 
-
-/*
-        <div id="form_section_container">
-            <div class="fields">
-                <div class="five wide field">
-                    <div class="fields">
-                        <div class="sixteen wide field">
-                            <label>Section name</label>
-                            <input name="first-name" placeholder="First Name" type="text">
-                        </div>
-                    </div>
-                    <div class="fields">
-                        <div class="sixteen wide field">
-                            <button class="ui basic button">Remove this section</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="eleven wide field">
-                    <label>Text</label>
-                    <textarea placeholder="Paragraph for a section."></textarea>
-                </div>
-            </div>
-        </div>
-*/
-
-
-
-
+function removeSection(target) {
+    let sectionContainer = target.parentElement.parentElement.parentElement.parentElement.parentElement;
+    let section = target.parentElement.parentElement.parentElement.parentElement;
+    sectionContainer.removeChild(section);
+}
+let formCounter = 1;
 function addFormSection() {
-
-    let feedDiv = document.getElementById('form_section_container');
+    let projectDiv = document.getElementById('form_section_container');
+    formCounter += 1;
     let fieldsDiv = document.createElement('div');
     fieldsDiv.className = 'fields';
+    fieldsDiv.setAttribute('id', 'section');
 
-    let fieldDiv = document.createElement('div');
-    fieldDiv.className = 'five wide field';
+        let fieldDiv = document.createElement('div');
+        fieldDiv.className = 'five wide field';
 
-    let sectionFieldsDiv = document.createElement('div');
-    innerFieldsDiv.className = 'fields';
-    let sectionNameFieldDiv = document.createElement('div');
-    sectionNameFieldDiv.className = 'sixteen wide field';
-    let labelName = document.createElement('label');
-    labelName.appendChild(document.createTextNode('Section name'));
-    sectionNameFieldDiv.appendChild(labelName);
+            let sectionFieldsDiv = document.createElement('div');
+            sectionFieldsDiv.className = 'fields';
 
-    let inputName = document.createElement('input');
-    inputName.setAttribute('name', 'section_name');
-    inputName.setAttribute('placeholder', 'e.g. Description');
-    inputName.setAttribute('type', 'text');
-    sectionNameFieldDiv.appendChild(inputName);
-    innerFieldsDiv.appendChild(sectionNameFieldDiv);
-    
+                let sectionNameFieldDiv = document.createElement('div');
+                sectionNameFieldDiv.className = 'sixteen wide field';
+                    let labelName = document.createElement('label');
+                    labelName.appendChild(document.createTextNode('Section name'));
+                sectionNameFieldDiv.appendChild(labelName);
 
+                    let inputName = document.createElement('input');
+                    let inputId = 'section_name'+formCounter
+                    inputName.setAttribute('name', inputId);
+                    inputName.setAttribute('id', inputId);
+                    inputName.setAttribute('placeholder', 'e.g. Description');
+                    inputName.setAttribute('type', 'text');
+                    
+                sectionNameFieldDiv.appendChild(inputName);
+            sectionFieldsDiv.appendChild(sectionNameFieldDiv);
+        fieldDiv.appendChild(sectionFieldsDiv);
 
+            let buttonFieldsDiv = document.createElement('div');
+            buttonFieldsDiv.className = 'fields';
 
-    let buttonFieldsDiv = document.createElement('div');
-    buttonFieldsDiv.className = 'fields';
+                let sectionButtonFieldDiv = document.createElement('div');
+                sectionButtonFieldDiv.className = 'sixteen wide field';
 
-    iconDiv.appendChild(gitIcon);
-    eventDiv.appendChild(iconDiv);
+                    let button = document.createElement('button');
+                    button.className = 'ui basic button';
+                    button.appendChild(document.createTextNode('Remove this section'));
+                    button.setAttribute('id', 'remove_section')
+                    button.addEventListener('click', function(event) {
+                        removeSection(event.target);
+                    });
+                sectionButtonFieldDiv.appendChild(button);
+            buttonFieldsDiv.appendChild(sectionButtonFieldDiv);
+        fieldDiv.appendChild(buttonFieldsDiv);
+    fieldsDiv.appendChild(fieldDiv);
 
-    let contentDiv = document.createElement('div');
-    contentDiv.className = 'content';
-
-    let summaryDiv = document.createElement('div');
-    summaryDiv.className = 'summary';
-
-    let linkEle = document.createElement('a');
-    linkEle.appendChild(document.createTextNode(dataObject.committer));
-    summaryDiv.appendChild(linkEle);
-    summaryDiv.appendChild(document.createTextNode(' committed on'));
-
-    let dateDiv = document.createElement('div');
-    dateDiv.className = 'date';
-    let commitDate = '';
-
-    // The time that has passed since the commit.
-    if (dataObject.days > 0) {
-        commitDate = dataObject.days + ' days ago';
-    } else if (dataObject.hours > 0) {
-        commitDate = dataObject.hours + ' hours and ' + dataObject.minutes + ' minutes ago';
-    } else if (dataObject.minutes > 0) {
-        commitDate = dataObject.minutes + ' minutes ago';
-    } else {
-        commitDate = 'Just now';
-    }
-    dateDiv.appendChild(document.createTextNode(commitDate));
-    summaryDiv.appendChild(dateDiv);
-    contentDiv.appendChild(summaryDiv);
-
-    let commitMessageDiv = document.createElement('div');
-    commitMessageDiv.className = 'extra text';
-    commitMessageDiv.appendChild(document.createTextNode(dataObject.message));
-
-    contentDiv.appendChild(commitMessageDiv);
-    eventDiv.appendChild(contentDiv);
-    feedDiv.appendChild(eventDiv);
+        let sectionTextFieldDiv = document.createElement('div');
+        sectionTextFieldDiv.className = 'eleven wide field';
+            let labelText = document.createElement('label');
+            labelText.appendChild(document.createTextNode('Text'));
+            let textArea = document.createElement('textarea');
+            let textId = 'section_text'+formCounter
+            textArea.setAttribute('name', textId);
+            textArea.setAttribute('id', textId);
+            textArea.setAttribute('placeholder', 'Paragraph for a section.');
+            
+        sectionTextFieldDiv.appendChild(labelText);
+        sectionTextFieldDiv.appendChild(textArea);
+    fieldsDiv.appendChild(sectionTextFieldDiv);
+    projectDiv.appendChild(fieldsDiv);
+    console.log(inputId);
+    $('#project_form').form('add rule', inputId, ['empty']);
+    /*
+    $('#project_form').form('add field', inputId, {
+        identifier: inputId,
+        rules: [
+            {
+                type: 'empty',
+                prompt: 'Please add section number '+formCounter+' name.'
+            }
+        ]
+    })
+    .form('add field', textId, {
+        identifier: textId,
+        rules: [
+            {
+                type: 'empty',
+                prompt: 'Please add section number '+formCounter+' text.'
+            }
+        ]
+    });
+    console.log($('#project_form').form('has field', textId))
+    $('#project_form').form('validate form');*/
 }
