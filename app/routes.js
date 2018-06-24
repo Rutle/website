@@ -220,16 +220,25 @@ module.exports = function (app, passport) {
             Store.find({})
                 .sort({ name: 'desc' })
                 .select('name url keywords')
-                .exec(function (err, store) {
+                .exec(function (err, stores) {
                     if (err) {
                         console.log(err);
-                        return res.status(500).json({ success: false })
+                        return res.status(500).json({ success: false, message: 'Error.' })
                     }
-                    console.log(store);
+                    if(!stores) {
+                        return res.status(500).json({success: false, message: 'None found.'})
+                    }
+                    console.log(stores);
+
+                    scraper.getData(stores)
+                        .then(function(data) {
+                            console.log(data);
+                            return res.status(200).json({ success: true, data: data })
+                        }, function(err) {
+                            console.log(err);
+                        });
 
                     
-
-                    return res.status(200).json({ success: true })
                 });
         }
 
