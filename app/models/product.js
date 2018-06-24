@@ -25,16 +25,11 @@ var productSchema = mongoose.Schema({
 
     productUrl: String,                 // Url of the product page
 
-    store: [{                           // Store where the data was extracted.
-        name: {
-            type: String,
-            required: true
-        },
-        url: {
-            type: String,
-            required: true
-        }
-    }],
+    store: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'Store'
+    },
 
     salesDates: [{                      // Sales data
         salePrice: {

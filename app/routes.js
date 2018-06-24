@@ -25,16 +25,19 @@ function isLoggedIn(req, res, next) {
     res.redirect('/');
 }
 
-/**
- * 
- */
+
 function isAdmin(req, res, next) {
     if (req.user.rights === 'admin') {
         return next();
     }
     res.redirect('/')
 }
-
+/**
+ * Middleware function to fetch Projects made for the website from the database and pass them into the response.
+ * @param {Object} req 
+ * @param {Object} res 
+ * @param {Function} next 
+ */
 function getProjects(req, res, next) {
     Project.find({ websiteProject: true })
         .sort({ name: 'desc' })
@@ -213,6 +216,21 @@ module.exports = function (app, passport) {
                 store.keywords.push(keyword);
                 return res.status(200).json({ message: 'Keyword ' + keyword + ' added to the list.' })
             })
+        } else if (action === 'update') {
+            Store.find({})
+                .sort({ name: 'desc' })
+                .select('name url keywords')
+                .exec(function (err, store) {
+                    if (err) {
+                        console.log(err);
+                        return res.status(500).json({ success: false })
+                    }
+                    console.log(store);
+
+                    
+
+                    return res.status(200).json({ success: true })
+                });
         }
 
     });
@@ -291,20 +309,7 @@ module.exports = function (app, passport) {
             });
         } else if (tab === 'scraper') {
             if (req.body.action === 'update') {
-                Store.find({})
-                    .sort({ name: 'desc' })
-                    .select('name url -_id')
-                    .exec(function (err, projects) {
-                        if (err) {
-                            console.log(err);
-                            return res.status(500).json({ success: false })
-                        }
-                        projects.forEach(function (elem, idx) {
-                            result.push({ name: elem.name, value: elem.name, text: elem.name, disabled: false })
-                        })
-                        return res.status(200).json({ success: true, results: result })
-                    });
-                scraper.getData()
+
             }
 
         } else if (tab === 'fetchScraperData') {
@@ -386,18 +391,18 @@ module.exports = function (app, passport) {
     */
     app.use(function (req, res, next) {
         Project.find({ websiteProject: true })
-        .sort({ name: 'desc' })
-        .select('name websiteProjectURL -_id')
-        .exec(function (err, projects) {
-            if (err) {
-                console.log(err);
-            }
-            return res.status(404).render('404', {
-                breadcrumbs: [{ breadcrumbName: "404", breadcrumbUrl: "/" }],
-                siteProjects: projects
-            });
-        })
- 
+            .sort({ name: 'desc' })
+            .select('name websiteProjectURL -_id')
+            .exec(function (err, projects) {
+                if (err) {
+                    console.log(err);
+                }
+                return res.status(404).render('404', {
+                    breadcrumbs: [{ breadcrumbName: "404", breadcrumbUrl: "/" }],
+                    siteProjects: projects
+                });
+            })
+
     })
 
 }

@@ -32,6 +32,11 @@ var storeSchema = mongoose.Schema({
     dateModified: {                     // Modification date.
         type: Date,
         default: Date.now
+    },
+    updateDate: {
+        type: Date,
+        default: Date.now,
+        required: true
     }
 
 });

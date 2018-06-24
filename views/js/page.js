@@ -453,9 +453,11 @@ $(function () {
         });
 
     $('#update_sales_data').click(function (event) {
+        event.preventDefault();
+
         $.ajax({
             type: 'POST',
-            url: '/dashboard/scraper',
+            url: '/dashboard/scraper/update',
             data: { action: 'update' },
             dataType: 'json',
             success: function (data) {
