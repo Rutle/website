@@ -42,7 +42,8 @@ exports.parseArr = function(objectList, url, keywords) {
             regularPrice: parseFloat(price),
             productId: "",
             category: "",
-            categoryUrl: ""
+            categoryUrl: "",
+            storeProductId: ""
           }
           newCounter++;
     

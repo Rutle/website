@@ -164,11 +164,14 @@ function getProductPages(links) {
                 if (element.status === 200 && element.config.url.includes('https://www.jimms.fi/')) {
                     let $ = cheerio.load(element.data);
                     //console.log("config: ", element.config.url);
+                    const regex = /https:\/\/www.jimms.fi\/fi\/Product\/Show\/(.*?)(\/)/gm;
+                    let storeProductId = element.config.url.match(regex)[1];
+
                     let idx = links.findIndex(item => item.url === element.config.url);
                     links[idx].category = $('.breadcrumb').children().last().prev().children('a').first().children('span').first().text();
                     links[idx].categoryUrl = $('.breadcrumb').children().last().prev().children('a').first().attr('href');
                     links[idx].productId = $('#pinfo_propinfo > div:nth-child(1) > div:nth-child(2)').text();
-
+                    links[idx].storeProductId = storeProductId;
                     //let category = $('.breadcrumb').children().last().prev().children('a').first().children('span').first().text();
                     //let categoryUrl = $('.breadcrumb').children().last().prev().children('a').first().attr('href');
                     //let productId = $('#pinfo_propinfo > div:nth-child(1) > div:nth-child(2)').text();
