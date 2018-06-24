@@ -67,3 +67,4 @@ productList.json
 apitest.json
 .vscode
 product.json
+*.stackdump
