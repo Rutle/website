@@ -30,8 +30,8 @@ exports.parseArr = function(objectList, url, keywords) {
         var indexBegin = objectList[i].pname.indexOf(containsAny(objectList[i].pname, keywords));
         if(indexBegin !== -1) {
           var productItem = objectList[i].pname.slice(0, indexBegin).trim();
-          var tarjousStr = objectList[i].pname.slice(indexBegin, objectList[i].pname.length);
-          var price = tarjousStr.match(/\d+(?:\,\d+)?/g);
+          var saleStr = objectList[i].pname.slice(indexBegin, objectList[i].pname.length);
+          var price = saleStr.match(/\d+(?:\,\d+)?/g);
     
           newObjectList[newCounter] = {
             storeUrl: objectList[i].storeUrl,
@@ -42,7 +42,6 @@ exports.parseArr = function(objectList, url, keywords) {
             regularPrice: parseFloat(price),
             productId: "",
             category: "",
-            categoryUrl: "",
             storeProductId: ""
           }
           newCounter++;

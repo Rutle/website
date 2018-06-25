@@ -168,9 +168,9 @@ function getProductPages(links) {
                     let storeProductId = element.config.url.match(regex)[1];
 
                     let idx = links.findIndex(item => item.url === element.config.url);
-                    links[idx].category = $('.breadcrumb').children().last().prev().children('a').first().children('span').first().text();
-                    links[idx].categoryUrl = $('.breadcrumb').children().last().prev().children('a').first().attr('href');
-                    links[idx].productId = $('#pinfo_propinfo > div:nth-child(1) > div:nth-child(2)').text();
+                    //links[idx].category = $('.breadcrumb').children().last().prev().children('a').first().children('span').first().text();
+                    links[idx].category = $('#productgroupmenu > div.list-group-item.menu > ul > li.open > a').text().trim();
+                    links[idx].productId = $('#pinfo_propinfo > div:nth-child(1) > div:nth-child(2)').text().trim();
                     links[idx].storeProductId = storeProductId;
                     //let category = $('.breadcrumb').children().last().prev().children('a').first().children('span').first().text();
                     //let categoryUrl = $('.breadcrumb').children().last().prev().children('a').first().attr('href');
