@@ -451,7 +451,21 @@ $(function () {
                 return false;
             }
         });
+    $('#refresh_sales_data').click(function(event) {
+        event.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '/dashboard/scraper/refresh',
+            data: { action: 'refresh' },
+            dataType: 'json',
+            success: function (data) {
 
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+
+            }
+        });
+    });
     $('#update_sales_data').click(function (event) {
         event.preventDefault();
 

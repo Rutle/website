@@ -1,6 +1,6 @@
 <div class="ui container">
 
-    <div class="ui small inverted top attached pointing menu" id="dashboard_menu">
+    <div class="ui small inverted top attached pointing menu active" id="dashboard_menu">
         <a class="item active" data-tab="current_projects">
             <i class="small archive icon"></i>
             Current projects
@@ -33,7 +33,7 @@
                     <div class="ui top segment secondary">
                         <h4 class="ui header">Sales scraper data</h4>
                     </div>
-                    
+
                     <table class="ui blue compact celled table">
                         <thead>
                             <tr>
@@ -62,13 +62,17 @@
                             <tr>
                                 <th colspan="3">
                                     <div class="ui tiny primary button" id="update_sales_data">
-                                        Update
+                                        Update data
+                                    </div>
+                                    <div class="ui tiny labeled icon button" id="refresh_sales_data">
+                                        <i class="redo icon"></i>
+                                        Refresh table
                                     </div>
                                 </th>
                             </tr>
                         </tfoot>
                     </table>
-                    
+
                 </div>
             </div>
             <div class="two column row">

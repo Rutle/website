@@ -52,6 +52,10 @@ function getProjects(req, res, next) {
         })
 }
 
+const arrayToObject = (array) => array.reduce((obj, item) => {
+    obj[item.url] = item._id;
+    return obj;
+}, {});
 
 module.exports = function (app, passport) {
 
@@ -216,7 +220,7 @@ module.exports = function (app, passport) {
         } else if (action === 'update') {
             Store.find({})
                 .sort({ name: 'desc' })
-                .select('name url keywords')
+                .select('name url keywords _id')
                 .exec(function (err, stores) {
                     if (err) {
                         console.log(err);
@@ -229,8 +233,10 @@ module.exports = function (app, passport) {
                         .then(function (data) {
                             //console.log("haettu data: \n", data);
                             let result = [];
-                            
+                            const storeIds = arrayToObject(stores);
+                            console.log(storeIds)
                             data.forEach(function(elem, idx) {
+
                                 let documentObj = {
                                     'updateOne': {
                                         'filter': { productId: elem.productId },
@@ -248,7 +254,8 @@ module.exports = function (app, passport) {
                                                 category: elem.category,
                                                 miscText: "",
                                                 productId: elem.productId,
-                                                productUrl: elem.url
+                                                productUrl: elem.url,
+                                                store: storeIds[elem.storeUrl]
                                             }
                                         },
                                         'upsert': true,
@@ -266,6 +273,12 @@ module.exports = function (app, passport) {
                                 .then(bulkWriteOpResult => {
                                     console.log('BULK update OK');
                                     console.log(JSON.stringify(bulkWriteOpResult, null, 2));
+                                    let resultObj = {
+                                        upserted: bulkWriteOpResult.upsertedCount,
+                                        modified: bulkWriteOpResult.modifiedCount
+                                    }
+                                    
+                                    return res.status(200).json({success: true, data: resultObj})
                                 })
                                 .catch(err => {
                                     console.log('BULK update error');
@@ -277,6 +290,19 @@ module.exports = function (app, passport) {
 
 
                 });
+        } else if (action === 'refresh') {
+            Product.aggregate([
+                { $group: { _id: '$store', count: { "$sum": 1 } }},
+                { $lookup: { from: "stores", localField: "store", foreignField: "_id", as: "store" }}
+            ]).exec(function(err, stores) {
+                if(err) {
+                    console.log(err);
+                }
+                console.log(stores);
+            })
+
+        } else {
+
         }
 
     });
