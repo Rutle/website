@@ -27,7 +27,7 @@ var productSchema = mongoose.Schema({
 
     store: {
         type: mongoose.Schema.Types.ObjectId,
-        required: true,
+        required: false,
         ref: 'Store'
     },
 
@@ -43,6 +43,9 @@ var productSchema = mongoose.Schema({
         dateOfSale: {
             type: Date,
             default: Date.now
+        },
+        storeId: {
+            type: String,
         }
     }],
 

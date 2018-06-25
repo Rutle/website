@@ -2,6 +2,7 @@
 
 var gha = require('./githubapi');
 var Project = require('./models/project');
+var Product = require('./models/product')
 var Store = require('./models/store')
 var scraper = require('./projects/scrape.js');
 
@@ -81,8 +82,6 @@ module.exports = function (app, passport) {
 	 * Website project route.
 	 */
     app.get('/projects/website', getBreadcrumbs, getProjects, function (req, res) {
-        console.log(req.breadcrumbs);
-        console.log()
         res.render('project', {
             breadcrumbs: req.breadcrumbs,
             projectName: 'Personal website',
@@ -95,7 +94,6 @@ module.exports = function (app, passport) {
      * 
      */
     app.get('/projects/website/scraper', getBreadcrumbs, getProjects, function (req, res) {
-        console.log("website scraper", req.breadcrumbs);
         res.render('scraper', {
             breadcrumbs: req.breadcrumbs,
             projectName: 'Sale price scraper',
@@ -108,7 +106,6 @@ module.exports = function (app, passport) {
 	 * Price scraper project route.
 	 */
     app.get('/projects/scraper', getBreadcrumbs, getProjects, function (req, res) {
-        console.log(req.breadcrumbs);
         res.render('scraper', {
             breadcrumbs: req.breadcrumbs,
             projectName: 'Sale price scraper',
@@ -225,20 +222,60 @@ module.exports = function (app, passport) {
                         console.log(err);
                         return res.status(500).json({ success: false, message: 'Error.' })
                     }
-                    if(!stores) {
-                        return res.status(500).json({success: false, message: 'None found.'})
+                    if (!stores) {
+                        return res.status(500).json({ success: false, message: 'None found.' })
                     }
-                    console.log(stores);
-
                     scraper.getData(stores)
-                        .then(function(data) {
-                            console.log(data);
-                            return res.status(200).json({ success: true, data: data })
-                        }, function(err) {
+                        .then(function (data) {
+                            //console.log("haettu data: \n", data);
+                            let result = [];
+                            
+                            data.forEach(function(elem, idx) {
+                                let documentObj = {
+                                    'updateOne': {
+                                        'filter': { productId: elem.productId },
+                                        'update': {
+                                            '$push': {
+                                                salesDates: {
+                                                    salePrice: elem.currentPrice,
+                                                    normalPrice: elem.regularPrice,
+                                                    dateOfSale: new Date(),
+                                                    storeId: elem.storeProductId
+                                                }
+                                            },
+                                            '$setOnInsert': {
+                                                name: elem.pname,
+                                                category: elem.category,
+                                                miscText: "",
+                                                productId: elem.productId,
+                                                productUrl: elem.url
+                                            }
+                                        },
+                                        'upsert': true,
+                                    }
+                                    
+                                }
+                                result.push(documentObj);
+                            });
+                            return result;
+                        }, function (err) {
+                            console.log(err);
+                        })
+                        .then(function (data) {
+                            Product.collection.bulkWrite(data)
+                                .then(bulkWriteOpResult => {
+                                    console.log('BULK update OK');
+                                    console.log(JSON.stringify(bulkWriteOpResult, null, 2));
+                                })
+                                .catch(err => {
+                                    console.log('BULK update error');
+                                    console.log(JSON.stringify(err, null, 2));
+                                });
+                        }, function (err) {
                             console.log(err);
                         });
 
-                    
+
                 });
         }
 
