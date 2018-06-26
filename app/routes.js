@@ -51,6 +51,27 @@ function getProjects(req, res, next) {
             return next();
         })
 }
+/**
+ * Function to retrieve product counts per store.
+ * @param {Function} callback 
+ */
+function getProductCounts(callback) {
+    Product.aggregate([
+        { $group: { _id: '$store', count: { "$sum": 1 } }},
+        { $lookup: { from: "stores", localField: "_id", foreignField: "_id", as: "store" }},
+        { $unwind: '$store' }
+    ]).exec(function(err, productCounts) {
+        if(err) {
+            console.log(err);
+            callback(err, null);
+        }
+        //console.log(productCounts);
+        let proCounts = productCounts.map(elem => ({storeName: elem.store.name, count: elem.count}));
+        callback(null, proCounts);
+    })
+}
+
+
 
 const arrayToObject = (array) => array.reduce((obj, item) => {
     obj[item.url] = item._id;
@@ -291,14 +312,11 @@ module.exports = function (app, passport) {
 
                 });
         } else if (action === 'refresh') {
-            Product.aggregate([
-                { $group: { _id: '$store', count: { "$sum": 1 } }},
-                { $lookup: { from: "stores", localField: "store", foreignField: "_id", as: "store" }}
-            ]).exec(function(err, stores) {
+            getProductCounts(function(err, data) {
                 if(err) {
-                    console.log(err);
+                    return res.status(500).json({success: false, message: 'There was a problem with database.'})
                 }
-                console.log(stores);
+                return res.status(200).json({success: true, data: data})
             })
 
         } else {
