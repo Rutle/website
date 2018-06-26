@@ -34,29 +34,23 @@
                         <h4 class="ui header">Sales scraper data</h4>
                     </div>
 
-                    <table class="ui blue compact celled table">
+                    <table class="ui blue compact celled table" id="store_data">
                         <thead>
                             <tr>
                                 <th>Webstore</th>
-                                <th>Total products in DB</th>
+                                <th>Count</th>
                                 <th>Last updated</th>
 
                             </tr>
                         </thead>
                         <tbody>
+                            {{#if productCounts}} {{#forEach productCounts}}
                             <tr>
-                                <td>Jimms</td>
-                                <td>200</td>
+                                <td>{{storeName}}</td>
+                                <td>{{count}}</td>
                                 <td>Today</td>
-
                             </tr>
-                            <tr>
-                                <td>Verkkokauppa.com</td>
-                                <td>3000</td>
-                                <td>Today</td>
-
-                            </tr>
-
+                            {{/forEach}} {{/if}}
                         </tbody>
                         <tfoot class="full-width">
                             <tr>

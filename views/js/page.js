@@ -459,6 +459,21 @@ $(function () {
             data: { action: 'refresh' },
             dataType: 'json',
             success: function (data) {
+                let table = document.getElementById('store_data');
+                for(let i = table.rows.length - 2; i > 0; i-- ) {
+                    table.deleteRow(i);
+                }
+                data.data.forEach(function(elem, idx) {
+                    let row = table.insertRow(idx+1);
+                    let nameCell = row.insertCell(0);
+                    let countCell = row.insertCell(1);
+                    let dateCell = row.insertCell(2);
+                    nameCell.innerHTML = elem.storeName;
+                    countCell.innerHTML = elem.count;
+                    dateCell.innerHTML = 'Today'
+                })
+
+                
 
             },
             error: function (jqXHR, textStatus, errorThrown) {

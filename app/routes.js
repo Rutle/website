@@ -71,7 +71,21 @@ function getProductCounts(callback) {
     })
 }
 
-
+function getMatchingStores(obj, callback) {
+    let productIds = Object.values(obj);
+    Product.aggregate([
+        { $match : { "_id" : { $in : productIds } } },
+        { $group : { "_id" : "$store", count : { "$sum" : 1 } } },
+        { $lookup : { from : "stores", localField : "_id", foreignField : "_id", as : "store" } },
+        { $unwind: '$store' }
+    ]).exec(function(err, storeCounts) {
+        if(err) {
+            console.log(err);
+            callback(err, null);
+        }
+        callback(null, storeCounts);
+    })
+}
 
 const arrayToObject = (array) => array.reduce((obj, item) => {
     obj[item.url] = item._id;
@@ -143,9 +157,20 @@ module.exports = function (app, passport) {
      * Dashboard route.
      */
     app.get('/dashboard', isLoggedIn, getBreadcrumbs, getProjects, function (req, res) {
-        res.render('dashboard', {
-            breadcrumbs: req.breadcrumbs,
-            user: req.user,
+        getProductCounts(function(err, data) {
+            if(err) {
+                return res.render('dashboard', {
+                    breadcrumbs: req.breadcrumbs,
+                    user: req.user,
+                    productCounts: null,
+                    productErrMessage: 'There was a problem with database.'
+                })
+            }
+            return res.render('dashboard', {
+                breadcrumbs: req.breadcrumbs,
+                user: req.user,
+                productCounts: data,
+            })
         })
 
     });
@@ -298,8 +323,17 @@ module.exports = function (app, passport) {
                                         upserted: bulkWriteOpResult.upsertedCount,
                                         modified: bulkWriteOpResult.modifiedCount
                                     }
+                                    if(bulkWriteOpResult.upsertedCount > 0 ) {
+                                        getMatchingStores(bulkWriteOpResult.upsertedIds, function(err, data) {
+                                            if(err) {
+                                                console.log(err);
+                                            }
+                                            console.log(data);
+                                            let newByStore = data.map(elem => ({storeName: elem.store.name, count: elem.count}));
+                                            return res.status(200).json({success: true, data: resultObj, newInsertByStore: newByStore})
+                                        });
+                                    }
                                     
-                                    return res.status(200).json({success: true, data: resultObj})
                                 })
                                 .catch(err => {
                                     console.log('BULK update error');
