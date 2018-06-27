@@ -91,74 +91,125 @@
     <h5 class="ui header">Testi</h5>
 </div>
 <div class="ftable ftable--3cols ftable--collapse">
+    {{#forEach data}} {{#if isFirst}}
+    <div class="ftable-toprow clearfix">
+        <div class="ftable-cell ftable-cell--head">{{name}}</div>
+        <div style="order:2;" class="ftable-cell ftable-cell--price">{{latestSalePrice}}</div>
+        <div style="order:2;" class="ftable-cell ftable-cell--price">{{latestNormalPrice}}</div>
+    </div>
+    {{else if isLast}}
+    <div class="ftable-bottomrow clearfix">
+        <div class="ftable-cell ftable-cell--head">{{name}}</div>
+        <div style="order:2;" class="ftable-cell ftable-cell--price">{{latestSalePrice}}</div>
+        <div style="order:2;" class="ftable-cell ftable-cell--price">{{latestNormalPrice}}</div>
+    </div>
+    {{else}}
+    <div class="ftable-middlerow clearfix">
+        <div class="ftable-cell ftable-cell--head">{{name}}</div>
+        <div style="order:2;" class="ftable-cell ftable-cell--price">{{latestSalePrice}}</div>
+        <div style="order:2;" class="ftable-cell ftable-cell--price">{{latestNormalPrice}}</div>
+    </div>
+    {{/if}} {{/forEach}}
+</div>
+<!--
+<div class="ftable ftable--3cols ftable--collapse">
+
     <div class="ftable-toprow clearfix">
         <div class="ftable-cell ftable-cell--head">Samsung 21,5" S22F350H</div>
         <div style="order:2;" class="ftable-cell ftable-cell--price">89€</div>
         <div style="order:2;" class="ftable-cell ftable-cell--price">119€</div>
     </div>
-
-        <div class="ftable-middlerow clearfix">
+    <div class="ftable-middlerow clearfix">
+        <div class="ftable-cell ftable-cell--head">Samsung 21,5" S22F350H</div>
+        <div style="order:2;" class="ftable-cell ftable-cell--price">89€</div>
+        <div style="order:2;" class="ftable-cell ftable-cell--price">119€</div>
+    </div>
+    <div class="ftable-bottomrow clearfix">
         <div class="ftable-cell ftable-cell--head">Samsung 21,5" S22F350H</div>
         <div style="order:2;" class="ftable-cell ftable-cell--price">89€</div>
         <div style="order:2;" class="ftable-cell ftable-cell--price">119€</div>
     </div>
 </div>
+-->
 <table class="ui very compact table">
-  <thead>
-    <tr>
-    <th>Name</th>
-    <th>Status</th>
-    <th>Sale price</th>
-    <th>Normal price</th>
-  </tr></thead>
-  <tbody>
-    <tr>
-      <td>Samsung 21,5" S22F350H</td>
-      <td>Näyttö</td>
-      <td>89€</td>
-      <td>119€</td>
-    </tr>
-    <tr>
-      <td>Jamie</td>
-      <td>Approved</td>
-      <td>Approved</td>
-      <td>Requires call</td>
-    </tr>
-    <tr>
-      <td>John</td>
-      <td>Approved</td>
-      <td>Approved</td>
-      <td>None</td>
-    </tr>
-    <tr>
-      <td>Jamie</td>
-      <td>Approved</td>
-      <td>Approved</td>
-      <td>Requires call</td>
-    </tr>
-    <tr>
-      <td>John</td>
-      <td>Approved</td>
-      <td>Approved</td>
-      <td>None</td>
-    </tr>
-    <tr>
-      <td>Jamie</td>
-      <td>Approved</td>
-      <td>Approved</td>
-      <td>Requires call</td>
-    </tr>
-    <tr>
-      <td>John</td>
-      <td>Approved</td>
-      <td>Approved</td>
-      <td>None</td>
-    </tr>
-    <tr>
-      <td>Jamie</td>
-      <td>Approved</td>
-      <td>Approved</td>
-      <td>Requires call</td>
-    </tr>
-  </tbody>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Status</th>
+            <th>Sale price</th>
+            <th>Normal price</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#forEach data}}
+        <tr>
+            <td>{{name}}</td>
+            <td>{{category}}</td>
+            <td>{{latestSalePrice}}</td>
+            <td>{{latestNormalPrice}}</td>
+        </tr>
+        {{/forEach}}
+    </tbody>
 </table>
+<!--
+<table class="ui very compact table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Status</th>
+            <th>Sale price</th>
+            <th>Normal price</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Samsung 21,5" S22F350H</td>
+            <td>Näyttö</td>
+            <td>89€</td>
+            <td>119€</td>
+        </tr>
+        <tr>
+            <td>Jamie</td>
+            <td>Approved</td>
+            <td>Approved</td>
+            <td>Requires call</td>
+        </tr>
+        <tr>
+            <td>John</td>
+            <td>Approved</td>
+            <td>Approved</td>
+            <td>None</td>
+        </tr>
+        <tr>
+            <td>Jamie</td>
+            <td>Approved</td>
+            <td>Approved</td>
+            <td>Requires call</td>
+        </tr>
+        <tr>
+            <td>John</td>
+            <td>Approved</td>
+            <td>Approved</td>
+            <td>None</td>
+        </tr>
+        <tr>
+            <td>Jamie</td>
+            <td>Approved</td>
+            <td>Approved</td>
+            <td>Requires call</td>
+        </tr>
+        <tr>
+            <td>John</td>
+            <td>Approved</td>
+            <td>Approved</td>
+            <td>None</td>
+        </tr>
+        <tr>
+            <td>Jamie</td>
+            <td>Approved</td>
+            <td>Approved</td>
+            <td>Requires call</td>
+        </tr>
+    </tbody>
+</table>
+-->

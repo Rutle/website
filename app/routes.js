@@ -135,12 +135,38 @@ module.exports = function (app, passport) {
      * 
      */
     app.get('/projects/website/scraper', getBreadcrumbs, getProjects, function (req, res) {
-        res.render('scraper', {
-            breadcrumbs: req.breadcrumbs,
-            projectName: 'Sale price scraper',
-            repo: 'scraper',
-            user: req.user,
-        });
+        let saleLimit = (5).days().ago();
+        Product.find({ latestSaleDate: { $gte: saleLimit } })
+            .sort({ name: 'desc' })
+            .select('name category productUrl salesDates -_id')
+            .exec(function (err, products) {
+                let success = false;
+                let data = [];
+                let message = "";
+                if (err) {
+                    success = false;
+                    data = null;
+                    message = 'There was a problem with searching products from database.';
+                } else if (products && products.length === 0) {
+                    success = true;
+                    data = null;
+                    message = 'No products found on sale.';
+                } else {
+                    success = true;
+                    data = products;
+                    message = 'Products found.';
+                }
+                console.log(products[0]);
+                return res.render('scraper', {
+                    breadcrumbs: req.breadcrumbs,
+                    projectName: 'Sale price scraper',
+                    repo: 'scraper',
+                    user: req.user,
+                    success: success,
+                    data: data,
+                    message: message 
+                });
+            });
     });
 
 	/**
@@ -200,25 +226,29 @@ module.exports = function (app, passport) {
 
 
     });
+
+    /**
+     * API endpoint for fetching sales from database.
+     */
     app.post('/api/stores/:store', function (req, res) {
         let storeId = req.params.store.trim();
         let saleLimit = (5).days().ago();
-        if(storeId) {
-            Product.find({ $and : [{ store: storeId }, { latestSaleDate: { $gte : saleLimit } }] })
-            .sort({ name: 'desc' })
-            .select('name category productUrl salesDates -_id')
-            .exec(function (err, products) {
-                if(err) {
-                    console.log("Find products by store id for sale list: ", err);
-                    return res.status(500).json({success: false, message: 'There was a problem with searching products from database.'})
-                }
-                if(products && products.length === 0) {
-                    return res.status(200).json({success: true, data: null, message: 'No products found on sale.'})
-                }
-                console.log(products.length);
-                return res.status(200).json({ success: true, data: products, message: 'Products found.' })
-            })
-            
+        if (storeId) {
+            Product.find({ $and: [{ store: storeId }, { latestSaleDate: { $gte: saleLimit } }] })
+                .sort({ name: 'desc' })
+                .select('name category productUrl salesDates -_id')
+                .exec(function (err, products) {
+                    if (err) {
+                        console.log("Find products by store id for sale list: ", err);
+                        return res.status(500).json({ success: false, message: 'There was a problem with searching products from database.' })
+                    }
+                    if (products && products.length === 0) {
+                        return res.status(200).json({ success: true, data: null, message: 'No products found on sale.' })
+                    }
+                    console.log(products.length);
+                    return res.status(200).json({ success: true, data: products, message: 'Products found.' })
+                });
+
         }
 
     })
@@ -262,7 +292,9 @@ module.exports = function (app, passport) {
         }
 
     });
-
+    /**
+     * Scraper tab on dashboard.
+     */
     app.post('/dashboard/scraper/:action', isLoggedIn, function (req, res) {
         let keyword = req.body.keyword;
         let storeId = req.body.storeId;

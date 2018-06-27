@@ -64,6 +64,12 @@ productSchema.virtual('formattedDate').get(function () {
     return new Date(this.dateCreated).toDateString();
 });
 
+productSchema.virtual('latestSalePrice').get(function () {
+    return this.salesDates[this.salesDates.length - 1].salePrice;
+});
+productSchema.virtual('latestNormalPrice').get(function () {
+    return this.salesDates[this.salesDates.length - 1].normalPrice;
+});
 productSchema.set('toObject', { getters: true });
 
 productSchema.set('toObject', { virtuals: true });
