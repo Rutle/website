@@ -1,10 +1,12 @@
 'use strict'
 
+require('datejs')
 var gha = require('./githubapi');
 var Project = require('./models/project');
 var Product = require('./models/product')
 var Store = require('./models/store')
 var scraper = require('./projects/scrape.js');
+
 
 // Function for getting breadcrumbs of the page
 function getBreadcrumbs(req, res, next) {
@@ -57,16 +59,16 @@ function getProjects(req, res, next) {
  */
 function getProductCounts(callback) {
     Product.aggregate([
-        { $group: { _id: '$store', count: { "$sum": 1 } }},
-        { $lookup: { from: "stores", localField: "_id", foreignField: "_id", as: "store" }},
+        { $group: { _id: '$store', count: { "$sum": 1 } } },
+        { $lookup: { from: "stores", localField: "_id", foreignField: "_id", as: "store" } },
         { $unwind: '$store' }
-    ]).exec(function(err, productCounts) {
-        if(err) {
+    ]).exec(function (err, productCounts) {
+        if (err) {
             console.log(err);
             callback(err, null);
         }
         //console.log(productCounts);
-        let proCounts = productCounts.map(elem => ({storeName: elem.store.name, count: elem.count}));
+        let proCounts = productCounts.map(elem => ({ storeName: elem.store.name, count: elem.count }));
         callback(null, proCounts);
     })
 }
@@ -74,12 +76,12 @@ function getProductCounts(callback) {
 function getMatchingStores(obj, callback) {
     let productIds = Object.values(obj);
     Product.aggregate([
-        { $match : { "_id" : { $in : productIds } } },
-        { $group : { "_id" : "$store", count : { "$sum" : 1 } } },
-        { $lookup : { from : "stores", localField : "_id", foreignField : "_id", as : "store" } },
+        { $match: { "_id": { $in: productIds } } },
+        { $group: { "_id": "$store", count: { "$sum": 1 } } },
+        { $lookup: { from: "stores", localField: "_id", foreignField: "_id", as: "store" } },
         { $unwind: '$store' }
-    ]).exec(function(err, storeCounts) {
-        if(err) {
+    ]).exec(function (err, storeCounts) {
+        if (err) {
             console.log(err);
             callback(err, null);
         }
@@ -157,8 +159,8 @@ module.exports = function (app, passport) {
      * Dashboard route.
      */
     app.get('/dashboard', isLoggedIn, getBreadcrumbs, getProjects, function (req, res) {
-        getProductCounts(function(err, data) {
-            if(err) {
+        getProductCounts(function (err, data) {
+            if (err) {
                 return res.render('dashboard', {
                     breadcrumbs: req.breadcrumbs,
                     user: req.user,
@@ -176,7 +178,7 @@ module.exports = function (app, passport) {
     });
 
     /**
-     * Dropdown API for scraper project
+     * Dropdown API for scraper project.
      */
     app.get('/api/stores', function (req, res) {
         Store.find({})
@@ -195,7 +197,32 @@ module.exports = function (app, passport) {
                 })
                 return res.status(200).json({ success: true, results: result })
             });
+
+
     });
+    app.post('/api/stores/:store', function (req, res) {
+        let storeId = req.params.store.trim();
+        let saleLimit = (5).days().ago();
+        if(storeId) {
+            Product.find({ $and : [{ store: storeId }, { latestSaleDate: { $gte : saleLimit } }] })
+            .sort({ name: 'desc' })
+            .select('name category productUrl salesDates -_id')
+            .exec(function (err, products) {
+                if(err) {
+                    console.log("Find products by store id for sale list: ", err);
+                    return res.status(500).json({success: false, message: 'There was a problem with searching products from database.'})
+                }
+                if(products && products.length === 0) {
+                    return res.status(200).json({success: true, data: null, message: 'No products found on sale.'})
+                }
+                console.log(products.length);
+                return res.status(200).json({ success: true, data: products, message: 'Products found.' })
+            })
+            
+        }
+
+    })
+
     /**
      * Getting keywords for stores.
      */
@@ -235,6 +262,7 @@ module.exports = function (app, passport) {
         }
 
     });
+
     app.post('/dashboard/scraper/:action', isLoggedIn, function (req, res) {
         let keyword = req.body.keyword;
         let storeId = req.body.storeId;
@@ -248,7 +276,13 @@ module.exports = function (app, passport) {
                     return res.status(500).json({ message: 'Keyword was not found.' });
                 }
                 store.keywords = store.keywords.filter(e => e !== keyword);
-                return res.status(200).json({ message: 'Selected keyword removed.' })
+                store.save(function (err) {
+                    if (err) {
+                        console.log("keyword removal save error: ", err);
+                    }
+                    return res.status(200).json({ message: 'Selected keyword removed.' })
+                })
+
             })
         } else if (action === 'addkeyword') {
             console.log('Add new keyword');
@@ -261,6 +295,11 @@ module.exports = function (app, passport) {
                     return res.status(500).json({ message: 'Keyword is already exists.' });
                 }
                 store.keywords.push(keyword);
+                store.save(function (err) {
+                    if (err) {
+                        console.log("keyword adding save error: ", err);
+                    }
+                })
                 return res.status(200).json({ message: 'Keyword ' + keyword + ' added to the list.' })
             })
         } else if (action === 'update') {
@@ -281,12 +320,15 @@ module.exports = function (app, passport) {
                             let result = [];
                             const storeIds = arrayToObject(stores);
                             console.log(storeIds)
-                            data.forEach(function(elem, idx) {
+                            data.forEach(function (elem, idx) {
 
                                 let documentObj = {
                                     'updateOne': {
                                         'filter': { productId: elem.productId },
                                         'update': {
+                                            '$set': {
+                                                latestSaleDate: new Date()
+                                            },
                                             '$push': {
                                                 salesDates: {
                                                     salePrice: elem.currentPrice,
@@ -298,7 +340,6 @@ module.exports = function (app, passport) {
                                             '$setOnInsert': {
                                                 name: elem.pname,
                                                 category: elem.category,
-                                                miscText: "",
                                                 productId: elem.productId,
                                                 productUrl: elem.url,
                                                 store: storeIds[elem.storeUrl]
@@ -306,7 +347,7 @@ module.exports = function (app, passport) {
                                         },
                                         'upsert': true,
                                     }
-                                    
+
                                 }
                                 result.push(documentObj);
                             });
@@ -323,17 +364,17 @@ module.exports = function (app, passport) {
                                         upserted: bulkWriteOpResult.upsertedCount,
                                         modified: bulkWriteOpResult.modifiedCount
                                     }
-                                    if(bulkWriteOpResult.upsertedCount > 0 ) {
-                                        getMatchingStores(bulkWriteOpResult.upsertedIds, function(err, data) {
-                                            if(err) {
+                                    if (bulkWriteOpResult.upsertedCount > 0) {
+                                        getMatchingStores(bulkWriteOpResult.upsertedIds, function (err, data) {
+                                            if (err) {
                                                 console.log(err);
                                             }
                                             console.log(data);
-                                            let newByStore = data.map(elem => ({storeName: elem.store.name, count: elem.count}));
-                                            return res.status(200).json({success: true, data: resultObj, newInsertByStore: newByStore})
+                                            let newByStore = data.map(elem => ({ storeName: elem.store.name, count: elem.count }));
+                                            return res.status(200).json({ success: true, data: resultObj, newInsertByStore: newByStore })
                                         });
                                     }
-                                    
+
                                 })
                                 .catch(err => {
                                     console.log('BULK update error');
@@ -346,11 +387,11 @@ module.exports = function (app, passport) {
 
                 });
         } else if (action === 'refresh') {
-            getProductCounts(function(err, data) {
-                if(err) {
-                    return res.status(500).json({success: false, message: 'There was a problem with database.'})
+            getProductCounts(function (err, data) {
+                if (err) {
+                    return res.status(500).json({ success: false, message: 'There was a problem with database.' })
                 }
-                return res.status(200).json({success: true, data: data})
+                return res.status(200).json({ success: true, data: data })
             })
 
         } else {

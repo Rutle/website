@@ -15,12 +15,7 @@ var productSchema = mongoose.Schema({
         type: String,
         required: true
     },
-
-    miscText: {                         // Any extra text that might have been extracted.
-        type: String,
-        required: false
-    },
-
+    
     productId: String,                  // ProductId from store page
 
     productUrl: String,                 // Url of the product page
@@ -30,7 +25,10 @@ var productSchema = mongoose.Schema({
         required: false,
         ref: 'Store'
     },
-
+    latestSaleDate: {
+        type: Date,
+        default: Date.now,
+    },
     salesDates: [{                      // Sales data
         salePrice: {
             type: Number,
@@ -60,5 +58,15 @@ var productSchema = mongoose.Schema({
     }
 
 });
+
+// Virtual getter to a better formatted date.
+productSchema.virtual('formattedDate').get(function () {
+    return new Date(this.dateCreated).toDateString();
+});
+
+productSchema.set('toObject', { getters: true });
+
+productSchema.set('toObject', { virtuals: true });
+productSchema.set('toJSON', { virtuals: true });
 
 module.exports = mongoose.model('Product', productSchema);

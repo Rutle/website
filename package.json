@@ -7,7 +7,11 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js"
   },
-  "keywords": ["website", "personal", "projects"],
+  "keywords": [
+    "website",
+    "personal",
+    "projects"
+  ],
   "homepage": "",
   "author": "Jussi Ristimäki",
   "license": "MIT",
@@ -19,6 +23,7 @@
     "cheerio": "^1.0.0-rc.2",
     "connect-flash": "^0.1.1",
     "cookie-parser": "^1.4.3",
+    "datejs": "^1.0.0-rc3",
     "dotenv": "^6.0.0",
     "express": "^4.16.3",
     "express-handlebars": "^3.0.0",
@@ -26,7 +31,7 @@
     "handlebars-helpers": "^0.10.0",
     "hoek": "5.0.3",
     "jquery": "^3.3.1",
-    "mongoose": "^5.1.6",
+    "mongoose": "^5.1.7",
     "morgan": "^1.9.0",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",

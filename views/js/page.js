@@ -77,10 +77,26 @@ $(function () {
     /**
      * 
      */
-    $('#cat_dpn')
+    $('#store_dpn')
         .dropdown({
             apiSettings: {
                 url: 'http://localhost:5000/api/stores/'
+            },
+            onChange: function(value, text, $choice) {
+                $.ajax({
+                    type: 'POST',
+                    url: '/api/stores/'+value,
+                    dataType: 'json',
+                    success: function (data) {
+                        console.log('message: ', data.message);
+    
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        
+                        let customErrorMessages = JSON.parse(jqXHR.responseText);
+                        console.log("Given error response: ", customErrorMessages);
+                    }
+                });
             },
             filterRemoteData: false,
             saveRemoteData: false,
