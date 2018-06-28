@@ -58,12 +58,6 @@ var productSchema = mongoose.Schema({
     }
 
 });
-
-// Virtual getter to a better formatted date.
-productSchema.virtual('formattedDate').get(function () {
-    return new Date(this.dateCreated).toDateString();
-});
-
 productSchema.virtual('latestSalePrice').get(function () {
     return this.salesDates[this.salesDates.length - 1].salePrice;
 });

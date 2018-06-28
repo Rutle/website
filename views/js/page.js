@@ -1,5 +1,6 @@
 
 $(function () {
+
     //$('.ui.dropdown').dropdown({ on: 'hover' }); // Initialize dropdown menu.
     $('#dashboard_menu > a.item').each(function (idx, element) {
         $(this).tab();

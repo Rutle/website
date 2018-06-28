@@ -138,7 +138,8 @@ module.exports = function (app, passport) {
         let saleLimit = (5).days().ago();
         Product.find({ latestSaleDate: { $gte: saleLimit } })
             .sort({ name: 'desc' })
-            .select('name category productUrl salesDates -_id')
+            .select('name category productUrl salesDates store -_id')
+            .populate('store', 'name -_id')
             .exec(function (err, products) {
                 let success = false;
                 let data = [];
@@ -153,10 +154,17 @@ module.exports = function (app, passport) {
                     message = 'No products found on sale.';
                 } else {
                     success = true;
-                    data = products;
+                    data = products.map(elem => ({
+                        category: elem.category,
+                        name: elem.name,
+                        productUrl: elem.productUrl,
+                        storeName: elem.store.name,
+                        latestSalePrice: elem.latestSalePrice,
+                        latestNormalPrice: elem.latestNormalPrice,
+                    }));
                     message = 'Products found.';
                 }
-                console.log(products[0]);
+                console.log(data[0]);
                 return res.render('scraper', {
                     breadcrumbs: req.breadcrumbs,
                     projectName: 'Sale price scraper',
@@ -164,6 +172,7 @@ module.exports = function (app, passport) {
                     user: req.user,
                     success: success,
                     data: data,
+                    sessionData: JSON.stringify(data),
                     message: message 
                 });
             });
