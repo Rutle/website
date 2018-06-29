@@ -15,7 +15,7 @@ var config = {
  * @enum {String}
  */
 const gitHubAction = {
-    GETDESCRIPTIONS: 'getDescriptions',
+    GETDESCRIPTION: 'getDescription',
     GETREPOSITORY: 'getRepository',
     INVALIDACTION: 'Invalid action'
 };
@@ -90,19 +90,22 @@ function getRepository(repo, action) {
                     console.log("Repository fetching error [GETREPOSITORY]: ", err);
                 });
             break;
-        case gitHubAction.GETDESCRIPTIONS:
-            return axios.get('https://api.github.com/users/rutle/repos')
+        case gitHubAction.GETDESCRIPTION:
+            return axios.get('https://api.github.com/repos/rutle/' + repo + '/readme',
+                { headers: { Accept: 'application/vnd.github.VERSION.raw' } })
                 .then(function (response) {
                     if (response.status === 200) {
                         const json = response.data;
-                        const headers = reponse.headers;
-                        let descData = [];
+                        //const headers = reponse.headers;
+                        //console.log("readme: ", response)
+                        //let descData = json['content'];
+                        /*
                         json.forEach((elem, idx) => {
                             descData.push({ repo: elem.name, description: elem.desciption })
-                        })
+                        })*/
 
                         //console.log("repos data: ", json);
-                        return descData;
+                        return json;
                     }
                 }, function (err) {
                     console.log("Description fetching error [GETDESCRIPTIONS]: ", err);

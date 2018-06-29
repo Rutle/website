@@ -42,6 +42,12 @@
             </p>
         </div>
     </div>
+    <div class="ui blue attached segment">
+        <div class="ui text container" id="description_container">
+            {{{htmldesc}}}
+        </div>
+
+    </div>
     <!--
         <div class="ui bottom attached info message" style="margin-bottom: 4rem;">
             <div class="header">
@@ -56,22 +62,22 @@
         <div id="slider_button">
             <i class="caret right icon tiny" id="slider_caret"></i>
         </div>-->
-        <div class="ui blue bottom attached segment">
-    <div class="ui segments" style="flex-grow: 1!important;">
-        <div class="ui secondary segment">
-            <div id="commit_header">
-                <h5 class="ui top header" style="margin-bottom: 2px!important;">
-                    Recent commits for '{{projectName}}'
-                </h5>
-                <i class="angle up icon" id="minimize_icon"></i>
-            </div>
+    <div class="ui blue bottom attached segment">
+        <div class="ui segments" style="flex-grow: 1!important;">
+            <div class="ui secondary segment">
+                <div id="commit_header">
+                    <h5 class="ui top header" style="margin-bottom: 2px!important;">
+                        Recent commits for '{{projectName}}'
+                    </h5>
+                    <i class="angle up icon" id="minimize_icon"></i>
+                </div>
 
-        </div>
-        <div class="ui segment">
-            <div class="ui feed" id="commit_feed">
+            </div>
+            <div class="ui segment">
+                <div class="ui feed" id="commit_feed">
+                </div>
             </div>
         </div>
-    </div>
     </div>
     <!--</div>-->
 </div>
@@ -87,6 +93,30 @@
     $(function () {
         document.body.onload = buildFeed('{{{repo}}}');
         //document.body.onload = getCommits('website');
+
+        let firstHeader = document.getElementById('description_container').firstElementChild;
+        firstHeader.className = "ui center aligned header";
+        firstHeader.setAttribute("style", "margin-top: 3rem; margin-bottom: 3rem;");
+
+        let cont = document.getElementById('description_container');
+        let children = cont.getElementsByTagName('h3');
+        console.log(children);
+        
+        while(children.length) {
+            let newHeader = document.createElement('div');
+            newHeader.className = "ui horizontal divider";
+            newHeader.innerHTML = children[0].innerHTML;
+            cont.replaceChild(newHeader, children[0]);
+        }
+        /*
+        children.forEach(function (elem, idx, array) {
+            console.log(elem);
+            let newHeader = document.createElement('div');
+            newHeader.className = "ui horizontal divider";
+            newHeader.innerHTML = elem.innerHTML;
+            array[idx] = newHeader;
+        })*/
+
     });
 
 </script>

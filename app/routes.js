@@ -7,6 +7,7 @@ var Product = require('./models/product')
 var Store = require('./models/store')
 var scraper = require('./projects/scrape.js');
 
+var md = require('markdown-it')();
 
 // Function for getting breadcrumbs of the page
 function getBreadcrumbs(req, res, next) {
@@ -122,13 +123,27 @@ module.exports = function (app, passport) {
 	/**
 	 * Website project route.
 	 */
-    app.get('/projects/website', getBreadcrumbs, getProjects, function (req, res) {
-        res.render('project', {
-            breadcrumbs: req.breadcrumbs,
-            projectName: 'Personal website',
-            repo: 'website',
-            user: req.user,
-        });
+    app.get('/projects/:repo', getBreadcrumbs, getProjects, function (req, res) {
+        if(req.params.repo) {
+            gha.getRepository(req.params.repo, gha.gitHubAction.GETDESCRIPTION)
+            .then(function (data) {
+                console.log("readme raw: ", data);
+                Project.findOne({repositoryName: req.params.repo})
+                    .exec(function(err, project) {
+                        console.log("project desc: ", project.desc);
+                        res.render('project', {
+                            breadcrumbs: req.breadcrumbs,
+                            projectName: 'Personal website',
+                            repo: 'website',
+                            user: req.user,
+                            htmldesc: project.desc
+                        });
+                    })
+
+            })
+        }
+
+
     });
 
     /**
@@ -173,7 +188,7 @@ module.exports = function (app, passport) {
                     success: success,
                     data: data,
                     sessionData: JSON.stringify(data),
-                    message: message 
+                    message: message
                 });
             });
     });
@@ -460,13 +475,13 @@ module.exports = function (app, passport) {
         let tab = req.params.tab;
         let formData = req.body.form;
         let isWebProject = (req.body.websiteProject === '1');
-        console.log(isWebProject);
+        //console.log(isWebProject);
 
         if (tab === 'new') {    // New Project
-
+            /*
             formData.forEach(function (element, idx) {
                 console.log(element.value);
-            });
+            });*/
             //Project.findOne({})
             let newProject = new Project();
             newProject.author = req.user._id;
@@ -477,10 +492,34 @@ module.exports = function (app, passport) {
 
             if (isWebProject) {
                 newProject.websiteProjectURL = '/' + formData[2].value;
+                newProject.save(function (err) {
+                    if (err) {
+                        console.error(err);
+                        return res.status(500).send(['Validation failed.']);
+                        //return next(err);
+                    }
+                    res.status(200).send({ message: 'Project successfully added to database.' });
+                });
             } else {
                 newProject.websiteProjectURL = '/projects/' + formData[1].value;
+                gha.getRepository('website', gha.gitHubAction.GETDESCRIPTION)
+                    .then(function (data) {
+                        //console.log("readme raw: ", data);
+                        newProject.desc = md.render(data);
+                        //console.log(newProject.desc);
+                        newProject.save(function (err) {
+                            if (err) {
+                                console.error(err);
+                                return res.status(500).send(['Validation failed.']);
+                                //return next(err);
+                            }
+                            res.status(200).send({ message: 'Project successfully added to database.' });
+                        });
+                    });
+
             }
-            console.log(newProject.websiteProjectURL)
+            //console.log(newProject.websiteProjectURL)
+
             //let formSize = formData.length;
             /*
             for (var i = (3 + parseInt(isWebProject)); i < formSize; i += 2) {
@@ -493,49 +532,42 @@ module.exports = function (app, passport) {
                 newProject.sections.push({ title: sectionName, text: sectionText })
             }*/
 
-            newProject.save(function (err) {
-                if (err) {
-                    console.error(err);
-                    return res.status(500).send(['Validation failed.']);
-                    //return next(err);
-                }
-                res.status(200).send({ message: 'Project successfully added to database.' });
-            });
-        } else if (tab === 'scraper') {
-            if (req.body.action === 'update') {
 
+            } else if (tab === 'scraper') {
+                if (req.body.action === 'update') {
+
+                }
+
+            } else if (tab === 'fetchScraperData') {
+
+            } else if (tab === 'newstore') {
+                let newStore = new Store();
+                newStore.name = formData[0].value.trim();
+                newStore.url = formData[1].value.trim();
+                newStore.keywords = formData[2].value.trim().split(';');
+                newStore.save(function (err) {
+                    if (err) {
+                        console.log(err);
+                        let errMessage = "";
+                        // Duplicate error.
+                        if (err.code === 11000 || err.name === 'MongoError') {
+                            console.log(err.message);
+                            if (err.message.includes(formData[0].value.trim())) {
+                                errMessage = 'That name already exists.';
+                            } else {
+                                errMessage = 'That URL already exists.';
+                            }
+                        }
+                        return res.status(500).send([errMessage])
+                    }
+                    res.status(200).send({ message: 'Store successfully added to database.' })
+                })
+            } else {
+                res.status(500).send(['Vdsasa', 'error tuli taas']);
             }
 
-        } else if (tab === 'fetchScraperData') {
 
-        } else if (tab === 'newstore') {
-            let newStore = new Store();
-            newStore.name = formData[0].value.trim();
-            newStore.url = formData[1].value.trim();
-            newStore.keywords = formData[2].value.trim().split(';');
-            newStore.save(function (err) {
-                if (err) {
-                    console.log(err);
-                    let errMessage = "";
-                    // Duplicate error.
-                    if (err.code === 11000 || err.name === 'MongoError') {
-                        console.log(err.message);
-                        if (err.message.includes(formData[0].value.trim())) {
-                            errMessage = 'That name already exists.';
-                        } else {
-                            errMessage = 'That URL already exists.';
-                        }
-                    }
-                    return res.status(500).send([errMessage])
-                }
-                res.status(200).send({ message: 'Store successfully added to database.' })
-            })
-        } else {
-            res.status(500).send(['Vdsasa', 'error tuli taas']);
-        }
-
-
-    })
+        })
     /**
      * 
      */

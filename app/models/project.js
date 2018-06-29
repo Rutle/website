@@ -36,6 +36,9 @@ var projectSchema = mongoose.Schema({
         unique: true,
         dropDups: true,
     },
+    desc: {
+        type: String
+    },
     /*
     sections: [{                        // Sections and text on a project page.
         title: {
