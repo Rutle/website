@@ -349,7 +349,8 @@ $(function () {
                             prompt: 'Please enter short name.'
                         }
                     ]
-                },
+                }
+                /*,
                 section_name: {
                     identifier: 'section_name',
                     rules: [
@@ -368,7 +369,7 @@ $(function () {
                             prompt: 'Please write text for section.'
                         }
                     ]
-                },
+                },*/
 
             },
             debug: true,
@@ -376,10 +377,11 @@ $(function () {
                 //console.log(fields);
                 event.preventDefault();
                 $('.ui.form').addClass('loading');
-                let isWebProject = $("input:checkbox").is(":checked") ? 1 : 0;
+                //let isWebProject = $("input:checkbox").is(":checked") ? 1 : 0;
                 let errorMessages = [];
                 let formData = $('#project_form').serializeArray();
                 console.log(formData);
+                /*
                 for (var i = (3 + parseInt(isWebProject)); i < formData.length; i += 2) {
                     let sectionName = formData[i];
                     let sectionText = formData[i + 1];
@@ -397,55 +399,55 @@ $(function () {
                     addErrorMessages(errorMessages, 'error_messages', 'input');
 
                     $('.ui.form').removeClass('loading');
-                } else {
-                    console.log('checkbox', $("input:checkbox").is(":checked") ? 1 : 0)
-                    $.ajax({
-                        method: 'POST',
-                        url: '/dashboard/new',
-                        data: {
-                            form: JSON.parse(JSON.stringify($('#project_form').serializeArray())),
-                            websiteProject: $("input:checkbox").is(":checked") ? 1 : 0
-                        },
-                        dataType: 'json',
-                        success: function (data) {
-                            console.log("vastaus: ", data.message);
-                            $('.ui.form').removeClass('loading');
-                            $('.ui.form').form('clear');
-                            let eMessageDiv = document.getElementById('error_messages');
-                            eMessageDiv.style.display = 'none';
-                            let sMessageDiv = document.getElementById('success_messages');
+                } else {*/
+                console.log('checkbox', $("input:checkbox").is(":checked") ? 1 : 0)
+                $.ajax({
+                    method: 'POST',
+                    url: '/dashboard/new',
+                    data: {
+                        form: JSON.parse(JSON.stringify($('#project_form').serializeArray())),
+                        websiteProject: $("input:checkbox").is(":checked") ? 1 : 0
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        console.log("vastaus: ", data.message);
+                        $('.ui.form').removeClass('loading');
+                        $('.ui.form').form('clear');
+                        let eMessageDiv = document.getElementById('error_messages');
+                        eMessageDiv.style.display = 'none';
+                        let sMessageDiv = document.getElementById('success_messages');
 
-                            let header = document.createElement('div');
-                            header.className = 'header';
-                            header.appendChild(document.createTextNode(data.message));
-                            sMessageDiv.appendChild(header);
-                            sMessageDiv.style.display = 'flex';
+                        let header = document.createElement('div');
+                        header.className = 'header';
+                        header.appendChild(document.createTextNode(data.message));
+                        sMessageDiv.appendChild(header);
+                        sMessageDiv.style.display = 'flex';
 
 
-                        },
-                        error: function (jqXHR, textStatus, errorThrown) {
-                            let error = errorThrown;
-                            let customErrorMessages = JSON.parse(jqXHR.responseText);
-                            console.log("responseText: ", customErrorMessages);
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        let error = errorThrown;
+                        let customErrorMessages = JSON.parse(jqXHR.responseText);
+                        console.log("responseText: ", customErrorMessages);
 
-                            let eMessageDiv = document.getElementById('error_messages');
-                            while (eMessageDiv.firstChild) {
-                                eMessageDiv.removeChild(eMessageDiv.firstChild);
-                            }
-                            let list = document.createElement('ul');
-                            list.className = 'list';
-                            customErrorMessages.forEach(function (elem, idx) {
-                                let listItem = document.createElement('li');
-                                listItem.appendChild(document.createTextNode(elem));
-                                list.appendChild(listItem);
-                            });
-                            eMessageDiv.appendChild(list);
-                            eMessageDiv.style.display = 'inherit';
-                            $('.ui.form').removeClass('loading');
-
+                        let eMessageDiv = document.getElementById('error_messages');
+                        while (eMessageDiv.firstChild) {
+                            eMessageDiv.removeChild(eMessageDiv.firstChild);
                         }
-                    });
-                }
+                        let list = document.createElement('ul');
+                        list.className = 'list';
+                        customErrorMessages.forEach(function (elem, idx) {
+                            let listItem = document.createElement('li');
+                            listItem.appendChild(document.createTextNode(elem));
+                            list.appendChild(listItem);
+                        });
+                        eMessageDiv.appendChild(list);
+                        eMessageDiv.style.display = 'inherit';
+                        $('.ui.form').removeClass('loading');
+
+                    }
+                });
+                //}
 
 
             },

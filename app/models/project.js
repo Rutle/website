@@ -36,7 +36,7 @@ var projectSchema = mongoose.Schema({
         unique: true,
         dropDups: true,
     },
-
+    /*
     sections: [{                        // Sections and text on a project page.
         title: {
             type: String,
@@ -46,7 +46,7 @@ var projectSchema = mongoose.Schema({
             type: String,
             required: true
         }
-    }],
+    }],*/
 
     dateCreated: {
         type: Date,

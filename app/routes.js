@@ -134,7 +134,7 @@ module.exports = function (app, passport) {
     /**
      * 
      */
-    app.get('/projects/website/scraper', getBreadcrumbs, getProjects, function (req, res) {
+    app.get('/scraper', getBreadcrumbs, getProjects, function (req, res) {
         let saleLimit = (5).days().ago();
         Product.find({ latestSaleDate: { $gte: saleLimit } })
             .sort({ name: 'desc' })
@@ -176,18 +176,6 @@ module.exports = function (app, passport) {
                     message: message 
                 });
             });
-    });
-
-	/**
-	 * Price scraper project route.
-	 */
-    app.get('/projects/scraper', getBreadcrumbs, getProjects, function (req, res) {
-        res.render('scraper', {
-            breadcrumbs: req.breadcrumbs,
-            projectName: 'Sale price scraper',
-            repo: 'Testi',
-            user: req.user,
-        });
     });
 
     /**
@@ -488,13 +476,13 @@ module.exports = function (app, passport) {
             newProject.websiteProject = isWebProject;
 
             if (isWebProject) {
-                newProject.websiteProjectURL = '/projects/website/' + formData[2].value;
+                newProject.websiteProjectURL = '/' + formData[2].value;
             } else {
                 newProject.websiteProjectURL = '/projects/' + formData[1].value;
             }
             console.log(newProject.websiteProjectURL)
-            let formSize = formData.length;
-
+            //let formSize = formData.length;
+            /*
             for (var i = (3 + parseInt(isWebProject)); i < formSize; i += 2) {
 
                 let sectionName = formData[i].value;
@@ -503,7 +491,7 @@ module.exports = function (app, passport) {
                     return res.status(500).send(['Validation failed.']);
                 }
                 newProject.sections.push({ title: sectionName, text: sectionText })
-            }
+            }*/
 
             newProject.save(function (err) {
                 if (err) {
