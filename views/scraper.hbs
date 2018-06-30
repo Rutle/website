@@ -82,16 +82,15 @@
             }
         }
         if (storageAvailable('sessionStorage')) {
+            // Yippee! We can use localStorage awesomeness
             if (!sessionStorage.getItem('salesData')) {
-
+                // No data has been stored to sessionStorage yet.
                 let data = {{{sessionData}}};
                 sessionStorage.setItem('data', JSON.stringify(data));
-                //var dadu = JSON.parse(sessionStorage.getItem('data'));
-                //console.log(dadu);
             } else {
-                // Data has been stored.
+                // Data has already been stored before.
             }
-            // Yippee! We can use localStorage awesomeness
+            
         }
         else {
             // Too bad, no localStorage for us

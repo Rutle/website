@@ -19,6 +19,11 @@
         <div class="ui center aligned basic segment">
             <h2 class="ui header">Current projects</h2>
         </div>
+        <div class="ui cards">
+        {{#forEach siteProjects}}
+            {{> project_card}}
+        {{/forEach}}
+        </div>
     </div>
     <div class="ui bottom attached tab segment" data-tab="new_project" style="margin-bottom: 5rem!important;">
         {{> new_project}}
@@ -47,7 +52,7 @@
                             {{#if productCounts}} {{#forEach productCounts}}
                             <tr>
                                 <td>{{storeName}}</td>
-                                <td>{{count}}</td>
+                                <td id="{{storeName}}_count">{{count}}</td>
                                 <td>Today</td>
                             </tr>
                             {{/forEach}} {{/if}}

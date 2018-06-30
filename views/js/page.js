@@ -470,14 +470,15 @@ $(function () {
                 return false;
             }
         });
+
     $('#refresh_sales_data').click(function(event) {
         event.preventDefault();
         $.ajax({
-            type: 'POST',
-            url: '/dashboard/scraper/refresh',
-            data: { action: 'refresh' },
+            type: 'GET',
+            url: '/api/scraper/salesdata',
             dataType: 'json',
             success: function (data) {
+                console.log(data);
                 let table = document.getElementById('store_data');
                 for(let i = table.rows.length - 2; i > 0; i-- ) {
                     table.deleteRow(i);
@@ -489,6 +490,7 @@ $(function () {
                     let dateCell = row.insertCell(2);
                     nameCell.innerHTML = elem.storeName;
                     countCell.innerHTML = elem.count;
+                    countCell.setAttribute('id', elem.storeName+'_count');
                     dateCell.innerHTML = 'Today'
                 })
 
@@ -502,6 +504,7 @@ $(function () {
     });
     $('#update_sales_data').click(function (event) {
         event.preventDefault();
+        $('#update_sales_data').addClass('loading');
 
         $.ajax({
             type: 'POST',
@@ -509,6 +512,17 @@ $(function () {
             data: { action: 'update' },
             dataType: 'json',
             success: function (data) {
+                console.log("Data retrieved: ", data);
+                let table = document.getElementById('store_data');
+                data.newInsertByStore.forEach(function(elem, idx) {
+                    console.log(typeof(elem.count));
+                    if(elem.count > 0) {
+                        let cell = document.getElementById(elem.storeName+'_count');
+                        cell.innerHTML = cell.innerHTML + ' (+'+elem.count+')';
+                        cell.className = 'positive';
+                    }
+                })
+                $('#update_sales_data').removeClass('loading');
 
             },
             error: function (jqXHR, textStatus, errorThrown) {

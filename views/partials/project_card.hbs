@@ -1,0 +1,21 @@
+<div class="card">
+    <div class="content">
+        <div class="header">{{name}}</div>
+        <div class="meta">
+            {{#if websiteProject}} Project on the website {{else}} Project on Github {{/if}}
+        </div>
+    </div>
+    <div class="extra content">
+
+        <div class="ui basic labeled icon button">
+            <i class="sign in alternate icon"></i>
+            <a href="{{websiteProjectURL}}">Website</a>
+        </div>
+        <div class="ui basic right labeled icon button">
+
+            <i class="github icon"></i>
+            <a href="http://github.com/rutle/{{repositoryName}}">Github</a>
+        </div>
+    </div>
+
+</div>

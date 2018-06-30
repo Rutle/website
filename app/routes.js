@@ -43,13 +43,14 @@ function isAdmin(req, res, next) {
  * @param {Function} next 
  */
 function getProjects(req, res, next) {
-    Project.find({ websiteProject: true })
+    Project.find()
         .sort({ name: 'desc' })
-        .select('name websiteProjectURL -_id')
+        .select('name websiteProject websiteProjectURL repositoryName -_id')
         .exec(function (err, projects) {
             if (err) {
                 console.log(err);
             }
+            console.log(projects)
             res.locals.siteProjects = projects;
             return next();
         })
@@ -304,6 +305,15 @@ module.exports = function (app, passport) {
         }
 
     });
+    app.get('/api/scraper/salesdata', isLoggedIn, function(req, res) {
+        getProductCounts(function (err, data) {
+            if (err) {
+                return res.status(500).json({ success: false, message: 'There was a problem with database.' })
+            }
+            return res.status(200).json({ success: true, data: data })
+        })
+    })
+
     /**
      * Scraper tab on dashboard.
      */
@@ -415,7 +425,7 @@ module.exports = function (app, passport) {
                                             }
                                             console.log(data);
                                             let newByStore = data.map(elem => ({ storeName: elem.store.name, count: elem.count }));
-                                            return res.status(200).json({ success: true, data: resultObj, newInsertByStore: newByStore })
+                                            return res.status(200).json({ success: true, results: resultObj, newInsertByStore: newByStore })
                                         });
                                     }
 
@@ -449,17 +459,17 @@ module.exports = function (app, passport) {
     app.get('/api/projects', function (req, res) {
         Project.find({ websiteProject: false })
             .sort({ websiteProject: 'desc' })
-            .select('name repositoryName websiteProjectUrl dateCreated formattedDate websiteProject -_id')
+            .select('name repositoryName websiteProjectURL dateCreated formattedDate websiteProject -_id')
             .exec(function (err, projects) {
                 if (err) {
                     console.log(err);
                     return res.status(500).json({ success: false })
                 }
-
+                console.log(projects)
                 let result = [];
                 projects.forEach(function (elem, idx) {
                     result.push({
-                        name: elem.name, value: elem.websiteProjectUrl,
+                        name: elem.name, value: elem.websiteProjectURL,
                         text: elem.title, disabled: false
                     })
                 })

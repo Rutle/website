@@ -54,7 +54,9 @@
             </div>
             
             {{#forEach siteProjects}}
-            <a href="{{websiteProjectURL}}" class="item">{{name}}</a>
+                {{#if websiteProject}}
+                <a href="{{websiteProjectURL}}" class="item">{{name}}</a>
+                {{/if}}
             {{/forEach}}
             <!--
             <a href="/about" class="item">
