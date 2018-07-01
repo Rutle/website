@@ -20,9 +20,20 @@
             <h2 class="ui header">Current projects</h2>
         </div>
         <div class="ui cards">
-        {{#forEach siteProjects}}
-            {{> project_card}}
-        {{/forEach}}
+            {{#forEach siteProjects}} {{> project_card}} {{/forEach}}
+        </div>
+        <div class="ui mini modal" id="modal_premove">
+            <i class="close icon"></i>
+            <div class="header">
+                Project removal
+            </div>
+            <div class="content">
+                Are you sure you want to remove this project?
+            </div>
+            <div class="actions">
+                <button class="ui cancel button">No</button>
+                <button class="ui ok button">Remove</button>
+            </div>
         </div>
     </div>
     <div class="ui bottom attached tab segment" data-tab="new_project" style="margin-bottom: 5rem!important;">

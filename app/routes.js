@@ -45,7 +45,7 @@ function isAdmin(req, res, next) {
 function getProjects(req, res, next) {
     Project.find()
         .sort({ name: 'desc' })
-        .select('name websiteProject websiteProjectURL repositoryName -_id')
+        .select('name websiteProject websiteProjectURL shortName repositoryName -_id')
         .exec(function (err, projects) {
             if (err) {
                 console.log(err);
@@ -499,6 +499,7 @@ module.exports = function (app, passport) {
             newProject.repositoryName = formData[1].value;
             newProject.shortName = formData[2].value
             newProject.websiteProject = isWebProject;
+            newProject.shortDesc = formData[3].value;
 
             if (isWebProject) {
                 newProject.websiteProjectURL = '/' + formData[2].value;
@@ -506,7 +507,6 @@ module.exports = function (app, passport) {
                     if (err) {
                         console.error(err);
                         return res.status(500).send(['Validation failed.']);
-                        //return next(err);
                     }
                     res.status(200).send({ message: 'Project successfully added to database.' });
                 });
@@ -542,39 +542,38 @@ module.exports = function (app, passport) {
                 newProject.sections.push({ title: sectionName, text: sectionText })
             }*/
 
+        } else if (tab === 'projects' && req.body.shortName) {
+            console.log(req.body.shortName)
+            Project.findOneAndRemove({shortName: req.body.shortName}, function(err, project) {
+                res.status(200).json({ success: true, result: project, message: project.name + 'has been removed'})
+            });
+            
 
-            } else if (tab === 'scraper') {
-                if (req.body.action === 'update') {
-
-                }
-
-            } else if (tab === 'fetchScraperData') {
-
-            } else if (tab === 'newstore') {
-                let newStore = new Store();
-                newStore.name = formData[0].value.trim();
-                newStore.url = formData[1].value.trim();
-                newStore.keywords = formData[2].value.trim().split(';');
-                newStore.save(function (err) {
-                    if (err) {
-                        console.log(err);
-                        let errMessage = "";
-                        // Duplicate error.
-                        if (err.code === 11000 || err.name === 'MongoError') {
-                            console.log(err.message);
-                            if (err.message.includes(formData[0].value.trim())) {
-                                errMessage = 'That name already exists.';
-                            } else {
-                                errMessage = 'That URL already exists.';
-                            }
+        } else if (tab === 'newstore') {
+            let newStore = new Store();
+            newStore.name = formData[0].value.trim();
+            newStore.url = formData[1].value.trim();
+            newStore.keywords = formData[2].value.trim().split(';');
+            newStore.save(function (err) {
+                if (err) {
+                    console.log(err);
+                    let errMessage = "";
+                    // Duplicate error.
+                    if (err.code === 11000 || err.name === 'MongoError') {
+                        console.log(err.message);
+                        if (err.message.includes(formData[0].value.trim())) {
+                            errMessage = 'That name already exists.';
+                        } else {
+                            errMessage = 'That URL already exists.';
                         }
-                        return res.status(500).send([errMessage])
                     }
-                    res.status(200).send({ message: 'Store successfully added to database.' })
-                })
-            } else {
-                res.status(500).send(['Vdsasa', 'error tuli taas']);
-            }
+                    return res.status(500).send([errMessage])
+                }
+                res.status(200).send({ message: 'Store successfully added to database.' })
+            })
+        } else {
+            res.status(500).send(['Vdsasa', 'error tuli taas']);
+        }
 
 
         })

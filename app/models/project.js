@@ -35,8 +35,12 @@ var projectSchema = mongoose.Schema({
         type: String,                  // If lacking repository
         unique: true,
         dropDups: true,
+        required: true
     },
     desc: {
+        type: String
+    },
+    shortDesc: {
         type: String
     },
     /*

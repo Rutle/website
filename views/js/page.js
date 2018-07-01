@@ -83,17 +83,17 @@ $(function () {
             apiSettings: {
                 url: 'http://localhost:5000/api/stores/'
             },
-            onChange: function(value, text, $choice) {
+            onChange: function (value, text, $choice) {
                 $.ajax({
                     type: 'POST',
-                    url: '/api/stores/'+value,
+                    url: '/api/stores/' + value,
                     dataType: 'json',
                     success: function (data) {
                         console.log('message: ', data.message);
-    
+
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
-                        
+
                         let customErrorMessages = JSON.parse(jqXHR.responseText);
                         console.log("Given error response: ", customErrorMessages);
                     }
@@ -287,7 +287,7 @@ $(function () {
                     },
                     dataType: 'json',
                     success: function (data) {
-                        console.log("vastaus: ", data.message);
+                        //console.log("vastaus: ", data.message);
                         $('#new_store_form').removeClass('loading');
                         //$('.ui.form').form('clear');
                         let eMessageDiv = document.getElementById('store_error_messages');
@@ -325,6 +325,53 @@ $(function () {
             }
         });
 
+
+    $('div.content > a.ui.top.right.attached.label').click(function (event) {
+        let id = $(this).parent().parent().attr('id');
+        console.log(id);
+        let isRemoved = false;
+
+        $('#modal_premove > div.actions > button.ui.ok.button').val(id);
+        $('#modal_premove')
+            .modal({
+                transition: 'slide down',
+                //inverted: true,
+                centered: false,
+                onApprove: function ($element) {
+                    console.log("approve: ", $element.val())
+                    $.ajax({
+                        method: 'POST',
+                        url: '/dashboard/projects',
+                        data: { shortName: $element.val() },
+                        success: function (data) {
+                            if (data.success) {
+                                console.log(data.message);
+                                isRemoved = true;
+                                return true;
+                            }
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                        }
+                    });
+                },
+                onHidden: function () {
+                    if (isRemoved) {
+                        $('div#' + id + '.card')
+                            .transition({
+                                animation: 'slide right',
+                                duration: '0.5s',
+                                onComplete: function () {
+                                    $('div#' + id + '.card').remove();
+                                }
+
+                            });
+                    }
+                }
+            })
+            .modal('show')
+
+
+    })
     /**
      * Form configuration for adding new project.
      */
@@ -347,6 +394,15 @@ $(function () {
                         {
                             type: 'empty',
                             prompt: 'Please enter short name.'
+                        }
+                    ]
+                },
+                short_desc: {
+                    identifier: 'short_desc',
+                    rules: [
+                        {
+                            type: 'empty',
+                            prompt: 'Please write a short description for the project'
                         }
                     ]
                 }
@@ -471,7 +527,7 @@ $(function () {
             }
         });
 
-    $('#refresh_sales_data').click(function(event) {
+    $('#refresh_sales_data').click(function (event) {
         event.preventDefault();
         $.ajax({
             type: 'GET',
@@ -480,21 +536,21 @@ $(function () {
             success: function (data) {
                 console.log(data);
                 let table = document.getElementById('store_data');
-                for(let i = table.rows.length - 2; i > 0; i-- ) {
+                for (let i = table.rows.length - 2; i > 0; i--) {
                     table.deleteRow(i);
                 }
-                data.data.forEach(function(elem, idx) {
-                    let row = table.insertRow(idx+1);
+                data.data.forEach(function (elem, idx) {
+                    let row = table.insertRow(idx + 1);
                     let nameCell = row.insertCell(0);
                     let countCell = row.insertCell(1);
                     let dateCell = row.insertCell(2);
                     nameCell.innerHTML = elem.storeName;
                     countCell.innerHTML = elem.count;
-                    countCell.setAttribute('id', elem.storeName+'_count');
+                    countCell.setAttribute('id', elem.storeName + '_count');
                     dateCell.innerHTML = 'Today'
                 })
 
-                
+
 
             },
             error: function (jqXHR, textStatus, errorThrown) {
@@ -514,11 +570,11 @@ $(function () {
             success: function (data) {
                 console.log("Data retrieved: ", data);
                 let table = document.getElementById('store_data');
-                data.newInsertByStore.forEach(function(elem, idx) {
-                    console.log(typeof(elem.count));
-                    if(elem.count > 0) {
-                        let cell = document.getElementById(elem.storeName+'_count');
-                        cell.innerHTML = cell.innerHTML + ' (+'+elem.count+')';
+                data.newInsertByStore.forEach(function (elem, idx) {
+                    console.log(typeof (elem.count));
+                    if (elem.count > 0) {
+                        let cell = document.getElementById(elem.storeName + '_count');
+                        cell.innerHTML = cell.innerHTML + ' (+' + elem.count + ')';
                         cell.className = 'positive';
                     }
                 })
