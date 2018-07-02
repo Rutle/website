@@ -203,7 +203,7 @@ $(function () {
     $('#project_dd')
         .dropdown({
             apiSettings: {
-                url: 'http://localhost:5000/api/projects'
+                url: '/api/projects'
             },
             action: 'hide',
             onChange: function (value, text, $selectedItem) {

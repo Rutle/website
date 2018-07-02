@@ -45,12 +45,12 @@ function isAdmin(req, res, next) {
 function getProjects(req, res, next) {
     Project.find()
         .sort({ name: 'desc' })
-        .select('name websiteProject websiteProjectURL shortName repositoryName -_id')
+        .select('name websiteProject websiteProjectURL shortName shortDesc repositoryName -_id')
         .exec(function (err, projects) {
             if (err) {
                 console.log(err);
             }
-            console.log(projects)
+            //console.log(projects)
             res.locals.siteProjects = projects;
             return next();
         })
@@ -102,7 +102,7 @@ module.exports = function (app, passport) {
 	 * Main page.
 	 */
     app.get('/', getBreadcrumbs, getProjects, function (req, res) {
-        console.log(res.locals.projects);
+        //console.log(res.locals.projects);
         res.render('home', {
             breadcrumbs: req.breadcrumbs,
             user: req.user,
@@ -128,10 +128,10 @@ module.exports = function (app, passport) {
         if(req.params.repo) {
             gha.getRepository(req.params.repo, gha.gitHubAction.GETDESCRIPTION)
             .then(function (data) {
-                console.log("readme raw: ", data);
+                //console.log("readme raw: ", data);
                 Project.findOne({repositoryName: req.params.repo})
                     .exec(function(err, project) {
-                        console.log("project desc: ", project.desc);
+                        //console.log("project desc: ", project.desc);
                         res.render('project', {
                             breadcrumbs: req.breadcrumbs,
                             projectName: 'Personal website',
@@ -180,7 +180,7 @@ module.exports = function (app, passport) {
                     }));
                     message = 'Products found.';
                 }
-                console.log(data[0]);
+                //console.log(data[0]);
                 return res.render('scraper', {
                     breadcrumbs: req.breadcrumbs,
                     projectName: 'Sale price scraper',
@@ -258,7 +258,7 @@ module.exports = function (app, passport) {
                     if (products && products.length === 0) {
                         return res.status(200).json({ success: true, data: null, message: 'No products found on sale.' })
                     }
-                    console.log(products.length);
+                    //console.log(products.length);
                     return res.status(200).json({ success: true, data: products, message: 'Products found.' })
                 });
 
@@ -270,7 +270,7 @@ module.exports = function (app, passport) {
      * Getting keywords for stores.
      */
     app.get(['/api/storekeywords', '/api/storekeywords/:id'], isLoggedIn, function (req, res) {
-        console.log('param: ', req.params.id);
+        //console.log('param: ', req.params.id);
         if (!req.params.id) {
             Store.find({})
                 .sort({ name: 'desc' })
@@ -339,7 +339,7 @@ module.exports = function (app, passport) {
 
             })
         } else if (action === 'addkeyword') {
-            console.log('Add new keyword');
+            //console.log('Add new keyword');
             if (keyword === '') return res.status(500).json({ message: 'Please type non-empty keyword.' })
             Store.findById(store, 'keywords', function (err, store) {
                 if (err) {
@@ -373,7 +373,7 @@ module.exports = function (app, passport) {
                             //console.log("haettu data: \n", data);
                             let result = [];
                             const storeIds = arrayToObject(stores);
-                            console.log(storeIds)
+                            //console.log(storeIds)
                             data.forEach(function (elem, idx) {
 
                                 let documentObj = {
@@ -457,15 +457,17 @@ module.exports = function (app, passport) {
      * Dropdown API for main menu projects dropdown
      */
     app.get('/api/projects', function (req, res) {
+        //console.log("api projects kutsuttu");
         Project.find({ websiteProject: false })
             .sort({ websiteProject: 'desc' })
             .select('name repositoryName websiteProjectURL dateCreated formattedDate websiteProject -_id')
             .exec(function (err, projects) {
+                //console.log(projects);
                 if (err) {
                     console.log(err);
                     return res.status(500).json({ success: false })
                 }
-                console.log(projects)
+                console.log("api: ", projects)
                 let result = [];
                 projects.forEach(function (elem, idx) {
                     result.push({
@@ -484,6 +486,7 @@ module.exports = function (app, passport) {
     app.post('/dashboard/:tab', isLoggedIn, getBreadcrumbs, function (req, res) {
         let tab = req.params.tab;
         let formData = req.body.form;
+        //console.log(formData);
         let isWebProject = (req.body.websiteProject === '1');
         //console.log(isWebProject);
 
@@ -499,7 +502,7 @@ module.exports = function (app, passport) {
             newProject.repositoryName = formData[1].value;
             newProject.shortName = formData[2].value
             newProject.websiteProject = isWebProject;
-            newProject.shortDesc = formData[3].value;
+            newProject.shortDesc = isWebProject ? formData[4].value : formData[3].value;
 
             if (isWebProject) {
                 newProject.websiteProjectURL = '/' + formData[2].value;
@@ -528,19 +531,6 @@ module.exports = function (app, passport) {
                     });
 
             }
-            //console.log(newProject.websiteProjectURL)
-
-            //let formSize = formData.length;
-            /*
-            for (var i = (3 + parseInt(isWebProject)); i < formSize; i += 2) {
-
-                let sectionName = formData[i].value;
-                let sectionText = formData[i + 1].value
-                if (sectionName === '' || sectionText === '') {
-                    return res.status(500).send(['Validation failed.']);
-                }
-                newProject.sections.push({ title: sectionName, text: sectionText })
-            }*/
 
         } else if (tab === 'projects' && req.body.shortName) {
             console.log(req.body.shortName)

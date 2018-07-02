@@ -1,4 +1,4 @@
-<div class="card" id="{{shortName}}">
+<div class="card blue" id="{{shortName}}">
     <div class="content">
         <div class="header">{{name}}</div>
         <a class="ui top right attached label">
@@ -7,6 +7,9 @@
         </a>
         <div class="meta">
             {{#if websiteProject}} Project on the website {{else}} Project on Github {{/if}}
+        </div>
+        <div class="description">
+            <p>{{shortDesc}}</p>
         </div>
     </div>
     <div class="extra content">
