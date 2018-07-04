@@ -13,15 +13,13 @@
         </div>
         <div class="ui stackable grid">
             <div class="row">
-                <div class="six wide column">
+                <div class="five wide column" style="flex:1;">
                     <div class="ui selection dropdown" id="store_dpn">
                         <div class="default text">Select store</div>
                         <i class="dropdown icon"></i>
                     </div>
-                </div>
-                <div class="six wide column">
                     <div class="ui selection dropdown" id="category_dpn">
-                        <div class="default text">Select store</div>
+                        <div class="default text">Select category</div>
                         <i class="dropdown icon"></i>
                     </div>
                 </div>
@@ -31,26 +29,14 @@
                     <div class="ui vertical segment">
                         {{> saletable}}
                     </div>
-                    <div class="ui vertical segment">
-                        {{> saletable}}
-                    </div>
 
                 </div>
-
-
-
             </div>
-
         </div>
-
-
     </div>
 
     <div class="ui bottom attached tab segment" data-tab="categories" style="margin-bottom: 5rem!important;" id="categories_tab">
         <div class="ui sub header">Stores</div>
-
-
-
     </div>
     <div class="ui bottom attached tab segment" data-tab="search" style="margin-bottom: 5rem!important;">
         <h3 class="ui header">AJAX Tab third</h3>
@@ -85,12 +71,16 @@
             // Yippee! We can use localStorage awesomeness
             if (!sessionStorage.getItem('salesData')) {
                 // No data has been stored to sessionStorage yet.
-                let data = {{{sessionData}}};
-                sessionStorage.setItem('data', JSON.stringify(data));
+                let storeSalesData = {{{ sessionData }}};
+                let storeCategories = {{{ storeCategories }}}
+
+                // Sales data
+                sessionStorage.setItem('salesData', JSON.stringify(storeSalesData));
+                // Unique categories
+                sessionStorage.setItem('storeCategories', JSON.stringify(storeCategories));
             } else {
-                // Data has already been stored before.
+            // Data has already been stored before.
             }
-            
         }
         else {
             // Too bad, no localStorage for us

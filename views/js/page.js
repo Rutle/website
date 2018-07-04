@@ -74,18 +74,24 @@ $(function () {
         }
 
     })
-
+    $('#category_dpn').dropdown();
     /**
      * 
      */
     $('#store_dpn')
         .dropdown({
             apiSettings: {
-                url: 'http://localhost:5000/api/stores/'
+                url: 'http://localhost:5000/api/stores/',
+                onComplete: function (response) {
+                    //console.log(response);
+                    //response.results[0].selected = true;
+                    //console.log(response);
+                }
             },
             onChange: function (value, text, $choice) {
+                /*
                 $.ajax({
-                    type: 'POST',
+                    method: 'GET',
                     url: '/api/stores/' + value,
                     dataType: 'json',
                     success: function (data) {
@@ -98,14 +104,76 @@ $(function () {
                         console.log("Given error response: ", customErrorMessages);
                     }
                 });
+                */
+                let storeData = JSON.parse((sessionStorage.getItem('salesData')));
+                storeData = (text === 'All stores' ? storeData : storeData.filter(elem => elem.storeName === text));
+                let categories = JSON.parse((sessionStorage.getItem('storeCategories')));
+                $('#category_dpn').dropdown({
+                    values: categories[text],
+                    onChange: function (value, categoryText, $choice) {
+                        let storeText = $('#store_dpn').dropdown('get text');
+        
+                        console.log("storeText ", storeText);
+                        let storeData = JSON.parse((sessionStorage.getItem('salesData')));
+                        storeData = (storeText === 'All stores' ? storeData : storeData.filter(elem => elem.storeName === text));
+                        console.log(storeText, categoryText);
+                        populateTable(storeData, categoryText)
+                    }
+                 });
+                populateTable(storeData);
+
             },
             filterRemoteData: false,
             saveRemoteData: false,
             fullTextSearch: 'exact',
             direction: 'auto',
-            debug: false
+            debug: true
+        });
+
+    /**
+     * Function to populate the sales table.
+     * @param {Array} storeData Data from sessionStorage for the selected store.
+     * @param {String} category Selected category. Default is 'all'.
+     */
+    function populateTable(storeData, category = 'all') {
+        let table = document.getElementById('sales_table').getElementsByTagName('tbody')[0];
+        console.log(storeData);
+        // Clear the table from previous data.
+        for (let i = table.rows.length - 1; i >= 0; --i) {
+            table.rows[i].remove();
+        }
+        console.log("generated new table")
+        // Add new data to the table.
+        let tableIdx = 0;
+        storeData.forEach(function (elem, idx) {
+            if (category === 'all') {
+                let row = table.insertRow(tableIdx);
+                let nameCell = row.insertCell(0);
+                let catCell = row.insertCell(1);
+                let saleCell = row.insertCell(2);
+                let normCell = row.insertCell(3);
+                //let storeCell = row.insertCell(4);
+                nameCell.innerHTML = elem.name;
+                catCell.innerHTML = elem.category;
+                saleCell.innerHTML = elem.latestSalePrice;
+                normCell.innerHTML = elem.latestNormalPrice == undefined ? 'N/A' : elem.latestNormalPrice;
+                //storeCell.innerHTML = elem.storeName;
+                tableIdx++;
+            } else if (category === elem.category) {
+                let row = table.insertRow(tableIdx);
+                let nameCell = row.insertCell(0);
+                let catCell = row.insertCell(1);
+                let saleCell = row.insertCell(2);
+                let normCell = row.insertCell(3);
+                nameCell.innerHTML = elem.name;
+                catCell.innerHTML = elem.category;
+                saleCell.innerHTML = elem.latestSalePrice;
+                normCell.innerHTML = elem.latestNormalPrice == undefined ? 'N/A' : elem.latestNormalPrice;
+                tableIdx++;
+            }
         })
 
+    }
     $('#store_keywords')
         .dropdown({
             apiSettings: {
@@ -530,7 +598,7 @@ $(function () {
     $('#refresh_sales_data').click(function (event) {
         event.preventDefault();
         $.ajax({
-            type: 'GET',
+            method: 'GET',
             url: '/api/scraper/salesdata',
             dataType: 'json',
             success: function (data) {

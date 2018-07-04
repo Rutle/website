@@ -125,23 +125,23 @@ module.exports = function (app, passport) {
 	 * Website project route.
 	 */
     app.get('/projects/:repo', getBreadcrumbs, getProjects, function (req, res) {
-        if(req.params.repo) {
+        if (req.params.repo) {
             gha.getRepository(req.params.repo, gha.gitHubAction.GETDESCRIPTION)
-            .then(function (data) {
-                //console.log("readme raw: ", data);
-                Project.findOne({repositoryName: req.params.repo})
-                    .exec(function(err, project) {
-                        //console.log("project desc: ", project.desc);
-                        res.render('project', {
-                            breadcrumbs: req.breadcrumbs,
-                            projectName: 'Personal website',
-                            repo: 'website',
-                            user: req.user,
-                            htmldesc: project.desc
-                        });
-                    })
+                .then(function (data) {
+                    //console.log("readme raw: ", data);
+                    Project.findOne({ repositoryName: req.params.repo })
+                        .exec(function (err, project) {
+                            //console.log("project desc: ", project.desc);
+                            res.render('project', {
+                                breadcrumbs: req.breadcrumbs,
+                                projectName: 'Personal website',
+                                repo: 'website',
+                                user: req.user,
+                                htmldesc: project.desc
+                            });
+                        })
 
-            })
+                })
         }
 
 
@@ -160,24 +160,42 @@ module.exports = function (app, passport) {
                 let success = false;
                 let data = [];
                 let message = "";
+                let categories = {};
                 if (err) {
                     success = false;
                     data = null;
+                    categories = null;
                     message = 'There was a problem with searching products from database.';
                 } else if (products && products.length === 0) {
                     success = true;
                     data = null;
+                    categories = null;
                     message = 'No products found on sale.';
                 } else {
                     success = true;
-                    data = products.map(elem => ({
-                        category: elem.category,
-                        name: elem.name,
-                        productUrl: elem.productUrl,
-                        storeName: elem.store.name,
-                        latestSalePrice: elem.latestSalePrice,
-                        latestNormalPrice: elem.latestNormalPrice,
-                    }));
+                    let unique_cats = [];
+                    products.forEach(function (elem, idx, array) {
+                        data.push({
+                            category: elem.category,
+                            name: elem.name,
+                            productUrl: elem.productUrl,
+                            storeName: elem.store.name,
+                            latestSalePrice: elem.latestSalePrice,
+                            latestNormalPrice: elem.latestNormalPrice,
+                        });
+                        if (unique_cats.indexOf(elem.category) === -1 && elem.category !== '') {
+                            unique_cats.push(elem.category);
+                            if (categories[elem.store.name] === undefined) {
+                                categories[elem.store.name] = [];
+                                categories[elem.store.name].push({ name: elem.category, value: elem.category,
+                                                                   text: elem.category, disabled: false});
+                            } else {
+                                categories[elem.store.name].push({ name: elem.category, value: elem.category,
+                                                                   text: elem.category, disabled: false });
+                            }
+                        }
+                        })
+                    //console.log(categories);
                     message = 'Products found.';
                 }
                 //console.log(data[0]);
@@ -189,7 +207,8 @@ module.exports = function (app, passport) {
                     success: success,
                     data: data,
                     sessionData: JSON.stringify(data),
-                    message: message
+                    message: message,
+                    storeCategories: JSON.stringify(categories)
                 });
             });
     });
@@ -229,7 +248,7 @@ module.exports = function (app, passport) {
                     return res.status(500).json({ success: false })
                 }
                 let result = [];
-                result.push({ name: 'Stores', value: 'Stores', text: 'Stores', disabled: true })
+                //result.push({ name: 'Stores', value: 'Stores', text: 'Stores', disabled: false })
                 result.push({ name: 'All', value: 'All', text: 'All stores', disabled: false })
                 projects.forEach(function (elem, idx) {
                     result.push({ name: elem.name, value: elem._id, text: elem.name, disabled: false })
@@ -243,7 +262,7 @@ module.exports = function (app, passport) {
     /**
      * API endpoint for fetching sales from database.
      */
-    app.post('/api/stores/:store', function (req, res) {
+    app.get('/api/stores/:store', function (req, res) {
         let storeId = req.params.store.trim();
         let saleLimit = (5).days().ago();
         if (storeId) {
@@ -258,7 +277,8 @@ module.exports = function (app, passport) {
                     if (products && products.length === 0) {
                         return res.status(200).json({ success: true, data: null, message: 'No products found on sale.' })
                     }
-                    //console.log(products.length);
+                    console.log(products);
+
                     return res.status(200).json({ success: true, data: products, message: 'Products found.' })
                 });
 
@@ -305,7 +325,7 @@ module.exports = function (app, passport) {
         }
 
     });
-    app.get('/api/scraper/salesdata', isLoggedIn, function(req, res) {
+    app.get('/api/scraper/salesdata', isLoggedIn, function (req, res) {
         getProductCounts(function (err, data) {
             if (err) {
                 return res.status(500).json({ success: false, message: 'There was a problem with database.' })
@@ -534,10 +554,10 @@ module.exports = function (app, passport) {
 
         } else if (tab === 'projects' && req.body.shortName) {
             console.log(req.body.shortName)
-            Project.findOneAndRemove({shortName: req.body.shortName}, function(err, project) {
-                res.status(200).json({ success: true, result: project, message: project.name + 'has been removed'})
+            Project.findOneAndRemove({ shortName: req.body.shortName }, function (err, project) {
+                res.status(200).json({ success: true, result: project, message: project.name + 'has been removed' })
             });
-            
+
 
         } else if (tab === 'newstore') {
             let newStore = new Store();
@@ -566,7 +586,7 @@ module.exports = function (app, passport) {
         }
 
 
-        })
+    })
     /**
      * 
      */

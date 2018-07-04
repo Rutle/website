@@ -1,8 +1,8 @@
 <div class="ui container" style="margin-bottom: 5rem;">
+    <!--
     <div class="ui blue top attached segment">
         <div class="ui text container">
             <h1 class="ui center aligned header" style="margin-top: 3rem; margin-bottom: 3rem;">{{projectName}}</h1>
-            <!--<h2 class="ui header">Description</h2>-->
             <div class="ui horizontal divider">Description</div>
 
             <p>
@@ -20,7 +20,6 @@
                 on this site and enhance it. Also I truly want to learn more things so these additional features give me
                 more experience.
             </p>
-            <!--<h2 class="ui header">Projects</h2>-->
             <div class="ui horizontal divider">Projects</div>
             <p>
                 So far I have made some small projects such as a stat calculator for a video game but I also started to work on a roguelike
@@ -42,11 +41,60 @@
             </p>
         </div>
     </div>
-    <div class="ui blue attached segment">
-        <div class="ui text container" id="description_container">
-            {{{htmldesc}}}
-        </div>
+    -->
 
+    <div class="ui blue attached segment">
+        <div class="ui stackable two column divided grid">
+            <div class="ten wide column">
+                <div class="ui basic segment">
+                    <div class="ui container" id="description_container">
+                        {{{htmldesc}}}
+                    </div>
+
+                </div>
+            </div>
+            <div class="six wide column">
+
+                    <div class="ui accordion">
+                        <div class="active title">
+                            <i class="dropdown icon"></i>
+                            Project stats
+                        </div>
+                        <div class="active content">
+                            <p>A dog is a type of domesticated animal. Known for its loyalty and faithfulness, it can be found
+                                as a welcome guest in many households across the world.</p>
+                        </div>
+                        <div class="title">
+                            <i class="dropdown icon"></i>
+                            Latest commits
+                        </div>
+                        <div class="content">
+
+                                <div class="ui feed" id="commit_feed">
+                                </div>
+
+                        </div>
+
+                    </div>
+                </div>
+                <div class="ui segments">
+                    <div class="ui secondary segment">
+                        <div id="commit_header">
+                            <h5 class="ui top header" style="margin-bottom: 2px!important;">
+                                Recent commits for '{{projectName}}'
+                            </h5>
+                            <i class="angle up icon" id="minimize_icon"></i>
+                        </div>
+
+                    </div>
+                    <div class="ui segment">
+                        <div class="ui feed" id="commit_feed">
+                        </div>
+                    </div>
+                </div>
+
+
+        </div>
     </div>
     <!--
         <div class="ui bottom attached info message" style="margin-bottom: 4rem;">
@@ -62,23 +110,6 @@
         <div id="slider_button">
             <i class="caret right icon tiny" id="slider_caret"></i>
         </div>-->
-    <div class="ui blue bottom attached segment">
-        <div class="ui segments" style="flex-grow: 1!important;">
-            <div class="ui secondary segment">
-                <div id="commit_header">
-                    <h5 class="ui top header" style="margin-bottom: 2px!important;">
-                        Recent commits for '{{projectName}}'
-                    </h5>
-                    <i class="angle up icon" id="minimize_icon"></i>
-                </div>
-
-            </div>
-            <div class="ui segment">
-                <div class="ui feed" id="commit_feed">
-                </div>
-            </div>
-        </div>
-    </div>
     <!--</div>-->
 </div>
 
@@ -87,6 +118,7 @@
     // Fetch commits once page has been fully loaded.
 
     $(function () {
+        $('.ui.accordion').accordion();
         document.body.onload = buildFeed('{{{repo}}}');
         //document.body.onload = getCommits('website');
 
@@ -96,9 +128,8 @@
 
         let cont = document.getElementById('description_container');
         let children = cont.getElementsByTagName('h3');
-        console.log(children);
-        
-        while(children.length) {
+
+        while (children.length) {
             let newHeader = document.createElement('div');
             newHeader.className = "ui horizontal divider";
             newHeader.innerHTML = children[0].innerHTML;
