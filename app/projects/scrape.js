@@ -1,7 +1,7 @@
 'use strict'
 var axios = require('axios');
 var cheerio = require('cheerio');
-//var fs = require('fs');
+var fs = require('fs');
 var parseData = require('./parser.js')
 
 /**
@@ -25,63 +25,102 @@ function getData(stores) {
         .then(axios.spread((...args) => {
             var siteData = []
             for (let i = 0; i < args.length; i++) {
-                if (args[i].status === 200 && args[i].config.url === 'https://www.jimms.fi/') {
+                if (args[i].status === 200) {
                     const html = args[i].data;
                     const $ = cheerio.load(html);
-                    let productList = []
                     let storeUrl = args[i].config.url;
                     let status = args[i].status;
-                    $('div.pcol > div.productitem').each(function (i, elem) {
-                        productList[i] = {
-                            storeUrl: storeUrl,
-                            status: status,
-                            pname: $(this).children('.p_name').children().first().text().trim(),
-                            currentPrice: $(this).children('.p_bottom').children('.p_price').first().text().trim(),
-                            url: $(this).children('.p_name').children().first().attr('href'),
+
+                    if (storeUrl === 'https://www.jimms.fi/') {
+                        let productList = []
+                        $('div.pcol > div.productitem').each(function (i, elem) {
+                            productList[i] = {
+                                storeUrl: storeUrl,
+                                status: status,
+                                pname: $(this).children('.p_name').children().first().text().trim(),
+                                currentPrice: $(this).children('.p_bottom').children('.p_price').first().text().trim(),
+                                url: $(this).children('.p_name').children().first().attr('href'),
+                            }
+                        });
+                        // Remove first element from array.
+                        productList.shift();
+
+                        // Clean up undefined elements.
+                        productList = productList.filter(n => n != undefined);
+
+                        let store = stores.find(function (store) {
+                            return store.url === args[i].config.url;
+                        });
+
+                        // Parse relevant data and modify it to desired format.
+                        productList = parseData.parseArr(productList, args[i].config.url, store.keywords);
+
+                        // Add elements from productList to siteData.
+                        siteData.push(...productList);
+                    } else if (storeUrl === 'https://cdon.fi/kesaale/tietokoneet/naytot/') {
+                        let productList = [];
+                        /*
+                                  newObjectList[newCounter] = {
+            storeUrl: objectList[i].storeUrl,
+            status: objectList[i].status,
+            pname: productItem,
+            currentPrice: parseFloat(objectList[i].currentPrice.match(/\d+(?:\,\d+)?/g)),
+            url: jimmsUrl.slice(0, -1)+objectList[i].url,
+            regularPrice: parseFloat(price),
+            productId: "",
+            category: "",
+            storeProductId: ""
+                        */
+                        let $ = cheerio.load(response.data);
+                        $('main > section > ul > li').each(function (i, elem) {
+                            let art = $(this).children('article');
+                            if (art.children('div.product-image-wrapper').children('a').first().children('div.price-splash').length === 1) {
+                                productList.push({
+                                    storeUrl: storeUrl,
+                                    status: status,
+                                    pname: art.children('.full-title').attr('value'),
+                                    currentPrice: art.children('div.product-price-wrapper').children().first().text().trim(),
+                                    regularPrice: art.children('div.product-price-wrapper').children().eq(1).text().trim(),
+                                    url: 'https://cdon.fi'+art.children('div.product-title-wrapper').children('a').first().attr('href'),
+                                    productId: '',
+                                    category: art.children('.category-title').attr('value').split('/').splice(-1, 1)[0],
+                                    storeProductId: art.children('.product-id').attr('value'),
+                                });
+                            }
+                        })
+
+                        //let name = article.children().first().attr('value');
+                        //let storeProductId = article.children().eq(1).attr('value');
+                        //let categoryString = article.children().eq(2).attr('value').split('/').splice(-1, 1)[0];
+                        //let salePrice = article.children('div.product-price-wrapper').children().first().text().trim();
+                        //let normalPrice = article.children('div.product-price-wrapper').children().eq(1).text().trim();
+                        //console.log(name, storeProductId, categoryString, salePrice, normalPrice);
+
+                        siteData.push(obj);
+                    } else {
+                        let obj = {
+                            url: args[i].config.url,
+                            status: args[i].status
                         }
-                    });
-                    // Remove first element from array.
-                    productList.shift();
-
-                    // Clean up undefined elements.
-                    productList = productList.filter(n => n != undefined);
-
-                    let store = stores.find(function(store) {
-                        return store.url === args[i].config.url;
-                    });
-
-                    // Parse relevant data and modify it to desired format.
-                    productList = parseData.parseArr(productList, args[i].config.url, store.keywords);
-
-                    // Add elements from productList to siteData.
-                    siteData.push(...productList);
-
-                } else if (args[i].config.url === 'https://www.verkkokauppa.com/' && args[i].status === 200) {
-
-                    let obj = {
-                        url: args[i].config.url,
-                        status: args[i].status
+                        siteData.push(obj);
                     }
-                    siteData.push(obj);
-                } else {
-                    let obj = {
-                        url: args[i].config.url,
-                        status: args[i].status
-                    }
-                    siteData.push(obj);
+
                 }
+
             }
+
             /*
             console.log("Eka site data: ", siteData.filter(function (l) {
                 return l.status === 200;
             }).map((li) => li.url));
             */
-            return siteData;
+
             /*
             fs.writeFile('productList.json',
                 JSON.stringify(pListTrimmed, null, 4),
                 (err) => console.log('File successfully written!'));
             */
+            return siteData;
 
         }, function (err) {
             console.log("First error ", err);
@@ -111,8 +150,8 @@ function getRepository(repo, action) {
                 .then(function (response) {
                     if (response.status === 200) {
                         const json = response.data;
-                        const headers = response.headers;
-                        console.log("eka: ", json);
+                        //const headers = response.headers;
+                        //console.log("eka: ", json);
                         /*
                         fs.writeFile('apitest.json',
                             JSON.stringify(json, null, 4),
@@ -130,7 +169,7 @@ function getRepository(repo, action) {
                 .then(function (response) {
                     if (response.status === 200) {
                         const json = response.data;
-                        const headers = reponse.headers;
+                        //const headers = reponse.headers;
                         let descData = [];
                         json.forEach((elem, idx) => {
                             descData.push({ repo: elem.name, description: elem.desciption })
@@ -168,24 +207,20 @@ function getProductPages(links) {
                     let storeProductId = element.config.url.match(regex)[0];
 
                     let idx = links.findIndex(item => item.url === element.config.url);
-                    //links[idx].category = $('.breadcrumb').children().last().prev().children('a').first().children('span').first().text();
                     links[idx].category = $('#productgroupmenu > div.list-group-item.menu > ul > li.open > a').text().trim();
                     links[idx].productId = $('#pinfo_propinfo > div:nth-child(1) > div:nth-child(2)').text().trim();
                     links[idx].storeProductId = storeProductId;
-                    //let category = $('.breadcrumb').children().last().prev().children('a').first().children('span').first().text();
-                    //let categoryUrl = $('.breadcrumb').children().last().prev().children('a').first().attr('href');
-                    //let productId = $('#pinfo_propinfo > div:nth-child(1) > div:nth-child(2)').text();
-                    //console.log('cat: ', links[idx].category);
-                    //console.log('url: ', links[idx].categoryUrl);
-                    //console.log('id: ', links[idx].productId, '\n');
-                } else if (element.status === 200 && element.config.url.includes('https://www.verkkokauppa.com/')) {
-                    let idx = links.findIndex(item => item.url === element.config.url);
-                    links[idx].category = 'Testi'
-                    links[idx].categoryUrl = 'Testi'
-                    links[idx].productId = 'Testi'
 
-                } else if(element.status === 200 && element.config.url.includes('https://www.power.fi/')) {
+                } else if (element.status === 200 && element.config.url.includes('https://cdon.fi/')) {
                     let $ = cheerio.load(element.data);
+                    if (element.config.url.includes('kesaale/tietokoneet/naytot/')) {
+                        let idx = links.findIndex(item => item.url === element.config.url);
+                        links[idx].productId = $('#energy-label__datasheet-popup > tbody > tr > th').filter(function(i, el) {
+                            return $(this).text() === 'Valmistajan tuotenumero';
+                        }).next().text().trim();
+
+                    }
+
                 }
             });
             return links;
@@ -200,3 +235,41 @@ module.exports = {
     getData: getData,
     getRepository: getRepository
 };
+/**
+ * Just a test function to check that the selectors work.
+ * @param {String} url 
+ */
+function saveTestHTML(url) {
+    //return axios.get(url, {headers: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:61.0) Gecko/20100101 Firefox/61.0'}})
+    return axios.get(url)
+        .then(function (response) {
+            if (response.status === 200) {
+                //const json = response.data;
+                //const headers = response.request;
+                //console.log(headers);
+                let $ = cheerio.load(response.data);
+                console.log($('#energy-label__datasheet-popup > tbody > tr > th').filter(function(i, el) {
+                    return $(this).text() === 'Valmistajan tuotenumero';
+                }).next().text().trim());
+                
+                //let article = $('main > section > ul > li').first().children().first();
+                //let name = article.children().first().attr('value');
+                //let storeProductId = article.children().eq(1).attr('value');
+                //let categoryString = article.children().eq(2).attr('value').split('/').splice(-1, 1)[0];
+                //let salePrice = article.children('div.product-price-wrapper').children().first().text().trim();
+                //let normalPrice = article.children('div.product-price-wrapper').children().eq(1).text().trim();
+                //console.log(name, storeProductId, categoryString, salePrice, normalPrice);
+                /*
+                fs.writeFile('apitest.json',
+                JSON.stringify(json, null, 4),
+                (err) => console.log('File successfully written!'));
+                */
+
+
+            }
+        }, function (err) {
+            console.log("Description fetching error [saveTestHTML]: ", err);
+        })
+
+}
+saveTestHTML('https://cdon.fi/kodin-elektroniikka/acer-31-5-led-eb321hqua-p40945618');
