@@ -165,7 +165,7 @@ function getProductPages(links) {
                     let $ = cheerio.load(element.data);
                     //console.log("config: ", element.config.url);
                     const regex = /https:\/\/www.jimms.fi\/fi\/Product\/Show\/(.*?)(\/)/gm;
-                    let storeProductId = element.config.url.match(regex)[1];
+                    let storeProductId = element.config.url.match(regex)[0];
 
                     let idx = links.findIndex(item => item.url === element.config.url);
                     //links[idx].category = $('.breadcrumb').children().last().prev().children('a').first().children('span').first().text();
@@ -184,6 +184,8 @@ function getProductPages(links) {
                     links[idx].categoryUrl = 'Testi'
                     links[idx].productId = 'Testi'
 
+                } else if(element.status === 200 && element.config.url.includes('https://www.power.fi/')) {
+                    let $ = cheerio.load(element.data);
                 }
             });
             return links;
