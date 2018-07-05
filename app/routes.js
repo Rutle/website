@@ -406,7 +406,7 @@ module.exports = function (app, passport) {
                                             '$push': {
                                                 salesDates: {
                                                     salePrice: elem.currentPrice,
-                                                    normalPrice: elem.regularPrice,
+                                                    normalPrice: elem.regularPrice === undefined ? 'N/A' : elem.regularPrice,
                                                     dateOfSale: new Date(),
                                                     storeId: elem.storeProductId
                                                 }

@@ -25,7 +25,7 @@ body {
 
 
 
-.content_wrap {
+.content-wrap {
   padding-top: 3rem;
   background-color: #F2F1EF!important;
 }
@@ -315,7 +315,19 @@ body {
     background: rgba(112, 128, 144, 0.2);
 }
 
+.inner-content-stretch {
+    flex: 1 1 auto!important;
+    
+}
+.inner-content-wrap {
+    display: flex!important;
+    flex-flow: column!important;
+    min-height: 90%!important;
+}
 
+.inner-content-wrap > .inner-content-stretch  {
+    margin-bottom: 5rem!important;
+}
 .ftable-toprow {
     box-sizing: border-box;
     display: flex;

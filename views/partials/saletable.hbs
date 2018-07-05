@@ -1,92 +1,4 @@
-<!--
-<div class="ui right aligned basic segment">
-    <h5 class="ui header">Jimms</h5>
-</div>
 
-<div class="ext_container" id="saletable">
-    <div class="ext_top_row">
-
-        <div class="ext_cat">
-            <i class="caret square down outline icon" style="display:inline-block!important; float:left!important;"></i>
-            <span style="float:right!important; display:inline-block!important;">Category</span>
-        </div>
-        <div class="ext_name">
-            <span>Samsung 21,5" S22F350H</span>
-        </div>
-        <div class="ext_sale">
-            <span>89€</span>
-        </div>
-        <div class="ext_right">
-            <span style="text-decoration: line-through;"> 119€</span>
-        </div>
-
-        <div class="ext_bottom card_transition" id="content_hide" style="height: 0; padding-top:0; padding-bottom: 0;">
-            <div class="ext_bottom_desc">
-                Full HD -monitori, musta
-            </div>
-            <div class="ext_bottom_meta">
-
-
-                <a class="right floated">Product page</a>
-            </div>
-        </div>
-    </div>
-    <div class="ext_middle_row">
-
-        <div class="ext_cat">
-            <i class="caret square down outline icon" style="display:inline-block!important; float:left!important;"></i>
-            <span style="float:right!important; display:inline-block!important;">Category</span>
-        </div>
-        <div class="ext_name">
-            <span>Samsung 21,5" S22F350H</span>
-        </div>
-        <div class="ext_sale">
-            <span>89€</span>
-        </div>
-        <div class="ext_right">
-            <span style="text-decoration: line-through;"> 119€</span>
-        </div>
-
-        <div class="ext_bottom card_transition" id="content_hide" style="height: 0; padding-top:0; padding-bottom: 0;">
-            <div class="ext_bottom_desc">
-                Full HD -monitori, musta
-            </div>
-            <div class="ext_bottom_meta">
-
-
-                <a class="right floated">Product page</a>
-            </div>
-        </div>
-    </div>
-    <div class="ext_bottom_row">
-
-        <div class="ext_cat">
-            <i class="caret square down outline icon" style="display:inline-block!important; float:left!important;"></i>
-            <span style="float:right!important; display:inline-block!important;">Category</span>
-        </div>
-        <div class="ext_name">
-            <span>Samsung 21,5" S22F350H</span>
-        </div>
-        <div class="ext_sale">
-            <span>89€</span>
-        </div>
-        <div class="ext_right">
-            <span style="text-decoration: line-through;"> 119€</span>
-        </div>
-
-        <div class="ext_bottom card_transition" id="content_hide" style="height: 0; padding-top:0; padding-bottom: 0;">
-            <div class="ext_bottom_desc">
-                Full HD -monitori, musta
-            </div>
-            <div class="ext_bottom_meta">
-
-
-                <a class="right floated">Product page</a>
-            </div>
-        </div>
-    </div>
-
-</div>-->
 <!--
 <div class="ui right aligned basic segment">
     <h5 class="ui header">Testi</h5>
@@ -118,7 +30,8 @@
     <thead>
         <tr>
             <th>Name</th>
-            <th>Status</th>
+            <th>Category</th>
+            <th>Store</th>
             <th>Sale price</th>
             <th>Normal price</th>
         </tr>
@@ -128,8 +41,9 @@
         <tr>
             <td>{{name}}</td>
             <td>{{category}}</td>
+            <td>{{storeName}}</td>
             <td>{{latestSalePrice}}</td>
-            <td>{{latestNormalPrice}}</td>
+            <td>{{#if latestNormalPrice}}{{latestNormalPrice}}{{else}}N/A{{/if}}</td>
         </tr>
         {{/forEach}}
     </tbody>

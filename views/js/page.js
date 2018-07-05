@@ -150,24 +150,26 @@ $(function () {
                 let row = table.insertRow(tableIdx);
                 let nameCell = row.insertCell(0);
                 let catCell = row.insertCell(1);
-                let saleCell = row.insertCell(2);
-                let normCell = row.insertCell(3);
-                //let storeCell = row.insertCell(4);
+                let storeCell = row.insertCell(2);
+                let saleCell = row.insertCell(3);
+                let normCell = row.insertCell(4);
                 nameCell.innerHTML = elem.name;
                 catCell.innerHTML = elem.category;
                 saleCell.innerHTML = elem.latestSalePrice;
                 normCell.innerHTML = elem.latestNormalPrice == undefined ? 'N/A' : elem.latestNormalPrice;
-                //storeCell.innerHTML = elem.storeName;
+                storeCell.innerHTML = elem.storeName;
                 tableIdx++;
             } else if (category === elem.category) {
                 let row = table.insertRow(tableIdx);
                 let nameCell = row.insertCell(0);
                 let catCell = row.insertCell(1);
-                let saleCell = row.insertCell(2);
-                let normCell = row.insertCell(3);
+                let storeCell = row.insertCell(2);
+                let saleCell = row.insertCell(3);
+                let normCell = row.insertCell(4);
                 nameCell.innerHTML = elem.name;
                 catCell.innerHTML = elem.category;
                 saleCell.innerHTML = elem.latestSalePrice;
+                storeCell.innerHTML = elem.storeName;
                 normCell.innerHTML = elem.latestNormalPrice == undefined ? 'N/A' : elem.latestNormalPrice;
                 tableIdx++;
             }
