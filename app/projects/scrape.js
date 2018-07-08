@@ -155,9 +155,7 @@ function getProductPages(links) {
 }
 
 module.exports = {
-    gitHubAction: gitHubAction,
     getData: getData,
-    getRepository: getRepository
 };
 /**
  * Just a test function to check that the selectors work.
