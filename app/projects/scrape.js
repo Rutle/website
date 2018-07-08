@@ -5,18 +5,6 @@ var fs = require('fs');
 var parseData = require('./parser.js')
 
 /**
- * Enum for actions.
- * @readonly
- * @enum {String}
- */
-const gitHubAction = {
-    GETDESCRIPTIONS: 'getDescriptions',
-    GETREPOSITORY: 'getRepository',
-    INVALIDACTION: 'Invalid action'
-};
-
-
-/**
  * Fetches data from a website defined by url.
  * @param {Array} stores List of stores to fetch data from.
  */
@@ -138,56 +126,6 @@ function getData(stores) {
             console.log("Second error ", error)
         });
 }
-/**
- * Function to fetch repository data.
- * @param {String} repo Name of the Github repository.
- * @param {Enum} action What is fetched.
- */
-function getRepository(repo, action) {
-    switch (action) {
-        case gitHubAction.GETREPOSITORY:
-            return axios.get('https://api.github.com/repos/rutle/' + repo + '/commits?per_page=3&sha=master')
-                .then(function (response) {
-                    if (response.status === 200) {
-                        const json = response.data;
-                        //const headers = response.headers;
-                        //console.log("eka: ", json);
-                        /*
-                        fs.writeFile('apitest.json',
-                            JSON.stringify(json, null, 4),
-                            (err) => console.log('File successfully written!'));
-                        */
-                        return json;
-                    }
-
-                }, function (err) {
-                    console.log("Repository fetching error [GETREPOSITORY]: ", err);
-                });
-            break;
-        case gitHubAction.GETDESCRIPTIONS:
-            return axios.get('https://api.github.com/users/rutle/repos')
-                .then(function (response) {
-                    if (response.status === 200) {
-                        const json = response.data;
-                        //const headers = reponse.headers;
-                        let descData = [];
-                        json.forEach((elem, idx) => {
-                            descData.push({ repo: elem.name, description: elem.desciption })
-                        })
-
-                        //console.log("repos data: ", json);
-                        return descData;
-                    }
-                }, function (err) {
-                    console.log("Description fetching error [GETDESCRIPTIONS]: ", err);
-                })
-            break;
-        default:
-            return gitHubAction.INVALIDACTION;
-            break;
-    }
-
-}
 
 /**
  * Function to fetch the page of each given link in links-array and add information back to the array.
@@ -272,4 +210,4 @@ function saveTestHTML(url) {
         })
 
 }
-saveTestHTML('https://cdon.fi/kodin-elektroniikka/acer-31-5-led-eb321hqua-p40945618');
+//saveTestHTML('https://cdon.fi/kodin-elektroniikka/acer-31-5-led-eb321hqua-p40945618');
