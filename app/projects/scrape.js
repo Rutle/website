@@ -45,46 +45,32 @@ function getData(stores) {
 
                         // Add elements from productList to siteData.
                         siteData.push(...productList);
-                    } else if (storeUrl === 'https://cdon.fi/kesaale/tietokoneet/naytot/') {
+                    } else if (storeUrl.includes('https://cdon.fi/')) {
                         let productList = [];
-                        /*
-                                  newObjectList[newCounter] = {
-            storeUrl: objectList[i].storeUrl,
-            status: objectList[i].status,
-            pname: productItem,
-            currentPrice: parseFloat(objectList[i].currentPrice.match(/\d+(?:\,\d+)?/g)),
-            url: jimmsUrl.slice(0, -1)+objectList[i].url,
-            regularPrice: parseFloat(price),
-            productId: "",
-            category: "",
-            storeProductId: ""
-                        */
                         let $ = cheerio.load(response.data);
-                        $('main > section > ul > li').each(function (i, elem) {
-                            let art = $(this).children('article');
-                            if (art.children('div.product-image-wrapper').children('a').first().children('div.price-splash').length === 1) {
-                                productList.push({
-                                    storeUrl: storeUrl,
-                                    status: status,
-                                    pname: art.children('.full-title').attr('value'),
-                                    currentPrice: art.children('div.product-price-wrapper').children().first().text().trim(),
-                                    regularPrice: art.children('div.product-price-wrapper').children().eq(1).text().trim(),
-                                    url: 'https://cdon.fi'+art.children('div.product-title-wrapper').children('a').first().attr('href'),
-                                    productId: '',
-                                    category: art.children('.category-title').attr('value').split('/').splice(-1, 1)[0],
-                                    storeProductId: art.children('.product-id').attr('value'),
-                                });
-                            }
-                        })
+                        if (storeUrl.includes('kesaale/tietokoneet/naytot/')) {
+                            $('main > section > ul > li').each(function (i, elem) {
+                                let art = $(this).children('article');
+                                if (art.children('div.product-image-wrapper').children('a').first().children('div.price-splash').length === 1) {
+                                    productList.push({
+                                        storeUrl: storeUrl,
+                                        status: status,
+                                        pname: art.children('.full-title').attr('value'),
+                                        currentPrice: art.children('div.product-price-wrapper').children().first().text().trim(),
+                                        regularPrice: art.children('div.product-price-wrapper').children().eq(1).text().trim(),
+                                        url: 'https://cdon.fi' + art.children('div.product-title-wrapper').children('a').first().attr('href'),
+                                        productId: '',
+                                        category: art.children('.category-title').attr('value').split('/').splice(-1, 1)[0],
+                                        storeProductId: art.children('.product-id').attr('value'),
+                                    });
+                                }
+                            })
+                        }
 
-                        //let name = article.children().first().attr('value');
-                        //let storeProductId = article.children().eq(1).attr('value');
-                        //let categoryString = article.children().eq(2).attr('value').split('/').splice(-1, 1)[0];
-                        //let salePrice = article.children('div.product-price-wrapper').children().first().text().trim();
-                        //let normalPrice = article.children('div.product-price-wrapper').children().eq(1).text().trim();
-                        //console.log(name, storeProductId, categoryString, salePrice, normalPrice);
-
-                        siteData.push(obj);
+                        
+                        // Clean up undefined elements.
+                        productList = productList.filter(n => n != undefined);
+                        siteData.push(...productList);
                     } else {
                         let obj = {
                             url: args[i].config.url,
@@ -153,7 +139,7 @@ function getProductPages(links) {
                     let $ = cheerio.load(element.data);
                     if (element.config.url.includes('kesaale/tietokoneet/naytot/')) {
                         let idx = links.findIndex(item => item.url === element.config.url);
-                        links[idx].productId = $('#energy-label__datasheet-popup > tbody > tr > th').filter(function(i, el) {
+                        links[idx].productId = $('#energy-label__datasheet-popup > tbody > tr > th').filter(function (i, el) {
                             return $(this).text() === 'Valmistajan tuotenumero';
                         }).next().text().trim();
 
@@ -186,10 +172,10 @@ function saveTestHTML(url) {
                 //const headers = response.request;
                 //console.log(headers);
                 let $ = cheerio.load(response.data);
-                console.log($('#energy-label__datasheet-popup > tbody > tr > th').filter(function(i, el) {
+                console.log($('#energy-label__datasheet-popup > tbody > tr > th').filter(function (i, el) {
                     return $(this).text() === 'Valmistajan tuotenumero';
                 }).next().text().trim());
-                
+
                 //let article = $('main > section > ul > li').first().children().first();
                 //let name = article.children().first().attr('value');
                 //let storeProductId = article.children().eq(1).attr('value');
