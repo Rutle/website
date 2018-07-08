@@ -187,18 +187,22 @@ module.exports = function (app, passport) {
                             unique_cats.push(elem.category);
                             if (categories[elem.store.name] === undefined) {
                                 categories[elem.store.name] = [];
-                                categories[elem.store.name].push({ name: elem.category, value: elem.category,
-                                                                   text: elem.category, disabled: false});
+                                categories[elem.store.name].push({
+                                    name: elem.category, value: elem.category,
+                                    text: elem.category, disabled: false
+                                });
                             } else {
-                                categories[elem.store.name].push({ name: elem.category, value: elem.category,
-                                                                   text: elem.category, disabled: false });
+                                categories[elem.store.name].push({
+                                    name: elem.category, value: elem.category,
+                                    text: elem.category, disabled: false
+                                });
                             }
                         }
-                        })
+                    })
                     //console.log(categories);
                     message = 'Products found.';
                 }
-                //console.log(data[0]);
+                console.log(data);
                 return res.render('scraper', {
                     breadcrumbs: req.breadcrumbs,
                     projectName: 'Sale price scraper',
@@ -234,7 +238,19 @@ module.exports = function (app, passport) {
         })
 
     });
+    app.get('/api/storecampaigns/:storeId', isLoggedIn, function (req, res) {
+        let id = req.params.storeId;
+        console.log(id);
+        Store.findById(id, function (err, store) {
+            if (err) {
+                return res.status(500).json({ success: false, results: null, message: ['There was a problem with database.'] })
+            }
 
+            return res.status(200).json({ success: true, results: store.campaignUrls })
+
+        });
+
+    })
     /**
      * Dropdown API for scraper project.
      */
@@ -316,7 +332,6 @@ module.exports = function (app, passport) {
                     }
                     let result = [];
                     store.keywords.forEach(function (elem, idx) {
-                        console.log(elem);
                         result.push({ name: elem, value: elem, text: elem, disabled: false })
                     });
                     return res.status(200).json({ success: true, results: result })
@@ -390,12 +405,10 @@ module.exports = function (app, passport) {
                     }
                     scraper.getData(stores)
                         .then(function (data) {
-                            //console.log("haettu data: \n", data);
                             let result = [];
                             const storeIds = arrayToObject(stores);
-                            //console.log(storeIds)
-                            data.forEach(function (elem, idx) {
 
+                            data.forEach(function (elem, idx) {
                                 let documentObj = {
                                     'updateOne': {
                                         'filter': { productId: elem.productId },
@@ -406,9 +419,8 @@ module.exports = function (app, passport) {
                                             '$push': {
                                                 salesDates: {
                                                     salePrice: elem.currentPrice,
-                                                    normalPrice: elem.regularPrice === undefined ? 'N/A' : elem.regularPrice,
+                                                    normalPrice: elem.regularPrice,
                                                     dateOfSale: new Date(),
-                                                    storeId: elem.storeProductId
                                                 }
                                             },
                                             '$setOnInsert': {
@@ -468,8 +480,50 @@ module.exports = function (app, passport) {
                 return res.status(200).json({ success: true, data: data })
             })
 
-        } else {
+        } else if (action === 'addcampaign') {
+            let name = req.body.name;
+            let url = req.body.url;
 
+            Store.findByIdAndUpdate(storeId,
+                { $push: { campaignUrls: { name: name, url: url, isActive: true } } },
+                { new: true },
+                function (err, store) {
+                    if (err) {
+                        console.log(err)
+                        return res.status(500).json({ success: false, data: null, message: ['There was a problem with database.'] })
+                    }
+                    return res.status(200).json({ success: true, results: store.campaignUrls })
+                });
+        } else if (action === 'removecampaign') {
+            let name = req.body.name;
+            let url = req.body.url;
+
+            Store.findByIdAndUpdate(storeId,
+                { $pull: { campaignUrls: { name: name, url: url } } },
+                function (err, store) {
+                    if (err) {
+                        console.log(err);
+                        return res.status(500).json({ success: false, message: ['There was a problem with database.'] })
+                    }
+                    return res.status(200).json({ success: true, message: ['There was a problem with database.'] })
+                }
+            );
+
+        } else if (action === 'toggleactivity') {
+
+            let name = req.body.name;
+            let url = req.body.url;
+            let isActive = (req.body.isActive == 'true');
+
+            Store.updateOne({ _id: storeId, campaignUrls: { $elemMatch: { name: name, url: url } } },
+                { $set: { "campaignUrls.$.isActive": isActive } }, { new: true },
+                function (err, store) {
+                    if (err) {
+                        console.log(err);
+                        return res.status(500).json({ success: false });
+                    }
+                    return res.status(200).json({ success: true });
+                })
         }
 
     });

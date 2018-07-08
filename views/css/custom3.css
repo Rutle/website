@@ -441,6 +441,15 @@ body {
     height: 80%;
     padding: 0.5em 0.5em;
 }
+/*
+div.campaign-container > div.inline.fields {
+    -moz-transition: height .5s!important;
+    -ms-transition: height .5s!important;
+    -o-transition: height .5s!important;
+    -webkit-transition: height .5s!important;
+    transition: height .5s!important;
+}*/
+
 /* Small devices (landscape phones, 576px and up) */
 @media (max-width: 575.98px) {
     .ftable--collapse {

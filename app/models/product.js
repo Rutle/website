@@ -41,21 +41,12 @@ var productSchema = mongoose.Schema({
         dateOfSale: {
             type: Date,
             default: Date.now
-        },
-        storeId: {
-            type: String,
         }
     }],
-
     dateCreated: {                      // Date when this product was found.
         type: Date,
         default: Date.now
     },
-
-    dateModified: {                     // Modification date.
-        type: Date,
-        default: Date.now
-    }
 
 });
 productSchema.virtual('latestSalePrice').get(function () {

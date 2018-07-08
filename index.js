@@ -69,7 +69,8 @@ app.engine('.hbs', exphbs({
 app.set('view engine', '.hbs');
 app.use('/bootstrap', express.static(__dirname + '/node_modules/bootstrap/'));
 app.use('/semantic', express.static(__dirname + '/semantic/'));
-app.use('/axios', express.static(__dirname + '/node_modules/axios/dist/'));
+//app.use('/axios', express.static(__dirname + '/node_modules/axios/dist/'));
+app.use('/jquery', express.static(__dirname + '/node_modules/jquery/dist/'));
 
 app.use('/', express.static(publicPath));
 app.use(morgan('dev')); // log every request to the console

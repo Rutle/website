@@ -46,71 +46,69 @@
         <div class="ui stackable two column grid">
             <div class="two column row">
                 <div class="column">
-                    <div class="ui top segment secondary">
-                        <h4 class="ui header">Sales scraper data</h4>
+                    <div class="row">
+                        <div class="ui top segment secondary">
+                            <h4 class="ui header">Sales scraper data</h4>
+                        </div>
+                        <table class="ui blue compact celled table" id="store_data">
+                            <thead>
+                                <tr>
+                                    <th>Webstore</th>
+                                    <th>Count</th>
+                                    <th>Last updated</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#if productCounts}} {{#forEach productCounts}}
+                                <tr>
+                                    <td>{{storeName}}</td>
+                                    <td id="{{storeName}}_count">{{count}}</td>
+                                    <td>Today</td>
+                                </tr>
+                                {{/forEach}} {{/if}}
+                            </tbody>
+                            <tfoot class="full-width">
+                                <tr>
+                                    <th colspan="3">
+                                        <div class="ui tiny primary button" id="update_sales_data">
+                                            Update data
+                                        </div>
+                                        <div class="ui tiny labeled icon button" id="refresh_sales_data">
+                                            <i class="redo icon"></i>
+                                            Refresh table
+                                        </div>
+                                    </th>
+                                </tr>
+                            </tfoot>
+                        </table>
                     </div>
+                    <div class="row">
+                        <div class="ui top segment secondary">
+                            <h4 class="ui header">Add new store</h4>
+                        </div>
+                        <div class="ui blue segment">
+                            <form class="ui small form" id="new_store_form">
+                                <div class="field">
+                                    <label>Store name</label>
+                                    <input name="store_name" placeholder="Store Name" type="text" required>
+                                </div>
+                                <div class="field">
+                                    <label>Base store URL</label>
+                                    <input name="store_url" placeholder="https://store.com" type="url" required>
+                                </div>
+                                <div class="field">
+                                    <label>Store Keywords</label>
+                                    <textarea name="store_keywords" rows="2" placeholder="Separate keywords with ';' such as 'Normaalihinta;norm;alennus..."
+                                        type="url"></textarea>
+                                </div>
+                                <button class="ui tiny primary button" type="submit" id="add_store">Submit</button>
+                                <button class="ui tiny clear button">Clear</button>
 
-                    <table class="ui blue compact celled table" id="store_data">
-                        <thead>
-                            <tr>
-                                <th>Webstore</th>
-                                <th>Count</th>
-                                <th>Last updated</th>
-
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {{#if productCounts}} {{#forEach productCounts}}
-                            <tr>
-                                <td>{{storeName}}</td>
-                                <td id="{{storeName}}_count">{{count}}</td>
-                                <td>Today</td>
-                            </tr>
-                            {{/forEach}} {{/if}}
-                        </tbody>
-                        <tfoot class="full-width">
-                            <tr>
-                                <th colspan="3">
-                                    <div class="ui tiny primary button" id="update_sales_data">
-                                        Update data
-                                    </div>
-                                    <div class="ui tiny labeled icon button" id="refresh_sales_data">
-                                        <i class="redo icon"></i>
-                                        Refresh table
-                                    </div>
-                                </th>
-                            </tr>
-                        </tfoot>
-                    </table>
-
-                </div>
-            </div>
-            <div class="two column row">
-                <div class="column">
-                    <div class="ui top segment secondary">
-                        <h4 class="ui header">Add new store</h4>
-                    </div>
-                    <div class="ui blue segment">
-                        <form class="ui small form" id="new_store_form">
-                            <div class="field">
-                                <label>Store name</label>
-                                <input name="store_name" placeholder="Store Name" type="text" required>
-                            </div>
-                            <div class="field">
-                                <label>Store URL</label>
-                                <input name="store_url" placeholder="Store URL" type="url" required>
-                            </div>
-                            <div class="field">
-                                <label>Store Keywords</label>
-                                <textarea name="store_keywords" rows="2" placeholder="Separate keywords with ';: Normaalihinta;norm;alennus..." type="url"></textarea>
-                            </div>
-                            <button class="ui tiny primary button" type="submit" id="add_store">Submit</button>
-
-                            <button class="ui tiny clear button">Clear</button>
-
-                            <div class="ui error message" id="store_error_messages"></div>
-                            <div class="ui success message" id="store_success_messages"></div>
-                        </form>
+                                <div class="ui error message" id="store_error_messages"></div>
+                                <div class="ui success message" id="store_success_messages"></div>
+                            </form>
+                        </div>
                     </div>
                 </div>
                 <div class="column">
@@ -119,6 +117,7 @@
                     </div>
                     <div class="ui blue segment">
                         <form class="ui small form" id="modify_store_keywords_form">
+                            <h4 class="ui dividing header">Store selection and keywords</h4>
                             <div class="field">
                                 <label>Store name</label>
                                 <div class="ui selection dropdown" id="store_keywords">
@@ -126,7 +125,6 @@
                                     <i class="dropdown icon"></i>
                                 </div>
                             </div>
-
                             <div class="fields">
                                 <div class="field">
                                     <label>Sale match keywords</label>
@@ -134,10 +132,9 @@
                                         <div class="default text">Select a keyword</div>
                                         <i class="dropdown icon"></i>
                                     </div>
-
                                 </div>
                                 <div class="field">
-                                    <label>Keyword</label>
+                                    <label>Removal</label>
                                     <button class="ui tiny labeled icon button" id="remove_keyword">
                                         <i class="delete icon"></i>
                                         Remove
@@ -157,7 +154,28 @@
                                     </button>
                                 </div>
                             </div>
-
+                            <h4 class="ui dividing header">Addition of a new campaign</h4>
+                            <div class="inline fields">
+                                <div class="field">
+                                    <label>Name</label>
+                                    <input id="campaign_name" placeholder="Summer sale" type="text">
+                                </div>
+                                <div class="field">
+                                    <label>Campaign URL</label>
+                                    <input id="campaign_url" placeholder="http://www.jimms.fi/campaign/sale" type="url">
+                                </div>
+                                <div class="field">
+                                    <label>Addition</label>
+                                    <button class="ui tiny labeled icon button" id="add_campaign">
+                                        <i class="plus icon"></i>
+                                        Add
+                                    </button>
+                                </div>
+                            </div>
+                            <h4 class="ui dividing header">Campaigns</h4>
+                            <div id="campaign-container">
+                        
+                            </div>
                             <div class="ui error message" id="store_keyword_error_messages"></div>
                             <div class="ui success message" id="store_keyword_success_messages"></div>
                         </form>
@@ -166,9 +184,13 @@
 
             </div>
 
-
         </div>
 
     </div>
 
 </div>
+<script>
+    $(function () {
+        $('.ui.checkbox').checkbox();
+    });
+</script>
