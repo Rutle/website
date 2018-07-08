@@ -374,7 +374,6 @@ module.exports = function (app, passport) {
 
             })
         } else if (action === 'addkeyword') {
-            //console.log('Add new keyword');
             if (keyword === '') return res.status(500).json({ message: 'Please type non-empty keyword.' })
             Store.findById(store, 'keywords', function (err, store) {
                 if (err) {
@@ -560,16 +559,9 @@ module.exports = function (app, passport) {
     app.post('/dashboard/:tab', isLoggedIn, getBreadcrumbs, function (req, res) {
         let tab = req.params.tab;
         let formData = req.body.form;
-        //console.log(formData);
         let isWebProject = (req.body.websiteProject === '1');
-        //console.log(isWebProject);
 
         if (tab === 'new') {    // New Project
-            /*
-            formData.forEach(function (element, idx) {
-                console.log(element.value);
-            });*/
-            //Project.findOne({})
             let newProject = new Project();
             newProject.author = req.user._id;
             newProject.name = formData[0].value;
@@ -642,9 +634,9 @@ module.exports = function (app, passport) {
 
     })
     /**
-     * 
+     * Route to fetch commits for a repository.
      */
-    app.post('/projects/:repo', function (req, res) {
+    app.get('/projects/:repo', function (req, res) {
         console.log(req.params.repo);
         /*
         gha.getCommits(req.params.repo)

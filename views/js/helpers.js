@@ -5,8 +5,8 @@
 function buildFeed(repo) {
     // Ajax post call to make server side fetch the tweet data for current user.
     $.ajax({
-        type: 'POST',
-        url: 'http://localhost:5000/projects/' + repo,
+        type: 'GET',
+        url: '/projects/' + repo,
         //url: 'https://ohsiha-webmc.herokuapp.com/dashboard',
         dataType: 'json',
         success: function (data) {
