@@ -49,11 +49,9 @@
         </tr>
         {{/forEach}}
         {{else}}
-        <tr>
-            <td>Empty</td>
-            <td>Empty</td>
-            <td>Empty</td>
-            <td>Empty</td>
+        <tr class="warning">
+            <td colspan="5" class="center aligned" >{{message}}</td>
+
         </tr>
         {{/if}}
     </tbody>

@@ -1,6 +1,7 @@
 'use strict'
 
 require('datejs')
+var mh = require('./mischelpers')
 var gha = require('./githubapi');
 var Project = require('./models/project');
 var Product = require('./models/product')
@@ -8,81 +9,6 @@ var Store = require('./models/store')
 var scraper = require('./projects/scrape.js');
 
 var md = require('markdown-it')();
-
-// Function for getting breadcrumbs of the page
-function getBreadcrumbs(req, res, next) {
-    const urls = req.originalUrl.split('/');
-    urls.shift();
-    req.breadcrumbs = urls.map((url, i) => {
-        return {
-            breadcrumbName: (url === '' ? 'Home' : url.charAt(0).toUpperCase() + url.slice(1)),
-            breadcrumbUrl: `/${urls.slice(0, i + 1).join('/')}`,
-        };
-    });
-    next();
-}
-
-// Check if user is logged in with a middleware
-function isLoggedIn(req, res, next) {
-    if (req.isAuthenticated())
-        return next();
-    res.redirect('/');
-}
-
-/**
- * Middleware function to fetch Projects made for the website from the database and pass them into the response.
- * @param {Object} req 
- * @param {Object} res 
- * @param {Function} next 
- */
-function getProjects(req, res, next) {
-    Project.find()
-        .sort({ name: 'desc' })
-        .select('name websiteProject websiteProjectURL shortName shortDesc repositoryName -_id')
-        .exec(function (err, projects) {
-            if (err) {
-                console.log(err);
-            }
-            //console.log(projects)
-            res.locals.siteProjects = projects;
-            return next();
-        })
-}
-/**
- * Function to retrieve product counts per store.
- * @param {Function} callback 
- */
-function getProductCounts(callback) {
-    Product.aggregate([
-        { $group: { _id: '$store', count: { "$sum": 1 } } },
-        { $lookup: { from: "stores", localField: "_id", foreignField: "_id", as: "store" } },
-        { $unwind: '$store' }
-    ]).exec(function (err, productCounts) {
-        if (err) {
-            console.log(err);
-            callback(err, null);
-        }
-        //console.log(productCounts);
-        let proCounts = productCounts.map(elem => ({ storeName: elem.store.name, count: elem.count }));
-        callback(null, proCounts);
-    })
-}
-
-function getMatchingStores(obj, callback) {
-    let productIds = Object.values(obj);
-    Product.aggregate([
-        { $match: { "_id": { $in: productIds } } },
-        { $group: { "_id": "$store", count: { "$sum": 1 } } },
-        { $lookup: { from: "stores", localField: "_id", foreignField: "_id", as: "store" } },
-        { $unwind: '$store' }
-    ]).exec(function (err, storeCounts) {
-        if (err) {
-            console.log(err);
-            callback(err, null);
-        }
-        callback(null, storeCounts);
-    })
-}
 
 const arrayToObject = (array) => array.reduce((obj, item) => {
     obj[item.url] = { id: item._id, name: item.name };
@@ -94,7 +20,7 @@ module.exports = function (app, passport) {
 	/**
 	 * Main page.
 	 */
-    app.get('/', getBreadcrumbs, getProjects, function (req, res) {
+    app.get('/', mh.getBreadcrumbs, mh.getProjects, function (req, res) {
         //console.log(res.locals.projects);
         res.render('home', {
             breadcrumbs: req.breadcrumbs,
@@ -106,7 +32,7 @@ module.exports = function (app, passport) {
 	/**
 	 * Projects page.
 	 */
-    app.get('/projects', getBreadcrumbs, getProjects, function (req, res) {
+    app.get('/projects', mh.getBreadcrumbs, mh.getProjects, function (req, res) {
         res.render('projects', {
             breadcrumbs: req.breadcrumbs,
             user: req.user,
@@ -117,7 +43,7 @@ module.exports = function (app, passport) {
 	/**
 	 * Website project route.
 	 */
-    app.get('/projects/:repo', getBreadcrumbs, getProjects, function (req, res) {
+    app.get('/projects/:repo', mh.getBreadcrumbs, mh.getProjects, function (req, res) {
         if (req.params.repo) {
             gha.getRepository(req.params.repo, gha.gitHubAction.GETDESCRIPTION)
                 .then(function (data) {
@@ -142,8 +68,8 @@ module.exports = function (app, passport) {
     /**
      * Dashboard route.
      */
-    app.get('/dashboard', isLoggedIn, getBreadcrumbs, getProjects, function (req, res) {
-        getProductCounts(function (err, data) {
+    app.get('/dashboard', mh.isLoggedIn, mh.getBreadcrumbs, mh.getProjects, function (req, res) {
+        mh.getProductCounts(function (err, data) {
             if (err) {
                 return res.render('dashboard', {
                     breadcrumbs: req.breadcrumbs,
@@ -217,7 +143,7 @@ module.exports = function (app, passport) {
     /**
      * Dashboard route
      */
-    app.post('/dashboard/:tab', isLoggedIn, getBreadcrumbs, function (req, res) {
+    app.post('/dashboard/:tab', mh.isLoggedIn, mh.getBreadcrumbs, function (req, res) {
         let tab = req.params.tab;
         let formData = req.body.form;
         let isWebProject = (req.body.websiteProject === '1');
@@ -320,7 +246,7 @@ module.exports = function (app, passport) {
     /**
      * Login page
      */
-    app.get('/login', getBreadcrumbs, getProjects, function (req, res) {
+    app.get('/login', mh.getBreadcrumbs, mh.getProjects, function (req, res) {
         res.render('login', {
             breadcrumbs: req.breadcrumbs,
             message: req.flash('loginMessage'),

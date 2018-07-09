@@ -2,87 +2,13 @@
 
 require('datejs')
 var gha = require('./githubapi');
+var mh = require('./mischelpers');
 var Project = require('./models/project');
 var Product = require('./models/product')
 var Store = require('./models/store')
 var scraper = require('./projects/scrape.js');
 
 var md = require('markdown-it')();
-
-// Function for getting breadcrumbs of the page
-function getBreadcrumbs(req, res, next) {
-    const urls = req.originalUrl.split('/');
-    urls.shift();
-    req.breadcrumbs = urls.map((url, i) => {
-        return {
-            breadcrumbName: (url === '' ? 'Home' : url.charAt(0).toUpperCase() + url.slice(1)),
-            breadcrumbUrl: `/${urls.slice(0, i + 1).join('/')}`,
-        };
-    });
-    next();
-}
-
-// Check if user is logged in with a middleware
-function isLoggedIn(req, res, next) {
-    if (req.isAuthenticated())
-        return next();
-    res.redirect('/');
-}
-
-/**
- * Middleware function to fetch Projects made for the website from the database and pass them into the response.
- * @param {Object} req 
- * @param {Object} res 
- * @param {Function} next 
- */
-function getProjects(req, res, next) {
-    Project.find()
-        .sort({ name: 'desc' })
-        .select('name websiteProject websiteProjectURL shortName shortDesc repositoryName -_id')
-        .exec(function (err, projects) {
-            if (err) {
-                console.log(err);
-            }
-            //console.log(projects)
-            res.locals.siteProjects = projects;
-            return next();
-        })
-}
-/**
- * Function to retrieve product counts per store.
- * @param {Function} callback 
- */
-function getProductCounts(callback) {
-    Product.aggregate([
-        { $group: { _id: '$store', count: { "$sum": 1 } } },
-        { $lookup: { from: "stores", localField: "_id", foreignField: "_id", as: "store" } },
-        { $unwind: '$store' }
-    ]).exec(function (err, productCounts) {
-        if (err) {
-            console.log(err);
-            callback(err, null);
-        }
-        //console.log(productCounts);
-        let proCounts = productCounts.map(elem => ({ storeName: elem.store.name, count: elem.count }));
-        callback(null, proCounts);
-    })
-}
-
-function getMatchingStores(obj, callback) {
-    let productIds = Object.values(obj);
-    Product.aggregate([
-        { $match: { "_id": { $in: productIds } } },
-        { $group: { "_id": "$store", count: { "$sum": 1 } } },
-        { $lookup: { from: "stores", localField: "_id", foreignField: "_id", as: "store" } },
-        { $unwind: '$store' }
-    ]).exec(function (err, storeCounts) {
-        if (err) {
-            console.log(err);
-            callback(err, null);
-        }
-        callback(null, storeCounts);
-    })
-}
 
 const arrayToObject = (array) => array.reduce((obj, item) => {
     obj[item.url] = { id: item._id, name: item.name };
@@ -93,7 +19,7 @@ module.exports = function (app, passport) {
     /**
      * Route for the sales scraper data on the website.
      */
-    app.get('/scraper', getBreadcrumbs, getProjects, function (req, res) {
+    app.get('/scraper', mh.getBreadcrumbs, mh.getProjects, function (req, res) {
         let saleLimit = (5).days().ago();
         Product.find({ latestSaleDate: { $gte: saleLimit } })
             .sort({ name: 'desc' })
@@ -154,7 +80,7 @@ module.exports = function (app, passport) {
             });
     });
 
-    app.get('/api/storecampaigns/:storeId', isLoggedIn, function (req, res) {
+    app.get('/api/storecampaigns/:storeId', mh.isLoggedIn, function (req, res) {
         let id = req.params.storeId;
         console.log(id);
         Store.findById(id, function (err, store) {
@@ -198,7 +124,7 @@ module.exports = function (app, passport) {
     /**
      * Getting keywords for stores.
      */
-    app.get(['/api/storekeywords', '/api/storekeywords/:id'], isLoggedIn, function (req, res) {
+    app.get(['/api/storekeywords', '/api/storekeywords/:id'], mh.isLoggedIn, function (req, res) {
         //console.log('param: ', req.params.id);
         if (!req.params.id) {
             Store.find({})
@@ -233,8 +159,8 @@ module.exports = function (app, passport) {
         }
 
     });
-    app.get('/api/scraper/salesdata', isLoggedIn, function (req, res) {
-        getProductCounts(function (err, data) {
+    app.get('/api/scraper/salesdata', mh.isLoggedIn, function (req, res) {
+        mh.getProductCounts(function (err, data) {
             if (err) {
                 return res.status(500).json({ success: false, message: 'There was a problem with database.' });
             }
@@ -245,7 +171,7 @@ module.exports = function (app, passport) {
     /**
      * Scraper tab on dashboard.
      */
-    app.post('/dashboard/scraper/:action', isLoggedIn, function (req, res) {
+    app.post('/dashboard/scraper/:action', mh.isLoggedIn, function (req, res) {
         let keyword = req.body.keyword;
         let storeId = req.body.storeId;
         let action = req.params.action;
@@ -353,7 +279,7 @@ module.exports = function (app, passport) {
                                         modified: bulkWriteOpResult.modifiedCount
                                     }
                                     if (bulkWriteOpResult.upsertedCount > 0) {
-                                        getMatchingStores(bulkWriteOpResult.upsertedIds, function (err, data) {
+                                        mh.getMatchingStores(bulkWriteOpResult.upsertedIds, function (err, data) {
                                             if (err) {
                                                 console.log(err);
                                             }
