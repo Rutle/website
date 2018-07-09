@@ -163,25 +163,4 @@ function addFormSection() {
     projectDiv.appendChild(fieldsDiv);
     console.log(inputId);
     $('#project_form').form('add rule', inputId, ['empty']);
-    /*
-    $('#project_form').form('add field', inputId, {
-        identifier: inputId,
-        rules: [
-            {
-                type: 'empty',
-                prompt: 'Please add section number '+formCounter+' name.'
-            }
-        ]
-    })
-    .form('add field', textId, {
-        identifier: textId,
-        rules: [
-            {
-                type: 'empty',
-                prompt: 'Please add section number '+formCounter+' text.'
-            }
-        ]
-    });
-    console.log($('#project_form').form('has field', textId))
-    $('#project_form').form('validate form');*/
 }

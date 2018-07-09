@@ -88,7 +88,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
 
-
+require('./app/scraperRoutes.js')(app, passport);
 require('./app/routes.js')(app, passport);
+
 
 app.listen(PORT, () => console.log('Listening on %d', PORT));
