@@ -92,7 +92,7 @@ function getMatchingStores(obj, callback) {
 }
 
 const arrayToObject = (array) => array.reduce((obj, item) => {
-    obj[item.url] = item._id;
+    obj[item.url] = { id: item._id, name: item.name };
     return obj;
 }, {});
 
@@ -393,7 +393,7 @@ module.exports = function (app, passport) {
         } else if (action === 'update') {
             Store.find({})
                 .sort({ name: 'desc' })
-                .select('name url keywords _id')
+                .select('name url campaignUrls keywords _id')
                 .exec(function (err, stores) {
                     if (err) {
                         console.log(err);
@@ -402,12 +402,22 @@ module.exports = function (app, passport) {
                     if (!stores) {
                         return res.status(500).json({ success: false, message: 'None found.' })
                     }
+                    console.log(stores);
+                    //console.log();
+
+
                     scraper.getData(stores)
                         .then(function (data) {
                             let result = [];
                             const storeIds = arrayToObject(stores);
+                            console.log(data);
 
                             data.forEach(function (elem, idx) {
+                                let pId = "";
+                                if (elem.productId === '' || elem.productId === undefined) {
+                                    pId = storeIds[elem.storeUrl].name + elem.storeProductId;
+                                } else { pId = elem.productId }
+                                
                                 let documentObj = {
                                     'updateOne': {
                                         'filter': { productId: elem.productId },
@@ -425,9 +435,9 @@ module.exports = function (app, passport) {
                                             '$setOnInsert': {
                                                 name: elem.pname,
                                                 category: elem.category,
-                                                productId: elem.productId,
+                                                productId: pId,
                                                 productUrl: elem.url,
-                                                store: storeIds[elem.storeUrl]
+                                                store: storeIds[elem.storeUrl].id
                                             }
                                         },
                                         'upsert': true,
@@ -468,7 +478,6 @@ module.exports = function (app, passport) {
                         }, function (err) {
                             console.log(err);
                         });
-
 
                 });
         } else if (action === 'refresh') {

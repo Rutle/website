@@ -9,7 +9,7 @@ var parseData = require('./parser.js')
  * @param {Array} stores List of stores to fetch data from.
  */
 function getData(stores) {
-    return axios.all(stores.map(l => axios.get(l.url)))
+    return axios.all(([].concat(...stores.map(l => l.campaignUrls))).map(k => axios.get(k.url)))
         .then(axios.spread((...args) => {
             var siteData = []
             for (let i = 0; i < args.length; i++) {
@@ -35,9 +35,9 @@ function getData(stores) {
 
                         // Clean up undefined elements.
                         productList = productList.filter(n => n != undefined);
-
+                        //console.log(storeUrl);
                         let store = stores.find(function (store) {
-                            return store.url === args[i].config.url;
+                            return store.url === storeUrl;
                         });
 
                         // Parse relevant data and modify it to desired format.
@@ -46,14 +46,15 @@ function getData(stores) {
                         // Add elements from productList to siteData.
                         siteData.push(...productList);
                     } else if (storeUrl.includes('https://cdon.fi/')) {
+                        //console.log(storeUrl);
                         let productList = [];
-                        let $ = cheerio.load(response.data);
+                        //let $ = cheerio.load(response.data);
                         if (storeUrl.includes('kesaale/tietokoneet/naytot/')) {
                             $('main > section > ul > li').each(function (i, elem) {
                                 let art = $(this).children('article');
                                 if (art.children('div.product-image-wrapper').children('a').first().children('div.price-splash').length === 1) {
                                     productList.push({
-                                        storeUrl: storeUrl,
+                                        storeUrl: 'https://cdon.fi/',
                                         status: status,
                                         pname: art.children('.full-title').attr('value'),
                                         currentPrice: art.children('div.product-price-wrapper').children().first().text().trim(),
@@ -67,7 +68,7 @@ function getData(stores) {
                             })
                         }
 
-                        
+
                         // Clean up undefined elements.
                         productList = productList.filter(n => n != undefined);
                         siteData.push(...productList);
@@ -102,7 +103,7 @@ function getData(stores) {
         .then(function (data) {
             // Fetch each product's category and productId information, that are on sale.
             return getProductPages(data).then(function (refinedData) {
-                console.log("refined Data: ", refinedData);
+               // console.log("refined Data: ", refinedData);
                 return refinedData;
             }, function (error) {
                 console.log("Error in calling [getProductPages]: ", error);
@@ -123,7 +124,7 @@ function getProductPages(links) {
     }).map((li) => axios.get(li.url)))
         .then(function (results) {
             results.forEach(element => {
-                console.log("status: ", element.status)
+                //console.log("status: ", element.status)
                 if (element.status === 200 && element.config.url.includes('https://www.jimms.fi/')) {
                     let $ = cheerio.load(element.data);
                     //console.log("config: ", element.config.url);
@@ -137,13 +138,13 @@ function getProductPages(links) {
 
                 } else if (element.status === 200 && element.config.url.includes('https://cdon.fi/')) {
                     let $ = cheerio.load(element.data);
-                    if (element.config.url.includes('kesaale/tietokoneet/naytot/')) {
-                        let idx = links.findIndex(item => item.url === element.config.url);
-                        links[idx].productId = $('#energy-label__datasheet-popup > tbody > tr > th').filter(function (i, el) {
-                            return $(this).text() === 'Valmistajan tuotenumero';
-                        }).next().text().trim();
+                    console.log("getproductpages kesaaly natot: ", element.config.url);
 
-                    }
+                    let idx = links.findIndex(item => item.url === element.config.url);
+                    links[idx].productId = $('#energy-label__datasheet-popup > tbody > tr > th').filter(function (i, el) {
+                        return $(this).text() === 'Valmistajan tuotenumero';
+                    }).next().text().trim();
+
 
                 }
             });
