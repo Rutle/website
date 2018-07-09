@@ -1,9 +1,7 @@
 'use strict'
 
 require('datejs')
-var gha = require('./githubapi');
 var mh = require('./mischelpers');
-var Project = require('./models/project');
 var Product = require('./models/product')
 var Store = require('./models/store')
 var scraper = require('./projects/scrape.js');
@@ -175,6 +173,7 @@ module.exports = function (app, passport) {
         let keyword = req.body.keyword;
         let storeId = req.body.storeId;
         let action = req.params.action;
+        console.log(action);
         if (action === 'removekeyword') {
             Store.findById(storeId, 'keywords', function (err, store) {
                 if (err) {
@@ -222,9 +221,7 @@ module.exports = function (app, passport) {
                         return res.status(500).json({ success: false, message: 'None found.' });
                     }
                     console.log(stores);
-                    //console.log();
-
-
+                    
                     scraper.getData(stores)
                         .then(function (data) {
                             let result = [];

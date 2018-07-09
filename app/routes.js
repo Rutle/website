@@ -10,11 +10,6 @@ var scraper = require('./projects/scrape.js');
 
 var md = require('markdown-it')();
 
-const arrayToObject = (array) => array.reduce((obj, item) => {
-    obj[item.url] = { id: item._id, name: item.name };
-    return obj;
-}, {});
-
 module.exports = function (app, passport) {
 
 	/**

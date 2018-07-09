@@ -53,12 +53,17 @@ function getData(stores) {
                             $('main > section > ul > li').each(function (i, elem) {
                                 let art = $(this).children('article');
                                 if (art.children('div.product-image-wrapper').children('a').first().children('div.price-splash').length === 1) {
+                                    let currentPrice = art.children('div.product-price-wrapper').children().first().text().trim();
+                                    currentPrice = currentPrice.match(/\d+(?:\,\d+)?/g);
+                                    let regularPrice = art.children('div.product-price-wrapper').children().eq(1).text().trim();
+                                    regularPrice = regularPrice.match(/\d+(?:\,\d+)?/g);
+                                    
                                     productList.push({
                                         storeUrl: 'https://cdon.fi/',
                                         status: status,
                                         pname: art.children('.full-title').attr('value'),
-                                        currentPrice: art.children('div.product-price-wrapper').children().first().text().trim(),
-                                        regularPrice: art.children('div.product-price-wrapper').children().eq(1).text().trim(),
+                                        currentPrice: currentPrice,
+                                        regularPrice: regularPrice,
                                         url: 'https://cdon.fi' + art.children('div.product-title-wrapper').children('a').first().attr('href'),
                                         productId: '',
                                         category: art.children('.category-title').attr('value').split('/').splice(-1, 1)[0],

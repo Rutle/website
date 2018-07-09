@@ -463,15 +463,29 @@ $(function () {
             dataType: 'json',
             success: function (data) {
                 console.log("Data retrieved: ", data);
-                let table = document.getElementById('store_data');
-                data.newInsertByStore.forEach(function (elem, idx) {
-                    console.log(typeof (elem.count));
-                    if (elem.count > 0) {
-                        let cell = document.getElementById(elem.storeName + '_count');
-                        cell.innerHTML = cell.innerHTML + ' (+' + elem.count + ')';
-                        cell.className = 'positive';
-                    }
-                })
+                let table = document.getElementById('').getElementsByTagName('tbody')[0];
+                if(table.childElementCount === 0) {
+                    data.newInsertByStore.forEach(function (elem, idx) {
+                        let row = table.insertRow(idx);
+                        let nameCell = row.insertCell(0);
+                        let countCell = row.insertCell(1);
+                        let dateCell = row.insertCell(2);
+                        nameCell.innerHTML = elem.storeName;
+                        countCell.innerHTML = elem.count;
+                        countCell.setAttribute('id', elem.storeName + '_count');
+                        dateCell.innerHTML = 'Today'
+                    });
+                } else {
+                    data.newInsertByStore.forEach(function (elem, idx) {
+                        console.log(typeof (elem.count));
+                        if (elem.count > 0) {
+                            let cell = document.getElementById(elem.storeName + '_count');
+                            cell.innerHTML = cell.innerHTML + ' (+' + elem.count + ')';
+                            cell.className = 'positive';
+                        }
+                    });
+                }
+
                 $('#update_sales_data').removeClass('loading');
 
             },
