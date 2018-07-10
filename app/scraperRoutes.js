@@ -6,13 +6,17 @@ var Product = require('./models/product')
 var Store = require('./models/store')
 var scraper = require('./projects/scrape.js');
 
-var md = require('markdown-it')();
-
 const arrayToObject = (array) => array.reduce((obj, item) => {
     obj[item.url] = { id: item._id, name: item.name };
     return obj;
 }, {});
 
+/**
+ * Module containing routes for scraper related actions.
+ * @module app/scraperroutes
+ * @param {Object} app
+ * @param {Object} passport
+ */
 module.exports = function (app, passport) {
     /**
      * Route for the sales scraper data on the website.
@@ -157,6 +161,10 @@ module.exports = function (app, passport) {
         }
 
     });
+
+    /**
+     * API route to fetch product counts.
+     */
     app.get('/api/scraper/salesdata', mh.isLoggedIn, function (req, res) {
         mh.getProductCounts(function (err, data) {
             if (err) {
@@ -191,7 +199,7 @@ module.exports = function (app, passport) {
                 })
 
             });
-        } else if (action === 'newstore') {
+        } else if (action === 'newstore') {            
             let formData = req.body.form;
             let newStore = new Store();
             newStore.name = formData[0].value.trim();
@@ -214,6 +222,7 @@ module.exports = function (app, passport) {
                 }
                 res.status(200).send({ message: 'Store successfully added to database.' })
             });
+            
         } else if (action === 'addkeyword') {
             if (keyword === '') return res.status(500).json({ message: 'Please type non-empty keyword.' });
             Store.findById(store, 'keywords', function (err, store) {

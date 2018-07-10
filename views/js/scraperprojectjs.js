@@ -51,9 +51,8 @@ $(function () {
      * @param {Array} messages Contains objects {name, value} where name is the id of the error causing field and value is the error message.
      * @param {String} divId Id of the error message div.
      * @param {String} type Type of the input: Dropdown etc.
-     * @param {String} messagesOnly If the messages should only be written in the message box or input fields also receive error coloring.
      */
-    function addErrorMessages(messages, divId, type, messagesOnly = false) {
+    function addErrorMessages(messages, divId, type = 'none') {
         let eMessageDiv = document.getElementById(divId);
         while (eMessageDiv.firstChild) {
             eMessageDiv.removeChild(eMessageDiv.firstChild);
@@ -64,7 +63,7 @@ $(function () {
             let listItem = document.createElement('li');
             listItem.appendChild(document.createTextNode(elem.value));
             list.appendChild(listItem);
-            if (!messagesOnly) { addErrorInfo(elem.name, type); }
+            if (type !== 'none') { addErrorInfo(elem.name, type); }
         });
         eMessageDiv.appendChild(list);
         eMessageDiv.style.display = 'inherit';
@@ -131,7 +130,7 @@ $(function () {
                         buildCampaignList(data.results);
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
-                        
+
                         let camp = document.getElementById("store_keyword_error_messages");
                         let customErrorMessages = JSON.parse(jqXHR.responseText);
                         while (camp.firstChild) {
@@ -188,8 +187,8 @@ $(function () {
         //
     }
     /**
-     * 
-     * @param {Object} campObj 
+     * Function to add rows to 'campaign-container' in a form.
+     * @param {Object} campObj Object in the form of {name:'string', url: 'string', isActive: 'boolean'}
      */
     function addCampaignRow(campObj) {
         let camp = document.getElementById("campaign-container");
@@ -259,7 +258,6 @@ $(function () {
 
                     }
                 })
-                console.log("Checked");
             },
             onUnchecked: function () {
                 let parentFields = $(this).parent().parent().parent();
@@ -282,7 +280,6 @@ $(function () {
 
                     }
                 });
-                console.log("Unchecked");
             }
         });
         campObj.isActive ? $(toggleDiv).checkbox('set checked') : $(toggleDiv).checkbox('set unchecked');
@@ -436,7 +433,7 @@ $(function () {
                 $('#new_store_form').addClass('loading');
                 $.ajax({
                     method: 'POST',
-                    url: '/dashboard/newstore',
+                    url: '/dashboard/scraper/newstore',
                     data: {
                         form: JSON.parse(JSON.stringify($('#new_store_form').serializeArray())),
                     },
@@ -455,24 +452,9 @@ $(function () {
 
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
-                        let customErrorMessages = JSON.parse(jqXHR.responseText);
-                        customErrorMessages = customErrorMessages.messages;
-                        console.log("responseText: ", customErrorMessages);
-                        /*
-                        let eMessageDiv = document.getElementById('store_error_messages');
-                        while (eMessageDiv.firstChild) {
-                            eMessageDiv.removeChild(eMessageDiv.firstChild);
-                        }
-                        let list = document.createElement('ul');
-                        list.className = 'list';
-                        customErrorMessages.forEach(function (elem, idx) {
-                            let listItem = document.createElement('li');
-                            listItem.appendChild(document.createTextNode(elem));
-                            list.appendChild(listItem);
-                        });
-                        eMessageDiv.appendChild(list);
-                        eMessageDiv.style.display = 'inherit';
-                        */
+                        let errMessages = JSON.parse(jqXHR.responseText);
+                        errMessages = errMessages.messages;
+                        addErrorMessages(errMessages, 'store_error_messages', 'none');
                         $('#new_store_form').removeClass('loading');
 
                     }
@@ -485,15 +467,34 @@ $(function () {
      * @param {HTMLTableSectionElement} table The table that this function is being applied to.
      * @param {Number} idx Current row index.
      */
-    function populateStoreStats(obj, table, idx) {
-        let row = table.insertRow(idx);
-        let nameCell = row.insertCell(0);
-        let countCell = row.insertCell(1);
-        let dateCell = row.insertCell(2);
-        nameCell.innerHTML = obj.storeName;
-        countCell.innerHTML = obj.count;
-        countCell.setAttribute('id', obj.storeName + '_count');
-        dateCell.innerHTML = 'Today'
+    function populateStoreStats(tableId, data) {
+        let table = document.getElementById(tableId).getElementsByTagName('tbody')[0];
+        for (let i = table.rows.length - 1; i >= 0; --i) {
+            table.rows[i].remove();
+        }
+        data.forEach(function (elem, idx) {
+            let row = table.insertRow(idx);
+            let nameCell = row.insertCell(0);
+            let countCell = row.insertCell(1);
+            let dateCell = row.insertCell(2);
+            nameCell.innerHTML = elem.storeName;
+            countCell.innerHTML = elem.count;
+            countCell.setAttribute('id', elem.storeName + '_count');
+            dateCell.innerHTML = 'Today'
+        })
+
+    }
+
+    function addTableErrorMessage(tableId, errMessage) {
+        let table = document.getElementById(tableId).getElementsByTagName('tbody')[0];
+        for (let i = table.rows.length - 1; i >= 0; --i) {
+            table.rows[i].remove();
+        }
+        let row = table.insertRow(0);
+        row.className = "warning";
+        let errorMessage = row.insertCell(0);
+        errorMessage.colSpan = 3;
+        errorMessage.innerHTML = errMessage;
     }
 
     $('#refresh_sales_data').click(function (event) {
@@ -503,16 +504,12 @@ $(function () {
             url: '/api/scraper/salesdata',
             dataType: 'json',
             success: function (data) {
-                let table = document.getElementById('store_data').getElementsByTagName('tbody')[0];
-                for (let i = table.rows.length - 1; i >= 0; --i) {
-                    table.rows[i].remove();
-                }
-
-                data.data.forEach(function (elem, idx) {
-                    populateStoreStats(elem, table, idx);
-                })
+                populateStoreStats('store_data', data.data);
             },
             error: function (jqXHR, textStatus, errorThrown) {
+                let errMessage = JSON.parse(jqXHR.responseText);
+                errMessage = errMessage.message;
+                addTableErrorMessage('store_data', errMessage);
 
             }
         });
@@ -531,11 +528,9 @@ $(function () {
                 console.log("Data retrieved: ", data);
                 let table = document.getElementById('store_data').getElementsByTagName('tbody')[0];
                 if (table.childElementCount === 0) {
-                    data.newInsertByStore.forEach(function (elem, idx) {
-                        populateStoreStats(elem, table, idx);
-                    });
-                // Insert additional text to each counter to indicate how many new products were added to database.
+                    populateStoreStats('store_data', data.newInsertByStore);
                 } else {
+                    // Insert additional text to each counter to indicate how many new products were added to database.
                     data.newInsertByStore.forEach(function (elem, idx) {
                         if (elem.count > 0) {
                             let cell = document.getElementById(elem.storeName + '_count');
