@@ -187,28 +187,29 @@ module.exports = function (app, passport) {
             });
 
 
-        } else if (tab === 'newstore') {
+        } else if (tab === 'newstore') {           
             let newStore = new Store();
             newStore.name = formData[0].value.trim();
             newStore.url = formData[1].value.trim();
             newStore.keywords = formData[2].value.trim().split(';');
             newStore.save(function (err) {
                 if (err) {
-                    console.log(err);
+                    //console.log(err);
                     let errMessage = "";
                     // Duplicate error.
                     if (err.code === 11000 || err.name === 'MongoError') {
-                        console.log(err.message);
+                        //console.log(err.message);
                         if (err.message.includes(formData[0].value.trim())) {
                             errMessage = 'That name already exists.';
                         } else {
                             errMessage = 'That URL already exists.';
                         }
                     }
-                    return res.status(500).send([errMessage])
+                    return res.status(500).send({messages: [{value: errMessage}]})
                 }
                 res.status(200).send({ message: 'Store successfully added to database.' })
             })
+            
         } else {
             res.status(500).send(['Vdsasa', 'error tuli taas']);
         }

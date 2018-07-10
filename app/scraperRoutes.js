@@ -191,6 +191,29 @@ module.exports = function (app, passport) {
                 })
 
             });
+        } else if (action === 'newstore') {
+            let formData = req.body.form;
+            let newStore = new Store();
+            newStore.name = formData[0].value.trim();
+            newStore.url = formData[1].value.trim();
+            newStore.keywords = formData[2].value.trim().split(';');
+            newStore.save(function (err) {
+                if (err) {
+                    //console.log(err);
+                    let errMessage = "";
+                    // Duplicate error.
+                    if (err.code === 11000 || err.name === 'MongoError') {
+                        //console.log(err.message);
+                        if (err.message.includes(formData[0].value.trim())) {
+                            errMessage = 'That name already exists.';
+                        } else {
+                            errMessage = 'That URL already exists.';
+                        }
+                    }
+                    return res.status(500).send({ messages: [{ value: errMessage }] })
+                }
+                res.status(200).send({ message: 'Store successfully added to database.' })
+            });
         } else if (action === 'addkeyword') {
             if (keyword === '') return res.status(500).json({ message: 'Please type non-empty keyword.' });
             Store.findById(store, 'keywords', function (err, store) {
@@ -221,7 +244,7 @@ module.exports = function (app, passport) {
                         return res.status(500).json({ success: false, message: 'None found.' });
                     }
                     console.log(stores);
-                    
+
                     scraper.getData(stores)
                         .then(function (data) {
                             let result = [];

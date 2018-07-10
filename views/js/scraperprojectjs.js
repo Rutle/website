@@ -44,8 +44,70 @@ $(function () {
                 tableIdx++;
             }
         })
-
     }
+
+    /**
+     * Function to add error messages to a form's error message box and input/dropdown fields.
+     * @param {Array} messages Contains objects {name, value} where name is the id of the error causing field and value is the error message.
+     * @param {String} divId Id of the error message div.
+     * @param {String} type Type of the input: Dropdown etc.
+     * @param {String} messagesOnly If the messages should only be written in the message box or input fields also receive error coloring.
+     */
+    function addErrorMessages(messages, divId, type, messagesOnly = false) {
+        let eMessageDiv = document.getElementById(divId);
+        while (eMessageDiv.firstChild) {
+            eMessageDiv.removeChild(eMessageDiv.firstChild);
+        }
+        let list = document.createElement('ul');
+        list.className = 'list';
+        messages.forEach(function (elem, idx) {
+            let listItem = document.createElement('li');
+            listItem.appendChild(document.createTextNode(elem.value));
+            list.appendChild(listItem);
+            if (!messagesOnly) { addErrorInfo(elem.name, type); }
+        });
+        eMessageDiv.appendChild(list);
+        eMessageDiv.style.display = 'inherit';
+    }
+
+    /**
+     * Function to add error messages to a form's input field.
+     * @param {String} id Id of the input field.
+     * @param {String} messageBoxId Id of the form's error message box.
+     */
+    function addErrorInfo(id, type) {
+        let inputNode = document.getElementById(id);
+        inputNode.style.color = '#9f3a38';
+        inputNode.style.borderColor = '#e0b4b4';
+        inputNode.style.backgroundColor = '#fff6f6';
+        let label = '';
+        if (type === 'input') {
+            label = document.getElementById(id).previousElementSibling;
+        } else if (type === 'dropdown') {
+            label = inputNode.previousElementSibling
+        }
+        label.style.color = '#9f3a38';
+    }
+
+    /**
+     * Function to clear error messages from a form.
+     * @param {String} id Id of the input field.
+     * @param {String} messageBoxId Id of the form's error message box.
+     */
+    function clearErrorInfo(id, messageBoxId) {
+        let inputNode = document.getElementById(id);
+        inputNode.style.color = 'rgba(0,0,0,.95)';
+        inputNode.style.borderColor = '#85b7d9';
+        inputNode.style.backgroundColor = '#fff';
+        let label = inputNode.previousElementSibling;
+        label.style.color = 'rgba(0,0,0,.87)';
+        let eMessageDiv = document.getElementById(messageBoxId);
+        while (eMessageDiv.firstChild) {
+            eMessageDiv.removeChild(eMessageDiv.firstChild);
+        }
+        eMessageDiv.style.display = 'none';
+    }
+
     $('#store_keywords')
         .dropdown({
             apiSettings: {
@@ -69,6 +131,7 @@ $(function () {
                         buildCampaignList(data.results);
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
+                        
                         let camp = document.getElementById("store_keyword_error_messages");
                         let customErrorMessages = JSON.parse(jqXHR.responseText);
                         while (camp.firstChild) {
@@ -83,10 +146,7 @@ $(function () {
                         });
                         eMessageDiv.appendChild(list);
                         eMessageDiv.style.display = 'inherit';
-
-                        //$('#modify_store_keywords_form').removeClass('loading');
-                        //let customErrorMessages = JSON.parse(jqXHR.responseText);
-                        //console.log("Given error response: ", customErrorMessages);
+                        //addErrorMessages(messages, divId, type, messagesOnly = false)
                     }
                 })
 
@@ -98,8 +158,7 @@ $(function () {
 
     function removeCampaign(event) {
         event.preventDefault();
-        //console.log(this)
-        //console.log(event);
+
         let parentFields = $(this).parent().parent();
         let name = parentFields.children().eq(1).children().first().val();
         let url = parentFields.children().eq(2).children().first().val();
@@ -292,7 +351,7 @@ $(function () {
                 error: function (jqXHR, textStatus, errorThrown) {
                     $('#modify_store_keywords_form').removeClass('loading');
                     let customErrorMessages = JSON.parse(jqXHR.responseText);
-                    console.log("Given error response: ", customErrorMessages);
+                    //console.log("Given error response: ", customErrorMessages);
                 }
             });
         }
@@ -383,9 +442,8 @@ $(function () {
                     },
                     dataType: 'json',
                     success: function (data) {
-                        //console.log("vastaus: ", data.message);
                         $('#new_store_form').removeClass('loading');
-                        //$('.ui.form').form('clear');
+
                         let eMessageDiv = document.getElementById('store_error_messages');
                         eMessageDiv.style.display = 'none';
                         let sMessageDiv = document.getElementById('store_success_messages');
@@ -397,10 +455,10 @@ $(function () {
 
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
-                        let error = errorThrown;
                         let customErrorMessages = JSON.parse(jqXHR.responseText);
+                        customErrorMessages = customErrorMessages.messages;
                         console.log("responseText: ", customErrorMessages);
-
+                        /*
                         let eMessageDiv = document.getElementById('store_error_messages');
                         while (eMessageDiv.firstChild) {
                             eMessageDiv.removeChild(eMessageDiv.firstChild);
@@ -414,12 +472,30 @@ $(function () {
                         });
                         eMessageDiv.appendChild(list);
                         eMessageDiv.style.display = 'inherit';
+                        */
                         $('#new_store_form').removeClass('loading');
 
                     }
                 });
             }
         });
+    /**
+     * Function to refresh/populate the store_sata table with current stats.
+     * @param {Object} obj Contains relevant information received from server for a row.
+     * @param {HTMLTableSectionElement} table The table that this function is being applied to.
+     * @param {Number} idx Current row index.
+     */
+    function populateStoreStats(obj, table, idx) {
+        let row = table.insertRow(idx);
+        let nameCell = row.insertCell(0);
+        let countCell = row.insertCell(1);
+        let dateCell = row.insertCell(2);
+        nameCell.innerHTML = obj.storeName;
+        countCell.innerHTML = obj.count;
+        countCell.setAttribute('id', obj.storeName + '_count');
+        dateCell.innerHTML = 'Today'
+    }
+
     $('#refresh_sales_data').click(function (event) {
         event.preventDefault();
         $.ajax({
@@ -427,24 +503,14 @@ $(function () {
             url: '/api/scraper/salesdata',
             dataType: 'json',
             success: function (data) {
-                console.log(data);
-                let table = document.getElementById('store_data');
-                for (let i = table.rows.length - 2; i > 0; i--) {
-                    table.deleteRow(i);
+                let table = document.getElementById('store_data').getElementsByTagName('tbody')[0];
+                for (let i = table.rows.length - 1; i >= 0; --i) {
+                    table.rows[i].remove();
                 }
+
                 data.data.forEach(function (elem, idx) {
-                    let row = table.insertRow(idx + 1);
-                    let nameCell = row.insertCell(0);
-                    let countCell = row.insertCell(1);
-                    let dateCell = row.insertCell(2);
-                    nameCell.innerHTML = elem.storeName;
-                    countCell.innerHTML = elem.count;
-                    countCell.setAttribute('id', elem.storeName + '_count');
-                    dateCell.innerHTML = 'Today'
+                    populateStoreStats(elem, table, idx);
                 })
-
-
-
             },
             error: function (jqXHR, textStatus, errorThrown) {
 
@@ -463,21 +529,14 @@ $(function () {
             dataType: 'json',
             success: function (data) {
                 console.log("Data retrieved: ", data);
-                let table = document.getElementById('').getElementsByTagName('tbody')[0];
-                if(table.childElementCount === 0) {
+                let table = document.getElementById('store_data').getElementsByTagName('tbody')[0];
+                if (table.childElementCount === 0) {
                     data.newInsertByStore.forEach(function (elem, idx) {
-                        let row = table.insertRow(idx);
-                        let nameCell = row.insertCell(0);
-                        let countCell = row.insertCell(1);
-                        let dateCell = row.insertCell(2);
-                        nameCell.innerHTML = elem.storeName;
-                        countCell.innerHTML = elem.count;
-                        countCell.setAttribute('id', elem.storeName + '_count');
-                        dateCell.innerHTML = 'Today'
+                        populateStoreStats(elem, table, idx);
                     });
+                // Insert additional text to each counter to indicate how many new products were added to database.
                 } else {
                     data.newInsertByStore.forEach(function (elem, idx) {
-                        console.log(typeof (elem.count));
                         if (elem.count > 0) {
                             let cell = document.getElementById(elem.storeName + '_count');
                             cell.innerHTML = cell.innerHTML + ' (+' + elem.count + ')';
@@ -494,45 +553,27 @@ $(function () {
             }
         });
     });
+
     $('#store_dpn')
         .dropdown({
             apiSettings: {
-                url: 'http://localhost:5000/api/stores/',
-                onComplete: function (response) {
-                    //console.log(response);
-                    //response.results[0].selected = true;
-                    //console.log(response);
-                }
+                url: 'http://localhost:5000/api/stores/'
             },
             onChange: function (value, text, $choice) {
-                /*
-                $.ajax({
-                    method: 'GET',
-                    url: '/api/stores/' + value,
-                    dataType: 'json',
-                    success: function (data) {
-                        console.log('message: ', data.message);
-
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-
-                        let customErrorMessages = JSON.parse(jqXHR.responseText);
-                        console.log("Given error response: ", customErrorMessages);
-                    }
-                });
-                */
+                // Fetch data from sessionStorage
                 let storeData = JSON.parse((sessionStorage.getItem('salesData')));
                 storeData = (text === 'All stores' ? storeData : storeData.filter(elem => elem.storeName === text));
                 let categories = JSON.parse((sessionStorage.getItem('storeCategories')));
+
+                //Initialize dropdown with selected values
                 $('#category_dpn').dropdown({
                     values: categories[text],
+
+                    // On selected choice populate the sales table based on data and chosen category.
                     onChange: function (value, categoryText, $choice) {
                         let storeText = $('#store_dpn').dropdown('get text');
-
-                        console.log("storeText ", storeText);
                         let storeData = JSON.parse((sessionStorage.getItem('salesData')));
                         storeData = (storeText === 'All stores' ? storeData : storeData.filter(elem => elem.storeName === text));
-                        console.log(storeText, categoryText);
                         populateTable(storeData, categoryText)
                     }
                 });
@@ -545,7 +586,5 @@ $(function () {
             direction: 'auto',
             debug: true
         });
-
-
 
 });

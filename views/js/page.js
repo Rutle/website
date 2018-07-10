@@ -73,68 +73,7 @@ $(function () {
             direction: 'auto'
         });
 
-    /**
-     * Function to add error messages to a form's error message box and input/dropdown fields.
-     * @param {Array} messages Contains objects {name, value} where name is the id of the error causing field and value is the error message.
-     * @param {String} divId Id of the error message div.
-     * @param {String} type Type of the input: Dropdown etc.
-     */
-    function addErrorMessages(messages, divId, type) {
-        let eMessageDiv = document.getElementById(divId);
-        while (eMessageDiv.firstChild) {
-            eMessageDiv.removeChild(eMessageDiv.firstChild);
-        }
-        let list = document.createElement('ul');
-        list.className = 'list';
-        messages.forEach(function (elem, idx) {
-            let listItem = document.createElement('li');
-            listItem.appendChild(document.createTextNode(elem.value));
-            list.appendChild(listItem);
-            addErrorInfo(elem.name, type);
-        });
-        eMessageDiv.appendChild(list);
-        eMessageDiv.style.display = 'inherit';
-    }
-
-    /**
-     * Function to add error messages to a form's input field.
-     * @param {String} id Id of the input field.
-     * @param {String} messageBoxId Id of the form's error message box.
-     */
-    function addErrorInfo(id, type) {
-        let inputNode = document.getElementById(id);
-        inputNode.style.color = '#9f3a38';
-        inputNode.style.borderColor = '#e0b4b4';
-        inputNode.style.backgroundColor = '#fff6f6';
-        let label = '';
-        if (type === 'input') {
-            label = document.getElementById(id).previousElementSibling;
-        } else if (type === 'dropdown') {
-            label = inputNode.previousElementSibling
-        }
-        label.style.color = '#9f3a38';
-    }
-
-    /**
-     * Function to clear error messages from a form.
-     * @param {String} id Id of the input field.
-     * @param {String} messageBoxId Id of the form's error message box.
-     */
-    function clearErrorInfo(id, messageBoxId) {
-        let inputNode = document.getElementById(id);
-        inputNode.style.color = 'rgba(0,0,0,.95)';
-        inputNode.style.borderColor = '#85b7d9';
-        inputNode.style.backgroundColor = '#fff';
-        let label = inputNode.previousElementSibling;
-        label.style.color = 'rgba(0,0,0,.87)';
-        let eMessageDiv = document.getElementById(messageBoxId);
-        while (eMessageDiv.firstChild) {
-            eMessageDiv.removeChild(eMessageDiv.firstChild);
-        }
-        eMessageDiv.style.display = 'none';
-    }
-
-
+    
     /**
      * Remove projects from database through the dashboard page 'current projects'.
      */
