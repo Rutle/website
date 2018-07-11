@@ -3,7 +3,7 @@
 var axios = require('axios');
 
 const apiURL = 'https://api.github.com/repos/rutle/'
-const suffixApiURL = '/commits?per_page=3&sha='
+const suffixApiURL = '/commits?per_page=5&sha='
 
 var config = {
     headers: { 'Authorization': 'token ' + process.env.PERSONAL_ACCESS_TOKEN }
@@ -17,6 +17,7 @@ var config = {
 const gitHubAction = {
     GETDESCRIPTION: 'getDescription',
     GETREPOSITORY: 'getRepository',
+    GETCONTRIBUTIONS: 'getContributions',
     INVALIDACTION: 'Invalid action'
 };
 /**
@@ -27,7 +28,7 @@ function getCommits(projectRepo) {
     return axios.get(apiURL + projectRepo + suffixApiURL, config)
         .then(function (response) {
             let commitData = response.data;
-            console.log(response);
+            //console.log(response);
             let returnData = [];
             commitData.forEach(function (elem, i) {
                 let now = new Date();
@@ -72,12 +73,11 @@ function getCommits(projectRepo) {
 function getRepository(repo, action) {
     switch (action) {
         case gitHubAction.GETREPOSITORY:
-            return axios.get('https://api.github.com/repos/rutle/' + repo + '/commits?per_page=3&sha=master')
+            return axios.get('https://api.github.com/repos/rutle/' + repo, config)
                 .then(function (response) {
                     if (response.status === 200) {
                         const json = response.data;
                         const headers = response.headers;
-                        console.log("eka: ", json);
                         /*
                         fs.writeFile('apitest.json',
                             JSON.stringify(json, null, 4),
@@ -92,10 +92,11 @@ function getRepository(repo, action) {
             break;
         case gitHubAction.GETDESCRIPTION:
             return axios.get('https://api.github.com/repos/rutle/' + repo + '/readme',
-                { headers: { Accept: 'application/vnd.github.VERSION.raw' } })
+                { headers: { Accept: 'application/vnd.github.VERSION.raw', Authorization: 'token ' + process.env.PERSONAL_ACCESS_TOKEN } })
                 .then(function (response) {
                     if (response.status === 200) {
                         const json = response.data;
+                        
                         //const headers = reponse.headers;
                         //console.log("readme: ", response)
                         //let descData = json['content'];
@@ -110,6 +111,17 @@ function getRepository(repo, action) {
                 }, function (err) {
                     console.log("Description fetching error [GETDESCRIPTIONS]: ", err);
                 })
+            break;
+        case gitHubAction.GETCONTRIBUTIONS:
+            return axios.get('https://api.github.com/repos/Rutle/' + repo + '/contributors', config)
+                .then(function (response) {
+                    if (response.status === 200) {
+                        const json = response.data;
+                        return json;
+                    }
+                }, function (err) {
+                    console.log("Description fetching error [GETCONTRIBUTIONS]: ", err);
+                });
             break;
         default:
             return gitHubAction.INVALIDACTION;

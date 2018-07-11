@@ -55,29 +55,73 @@
             </div>
             <div class="six wide column">
 
-                    <div class="ui accordion">
-                        <div class="active title">
-                            <i class="dropdown icon"></i>
-                            Project stats
-                        </div>
-                        <div class="active content">
-                            <p>A dog is a type of domesticated animal. Known for its loyalty and faithfulness, it can be found
-                                as a welcome guest in many households across the world.</p>
-                        </div>
-                        <div class="title">
-                            <i class="dropdown icon"></i>
-                            Latest commits
-                        </div>
-                        <div class="content">
-
-                                <div class="ui feed" id="commit_feed">
+                <div class="ui accordion">
+                    <div class="active title">
+                        <i class="dropdown icon"></i>
+                        Project stats
+                    </div>
+                    <div class="active content">
+                        <!--
+                        <div class="ui tiny horizontal statistics">
+                            <div class="statistic">
+                                <div class="label">
+                                    Created At...
+                                </div>
+                                <div class="value">
                                 </div>
 
+                            </div>
+                            <div class="statistic">
+                                <div class="label">
+                                    Commits...
+                                </div>
+                                <div class="value" >
+                                </div>
+
+                            </div>
+                            <div class="statistic">
+                                <div class="label">
+                                    Language...
+                                </div>
+                                <div class="value">
+                                </div>
+
+                            </div>
+                        </div>
+                        -->
+                        <div class="ui list">
+                            <div class="item">
+                                <div class="content" id="creation">
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="content" id="commitcount">
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="content" id="lang">
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="content" id="license">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="title">
+                        <i class="dropdown icon"></i>
+                        Latest commits
+                    </div>
+                    <div class="content">
+
+                        <div class="ui feed" id="commit_feed">
                         </div>
 
                     </div>
+
                 </div>
-                <!--
+            </div>
+            <!--
                 <div class="ui segments">
                     <div class="ui secondary segment">
                         <div id="commit_header">
@@ -120,7 +164,9 @@
 
     $(function () {
         $('.ui.accordion').accordion();
+        console.log("repo: ", '{{{repo}}}')
         document.body.onload = buildFeed('{{{repo}}}');
+        document.body.onload = buildStats('{{{repo}}}')
         //document.body.onload = getCommits('website');
 
         let firstHeader = document.getElementById('description_container').firstElementChild;

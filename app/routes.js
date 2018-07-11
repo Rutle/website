@@ -192,25 +192,42 @@ module.exports = function (app, passport) {
         }
 
 
-    })
+    });
     /**
-     * Route to fetch commits for a repository.
+     * Route to fetch data through Github API repository.
      */
-    app.get('/projects/:repo', function (req, res) {
-        console.log(req.params.repo);
-        /*
-        gha.getCommits(req.params.repo)
-          .then(function(response) {
-            if(response.length === 1 && response[0].isError) {
-              return res.status(500).send('Something went wrong.')
-            } else {
-              return res.status(200).send({
-                data: response
+    app.get('/api/:action/:repo', function (req, res) {
+        let action = req.params.action;
+        let repo = req.params.repo;
+        if (action === 'commits') {
+            gha.getCommits(repo)
+                .then(function (response) {
+                    if (response.length === 1 && response[0].isError) {
+                        return res.status(500).send('Something went wrong.')
+                    } else {
+                        return res.status(200).send({
+                            data: response
+                        });
+                    }
                 });
-            }
-          });
-          */
-        return res.status(200).send({ data: [{ committer: 'Jussi Ristimäki', message: 'Toimiiko tama nyt oleenkaan', days: 5, hours: 4, minutes: 2 }] });
+        } else if (action === 'contributions') {
+            gha.getRepository(repo, gha.gitHubAction.GETCONTRIBUTIONS)
+                .then(function(data) {
+                    let commitCount = data[0].contributions;
+                    return res.status(200).send({commitCount: commitCount});
+                });
+        } else if (action === 'repository') {
+            gha.getRepository(repo, gha.gitHubAction.GETREPOSITORY)
+                .then(function(data) {
+                    let lang = data.language;
+                    let license = data.license.name;
+                    let createdAt = new Date(data.created_at).toDateString();
+                    return res.status(200).send({language: lang, license: license, createdAt: createdAt});
+                });
+        }
+
+
+        //return res.status(200).send({ data: [{ committer: 'Jussi Ristimäki', message: 'Toimiiko tama nyt oleenkaan', days: 5, hours: 4, minutes: 2 }] });
     });
 
     // ###############################################################################

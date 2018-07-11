@@ -4,9 +4,10 @@
  */
 function buildFeed(repo) {
     // Ajax post call to make server side fetch the tweet data for current user.
+    console.log("buildfeed: ", repo)
     $.ajax({
         type: 'GET',
-        url: '/projects/' + repo,
+        url: '/api/commits/' + repo,
         //url: 'https://ohsiha-webmc.herokuapp.com/dashboard',
         dataType: 'json',
         success: function (data) {
@@ -19,6 +20,41 @@ function buildFeed(repo) {
             alert(data.errorMessage);
         }
     });
+}
+function buildStats(repo) {
+    // Ajax post call to make server side fetch the tweet data for current user.
+    console.log("buildstats: ", repo)
+    $.when( $.ajax('/api/contributions/'+repo), $.ajax('/api/repository/'+repo) )
+        .done(function(contrib, repo) {
+            let creation = document.getElementById('creation');
+            creation.innerHTML = "Created at: "+repo[0].createdAt;
+
+            let commits = document.getElementById('commitcount')
+            commits.innerHTML = "Commits: "+contrib[0].commitCount;
+
+            let lang = document.getElementById('lang');
+            lang.innerHTML = "Language: "+repo[0].language;
+            
+            let license = document.getElementById('license');
+            license.innerHTML = "License: "+repo[0].license;
+        });
+
+    /*
+    $.ajax({
+        type: 'GET',
+        url: '/api/commits/' + repo,
+        //url: 'https://ohsiha-webmc.herokuapp.com/dashboard',
+        dataType: 'json',
+        success: function (data) {
+            data.data.forEach(function (elem, i) {
+                addFeedEvent(elem);
+            });
+
+        },
+        error: function (jqXHR, textStatus, err, data) {
+            alert(data.errorMessage);
+        }
+    });*/
 }
 
 /**
