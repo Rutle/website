@@ -3,58 +3,80 @@
  * @param {String} repo Repository's name.
  */
 function buildFeed(repo) {
-    // Ajax post call to make server side fetch the tweet data for current user.
+    // Ajax get call to make server side fetch the tweet data for current user.
     console.log("buildfeed: ", repo)
-    $.ajax({
-        type: 'GET',
-        url: '/api/commits/' + repo,
-        //url: 'https://ohsiha-webmc.herokuapp.com/dashboard',
-        dataType: 'json',
-        success: function (data) {
-            data.data.forEach(function (elem, i) {
-                addFeedEvent(elem);
-            });
+    if (!sessionStorage.getItem(repo + "Feed")) {
+        // No data has been stored to sessionStorage yet.
+        $.ajax({
+            type: 'GET',
+            url: '/api/commits/' + repo,
+            //url: 'https://ohsiha-webmc.herokuapp.com/dashboard',
+            dataType: 'json',
+            success: function (data) {
+                // Add data to sessionStorage to prevent the spamming of API.
+                sessionStorage.setItem(repo + "Feed", JSON.stringify(data.data));
+                console.log(data.data);
+                data.data.forEach(function (elem, i) {
+                    addFeedEvent(elem);
+                });
 
-        },
-        error: function (jqXHR, textStatus, err, data) {
-            alert(data.errorMessage);
-        }
-    });
+            },
+            error: function (jqXHR, textStatus, err, data) {
+                alert(data.errorMessage);
+            }
+        });
+    } else {
+        // Data has already been stored before.
+        let data = JSON.parse(sessionStorage.getItem(repo + "Feed"));
+
+        data.forEach(function (elem, i) {
+            addFeedEvent(elem);
+        });
+    }
+
 }
 function buildStats(repo) {
-    // Ajax post call to make server side fetch the tweet data for current user.
-    console.log("buildstats: ", repo)
-    $.when( $.ajax('/api/contributions/'+repo), $.ajax('/api/repository/'+repo) )
-        .done(function(contrib, repo) {
-            let creation = document.getElementById('creation');
-            creation.innerHTML = "Created at: "+repo[0].createdAt;
+    // Ajax get call to make server side fetch the tweet data for current user.
 
-            let commits = document.getElementById('commitcount')
-            commits.innerHTML = "Commits: "+contrib[0].commitCount;
+    if (!sessionStorage.getItem(repo + "Contrib") || !sessionStorage.getItem(repo + "Repo")) {
+        // No data has been stored to sessionStorage yet.
+        $.when($.ajax('/api/contributions/' + repo), $.ajax('/api/repository/' + repo))
+            .done(function (contrib, repoData) {
 
-            let lang = document.getElementById('lang');
-            lang.innerHTML = "Language: "+repo[0].language;
-            
-            let license = document.getElementById('license');
-            license.innerHTML = "License: "+repo[0].license;
-        });
+                // Add data to sessionStorage to prevent the spamming of API.
+                sessionStorage.setItem(repo + "Contrib", JSON.stringify(contrib));
+                sessionStorage.setItem(repo + "Repo", JSON.stringify(repoData));
 
-    /*
-    $.ajax({
-        type: 'GET',
-        url: '/api/commits/' + repo,
-        //url: 'https://ohsiha-webmc.herokuapp.com/dashboard',
-        dataType: 'json',
-        success: function (data) {
-            data.data.forEach(function (elem, i) {
-                addFeedEvent(elem);
+                let creation = document.getElementById('creation');
+                creation.innerHTML = "Created at: " + repoData[0].createdAt;
+
+                let commits = document.getElementById('commitcount')
+                commits.innerHTML = "Commits: " + contrib[0].commitCount;
+
+                let lang = document.getElementById('lang');
+                lang.innerHTML = "Language: " + repoData[0].language;
+
+                let license = document.getElementById('license');
+                license.innerHTML = "License: " + repoData[0].license;
             });
+    } else {
+        // Data has already been stored before.
 
-        },
-        error: function (jqXHR, textStatus, err, data) {
-            alert(data.errorMessage);
-        }
-    });*/
+        let contrib = JSON.parse(sessionStorage.getItem(repo + "Contrib"));
+        let repoData = JSON.parse(sessionStorage.getItem(repo + "Repo"));
+
+        let creation = document.getElementById('creation');
+        creation.innerHTML = "Created at: " + repoData[0].createdAt;
+
+        let commits = document.getElementById('commitcount')
+        commits.innerHTML = "Commits: " + contrib[0].commitCount;
+
+        let lang = document.getElementById('lang');
+        lang.innerHTML = "Language: " + repoData[0].language;
+
+        let license = document.getElementById('license');
+        license.innerHTML = "License: " + repoData[0].license;
+    }
 }
 
 /**
@@ -116,11 +138,11 @@ function minimizeFeed() {
     var feedDiv = document.getElementById('commit_feed');
     var minIcon = document.getElementById('minimize_icon');
     if (feedDiv.clientHeight) {
-      feedDiv.style.height = 0;
-      minIcon.className = 'angle down icon'
+        feedDiv.style.height = 0;
+        minIcon.className = 'angle down icon'
     } else {
-      feedDiv.style.height = feedDiv.scrollHeight + "px";
-      minIcon.className = 'angle up icon';
+        feedDiv.style.height = feedDiv.scrollHeight + "px";
+        minIcon.className = 'angle up icon';
     }
     // document.getElementById("more-button").value=document.getElementById("more-button").value=='Read more'?'Read less':'Read more';
 }
@@ -142,59 +164,59 @@ function addFormSection() {
     fieldsDiv.className = 'fields';
     fieldsDiv.setAttribute('id', 'section');
 
-        let fieldDiv = document.createElement('div');
-        fieldDiv.className = 'five wide field';
+    let fieldDiv = document.createElement('div');
+    fieldDiv.className = 'five wide field';
 
-            let sectionFieldsDiv = document.createElement('div');
-            sectionFieldsDiv.className = 'fields';
+    let sectionFieldsDiv = document.createElement('div');
+    sectionFieldsDiv.className = 'fields';
 
-                let sectionNameFieldDiv = document.createElement('div');
-                sectionNameFieldDiv.className = 'sixteen wide field';
-                    let labelName = document.createElement('label');
-                    labelName.appendChild(document.createTextNode('Section name'));
-                sectionNameFieldDiv.appendChild(labelName);
+    let sectionNameFieldDiv = document.createElement('div');
+    sectionNameFieldDiv.className = 'sixteen wide field';
+    let labelName = document.createElement('label');
+    labelName.appendChild(document.createTextNode('Section name'));
+    sectionNameFieldDiv.appendChild(labelName);
 
-                    let inputName = document.createElement('input');
-                    let inputId = 'section_name'+formCounter
-                    inputName.setAttribute('name', inputId);
-                    inputName.setAttribute('id', inputId);
-                    inputName.setAttribute('placeholder', 'e.g. Description');
-                    inputName.setAttribute('type', 'text');
-                    
-                sectionNameFieldDiv.appendChild(inputName);
-            sectionFieldsDiv.appendChild(sectionNameFieldDiv);
-        fieldDiv.appendChild(sectionFieldsDiv);
+    let inputName = document.createElement('input');
+    let inputId = 'section_name' + formCounter
+    inputName.setAttribute('name', inputId);
+    inputName.setAttribute('id', inputId);
+    inputName.setAttribute('placeholder', 'e.g. Description');
+    inputName.setAttribute('type', 'text');
 
-            let buttonFieldsDiv = document.createElement('div');
-            buttonFieldsDiv.className = 'fields';
+    sectionNameFieldDiv.appendChild(inputName);
+    sectionFieldsDiv.appendChild(sectionNameFieldDiv);
+    fieldDiv.appendChild(sectionFieldsDiv);
 
-                let sectionButtonFieldDiv = document.createElement('div');
-                sectionButtonFieldDiv.className = 'sixteen wide field';
+    let buttonFieldsDiv = document.createElement('div');
+    buttonFieldsDiv.className = 'fields';
 
-                    let button = document.createElement('button');
-                    button.className = 'ui basic button';
-                    button.appendChild(document.createTextNode('Remove this section'));
-                    button.setAttribute('id', 'remove_section')
-                    button.addEventListener('click', function(event) {
-                        removeSection(event.target);
-                    });
-                sectionButtonFieldDiv.appendChild(button);
-            buttonFieldsDiv.appendChild(sectionButtonFieldDiv);
-        fieldDiv.appendChild(buttonFieldsDiv);
+    let sectionButtonFieldDiv = document.createElement('div');
+    sectionButtonFieldDiv.className = 'sixteen wide field';
+
+    let button = document.createElement('button');
+    button.className = 'ui basic button';
+    button.appendChild(document.createTextNode('Remove this section'));
+    button.setAttribute('id', 'remove_section')
+    button.addEventListener('click', function (event) {
+        removeSection(event.target);
+    });
+    sectionButtonFieldDiv.appendChild(button);
+    buttonFieldsDiv.appendChild(sectionButtonFieldDiv);
+    fieldDiv.appendChild(buttonFieldsDiv);
     fieldsDiv.appendChild(fieldDiv);
 
-        let sectionTextFieldDiv = document.createElement('div');
-        sectionTextFieldDiv.className = 'eleven wide field';
-            let labelText = document.createElement('label');
-            labelText.appendChild(document.createTextNode('Text'));
-            let textArea = document.createElement('textarea');
-            let textId = 'section_text'+formCounter
-            textArea.setAttribute('name', textId);
-            textArea.setAttribute('id', textId);
-            textArea.setAttribute('placeholder', 'Paragraph for a section.');
-            
-        sectionTextFieldDiv.appendChild(labelText);
-        sectionTextFieldDiv.appendChild(textArea);
+    let sectionTextFieldDiv = document.createElement('div');
+    sectionTextFieldDiv.className = 'eleven wide field';
+    let labelText = document.createElement('label');
+    labelText.appendChild(document.createTextNode('Text'));
+    let textArea = document.createElement('textarea');
+    let textId = 'section_text' + formCounter
+    textArea.setAttribute('name', textId);
+    textArea.setAttribute('id', textId);
+    textArea.setAttribute('placeholder', 'Paragraph for a section.');
+
+    sectionTextFieldDiv.appendChild(labelText);
+    sectionTextFieldDiv.appendChild(textArea);
     fieldsDiv.appendChild(sectionTextFieldDiv);
     projectDiv.appendChild(fieldsDiv);
     console.log(inputId);

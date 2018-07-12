@@ -54,9 +54,9 @@ function getData(stores) {
                                 let art = $(this).children('article');
                                 if (art.children('div.product-image-wrapper').children('a').first().children('div.price-splash').length === 1) {
                                     let currentPrice = art.children('div.product-price-wrapper').children().first().text().trim();
-                                    currentPrice = currentPrice.match(/\d+(?:\,\d+)?/g);
+                                    currentPrice = currentPrice.match(/\d+(?:\,\d+)?/g)[0];
                                     let regularPrice = art.children('div.product-price-wrapper').children().eq(1).text().trim();
-                                    regularPrice = regularPrice.match(/\d+(?:\,\d+)?/g);
+                                    regularPrice = regularPrice.match(/\d+(?:\,\d+)?/g)[0];
                                     
                                     productList.push({
                                         storeUrl: 'https://cdon.fi/',
@@ -143,7 +143,7 @@ function getProductPages(links) {
 
                 } else if (element.status === 200 && element.config.url.includes('https://cdon.fi/')) {
                     let $ = cheerio.load(element.data);
-                    console.log("getproductpages kesaaly natot: ", element.config.url);
+                    //console.log("getproductpages kesaaly natot: ", element.config.url);
 
                     let idx = links.findIndex(item => item.url === element.config.url);
                     links[idx].productId = $('#energy-label__datasheet-popup > tbody > tr > th').filter(function (i, el) {

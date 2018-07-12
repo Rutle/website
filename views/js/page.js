@@ -64,9 +64,9 @@ $(function () {
             },
             action: 'hide',
             onChange: function (value, text, $selectedItem) {
-                console.log("Text: ", text);
-                console.log("Value: ", value);
-                console.log($selectedItem)
+                //console.log("Text: ", text);
+                //console.log("Value: ", value);
+                //console.log($selectedItem)
                 window.location = value;
             },
             saveRemoteData: false,

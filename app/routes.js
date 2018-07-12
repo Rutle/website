@@ -45,11 +45,11 @@ module.exports = function (app, passport) {
                     //console.log("readme raw: ", data);
                     Project.findOne({ repositoryName: req.params.repo })
                         .exec(function (err, project) {
-                            //console.log("project desc: ", project.desc);
+                            console.log("project desc: ", project.desc);
                             res.render('project', {
                                 breadcrumbs: req.breadcrumbs,
-                                projectName: 'Personal website',
-                                repo: 'website',
+                                projectName: project.name,
+                                repo: project.repositoryName,
                                 user: req.user,
                                 htmldesc: project.desc
                             });
@@ -163,7 +163,7 @@ module.exports = function (app, passport) {
                 });
             } else {
                 newProject.websiteProjectURL = '/projects/' + formData[1].value;
-                gha.getRepository('website', gha.gitHubAction.GETDESCRIPTION)
+                gha.getRepository(formData[1].value, gha.gitHubAction.GETDESCRIPTION)
                     .then(function (data) {
                         //console.log("readme raw: ", data);
                         newProject.desc = md.render(data);
@@ -212,17 +212,25 @@ module.exports = function (app, passport) {
                 });
         } else if (action === 'contributions') {
             gha.getRepository(repo, gha.gitHubAction.GETCONTRIBUTIONS)
-                .then(function(data) {
+                .then(function (data) {
                     let commitCount = data[0].contributions;
-                    return res.status(200).send({commitCount: commitCount});
+                    return res.status(200).send({ commitCount: commitCount });
                 });
         } else if (action === 'repository') {
             gha.getRepository(repo, gha.gitHubAction.GETREPOSITORY)
-                .then(function(data) {
+                .then(function (data) {
                     let lang = data.language;
-                    let license = data.license.name;
+                    let license = "";
+                    console.log(data);
+                    //console.log(data.hasOwnProperty('license'));
+                    if (data.license === null) {
+                        license = "Not available";
+                    } else {
+                        license = data.license.name;
+                    }
+                    //license = "Not available"
                     let createdAt = new Date(data.created_at).toDateString();
-                    return res.status(200).send({language: lang, license: license, createdAt: createdAt});
+                    return res.status(200).send({ language: lang, license: license, createdAt: createdAt });
                 });
         }
 
