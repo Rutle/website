@@ -9,7 +9,7 @@ var parseData = require('./parser.js')
  * @param {Array} stores List of stores to fetch data from.
  */
 function getData(stores) {
-    return axios.all(([].concat(...stores.map(l => l.campaignUrls))).map(k => axios.get(k.url)))
+    return axios.all(([].concat(...stores.map(l => l.campaignUrls))).filter(d => d.isActive).map(k => axios.get(k.url)))
         .then(axios.spread((...args) => {
             var siteData = []
             for (let i = 0; i < args.length; i++) {

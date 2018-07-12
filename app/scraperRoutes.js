@@ -253,12 +253,12 @@ module.exports = function (app, passport) {
                         return res.status(500).json({ success: false, message: 'None found.' });
                     }
                     console.log(stores);
-
+                    
                     scraper.getData(stores)
                         .then(function (data) {
                             let result = [];
                             const storeIds = arrayToObject(stores);
-                            console.log(data);
+                            //console.log(data);
 
                             data.forEach(function (elem, idx) {
                                 let pId = "";
@@ -302,7 +302,7 @@ module.exports = function (app, passport) {
                             Product.collection.bulkWrite(data)
                                 .then(bulkWriteOpResult => {
                                     console.log('BULK update OK');
-                                    console.log(JSON.stringify(bulkWriteOpResult, null, 2));
+                                    //console.log(JSON.stringify(bulkWriteOpResult, null, 2));
                                     let resultObj = {
                                         upserted: bulkWriteOpResult.upsertedCount,
                                         modified: bulkWriteOpResult.modifiedCount
@@ -312,7 +312,7 @@ module.exports = function (app, passport) {
                                             if (err) {
                                                 console.log(err);
                                             }
-                                            console.log(data);
+                                            //console.log(data);
                                             let newByStore = data.map(elem => ({ storeName: elem.store.name, count: elem.count }));
                                             return res.status(200).json({ success: true, results: resultObj, newInsertByStore: newByStore })
                                         });
@@ -326,7 +326,6 @@ module.exports = function (app, passport) {
                         }, function (err) {
                             console.log(err);
                         });
-
                 });
         } else if (action === 'refresh') {
             getProductCounts(function (err, data) {

@@ -47,7 +47,7 @@ exports.parseArr = function(objectList, url, keywords) {
           newCounter++;
     
         } else {
-          console.log("Skipped..\n")
+          //console.log("Skipped..\n")
         }
       }
     return newObjectList;

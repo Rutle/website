@@ -194,12 +194,16 @@ $(function () {
         let camp = document.getElementById("campaign-container");
 
         let iFields = document.createElement("div");
-        iFields.className = "inline fields";
+        iFields.className = "fields";
 
         let removeField = document.createElement("div");
         removeField.className = "field";
         let rBtn = document.createElement("button");
         rBtn.className = "ui tiny icon negative button";
+        $(rBtn).popup({
+            content: 'Remove campaign',
+            position: 'left center'
+        });
         let rIcon = document.createElement("i");
         rIcon.className = "delete icon";
         rBtn.onclick = removeCampaign;
@@ -214,6 +218,10 @@ $(function () {
         nameInput.setAttribute("value", campObj.name);
         nameInput.setAttribute("disabled", "");
         nameField.appendChild(nameInput);
+        $(nameField).popup({
+            content: campObj.name,
+            position: 'top center'
+        });
         iFields.appendChild(nameField);
 
         let urlField = document.createElement("div");
@@ -223,6 +231,10 @@ $(function () {
         urlInput.setAttribute("value", campObj.url);
         urlInput.setAttribute("disabled", "");
         urlField.appendChild(urlInput);
+        $(urlField).popup({
+            content: campObj.url,
+            position: 'top center'
+        });
         iFields.appendChild(urlField);
 
         let toggleField = document.createElement("div");
@@ -232,6 +244,10 @@ $(function () {
         let toggleInput = document.createElement("input");
         toggleInput.setAttribute("type", "checkbox");
         toggleDiv.appendChild(toggleInput);
+        $(urlField).popup({
+            content: 'Activate/Deactivate',
+            position: 'right center'
+        });
         toggleField.appendChild(toggleDiv);
         iFields.appendChild(toggleField);
         camp.appendChild(iFields);
@@ -242,16 +258,13 @@ $(function () {
                 let name = parentFields.children().eq(1).children().first().val();
                 let url = parentFields.children().eq(2).children().first().val();
                 let id = $('#store_keywords').dropdown('get value');
-                console.log(name, url, id);
-                $(this).checkbox('set disabled');
+
                 $.ajax({
                     method: 'POST',
                     url: '/dashboard/scraper/toggleactivity',
                     data: { name: name, url: url, storeId: id, isActive: true },
                     dataType: 'JSON',
                     success: function (data) {
-
-                        $(this).checkbox('set enabled');
 
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
@@ -264,8 +277,7 @@ $(function () {
                 let name = parentFields.children().eq(1).children().first().val();
                 let url = parentFields.children().eq(2).children().first().val();
                 let id = $('#store_keywords').dropdown('get value');
-                console.log(name, url, id);
-                $(this).checkbox('set disabled');
+
                 $.ajax({
                     method: 'POST',
                     url: '/dashboard/scraper/toggleactivity',
@@ -273,15 +285,13 @@ $(function () {
                     dataType: 'JSON',
                     success: function (data) {
 
-                        $(this).checkbox('set enabled');
-
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
 
                     }
                 });
             }
-        });
+        }); //.checkbox(campObj.isActive ? 'set checked' : 'set unchecked');
         campObj.isActive ? $(toggleDiv).checkbox('set checked') : $(toggleDiv).checkbox('set unchecked');
     }
 
